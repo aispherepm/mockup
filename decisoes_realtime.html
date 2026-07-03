@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reintegrados — Decisões do Pedido de Reintegração por Fase</title>
+<style>
+  :root{
+    --red:#CC092F; --redMid:#E84667; --redLight:#FDE8EC; --redBg:#FDF2F4;
+    --purple:#7B2D8E; --purpleLight:#F3E8F7;
+    --green:#2E7D32; --greenLight:#E8F5E9;
+    --amber:#F57F17; --amberLight:#FFF8E1;
+    --blue:#1565C0; --blueLight:#E3F2FD;
+    --navy:#1F2A7A; --navyMid:#3A49A8; --navyLight:#E8EAF6; --navyBg:#F0F1F9;
+    --bg:#F5F6FA; --white:#fff; --border:#E8EAED;
+    --text:#1a1a2e; --textSec:#5f6368; --textMuted:#9AA0A6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI','Roboto',-apple-system,sans-serif;background:var(--bg);color:var(--text);padding:28px;max-width:1120px;margin:0 auto;}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+  .section-title{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .section-title .bar{width:4px;height:20px;background:var(--red);border-radius:2px;flex-shrink:0;}
+  .section-title h2{font-size:16px;font-weight:700;}
+  .section-title .desc{font-size:11px;color:var(--textMuted);font-weight:600;}
+  .subtitle{font-size:12px;color:var(--textSec);line-height:1.5;}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;}
+  .badge .dot{width:7px;height:7px;border-radius:50%;}
+  .b-green{background:var(--greenLight);color:var(--green);}
+  .b-blue{background:var(--blueLight);color:var(--blue);cursor:pointer;transition:transform .12s;}
+  .b-blue:hover{transform:translateY(-1px);}
+  .b-grey{background:#F1F3F4;color:var(--textSec);}
+  .b-navy{background:var(--navyLight);color:var(--navy);}
+  .b-red{background:var(--redLight);color:var(--red);}
+  .header-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+  .note{font-size:10.5px;color:var(--textMuted);font-style:italic;margin-top:16px;}
+
+  /* ===== Donut ===== */
+  .main-grid{display:flex;justify-content:center;margin-top:8px;}
+  .donut-wrap{position:relative;width:540px;height:430px;margin:0 auto;}
+  .donut-wrap svg{width:100%;height:100%;overflow:visible;}
+  .donut-wrap svg path.seg{cursor:pointer;transition:all .18s ease;}
+  .donut-wrap svg path.seg:hover{stroke-width:33;filter:brightness(1.07);}
+  .seg-label{font-size:7.6px;font-weight:600;fill:var(--text);cursor:pointer;}
+  .seg-label:hover{fill:var(--red);}
+  .seg-label .cnt{font-weight:700;fill:var(--textSec);}
+  .seg-lead{stroke:#C9CDD4;stroke-width:.7;fill:none;}
+  .donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center;}
+  .donut-center .center-btn{pointer-events:auto;cursor:pointer;padding:14px 18px;border-radius:50%;transition:transform .15s;}
+  .donut-center .center-btn:hover{transform:scale(1.05);}
+  .donut-center .center-btn:hover .num{color:var(--red);}
+  .donut-center .num{font-size:30px;font-weight:800;line-height:1;transition:color .15s;}
+  .donut-center .lbl{font-size:11px;color:var(--textSec);margin-top:4px;line-height:1.35;}
+
+  /* Lista de processos */
+  .list-link{display:inline-flex;align-items:center;gap:6px;margin-top:14px;border:none;background:none;color:var(--blue);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;padding:0;}
+  .list-link:hover{text-decoration:underline;}
+  .plist{max-height:460px;overflow:auto;border:1px solid var(--border);border-radius:10px;}
+  .plist table{width:100%;border-collapse:collapse;font-size:12px;}
+  .plist thead th{position:sticky;top:0;background:var(--bg);text-transform:uppercase;font-size:10px;letter-spacing:.5px;color:var(--textSec);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);z-index:1;}
+  .plist tbody td{padding:9px 14px;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .plist tbody tr:last-child td{border-bottom:none;}
+  .plist tbody tr:hover{background:#FAFBFC;}
+  .cnj{color:var(--blue);font-weight:600;text-decoration:none;font-family:'Consolas','Menlo',monospace;font-size:11.5px;}
+  .cnj:hover{text-decoration:underline;}
+  .res-cell{display:flex;align-items:center;gap:7px;font-weight:600;}
+  .res-cell .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+  /* Filtros da lista */
+  .fbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;}
+  .fgroup-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--textSec);margin-right:2px;}
+  .fchip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--white);user-select:none;transition:all .12s;}
+  .fchip input{accent-color:var(--red);cursor:pointer;margin:0;}
+  .fchip.on{border-color:var(--red);background:var(--redLight);color:var(--red);}
+  .fdrop{position:relative;}
+  .fbtn{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border:1px solid var(--border);border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer;background:var(--white);font-family:inherit;color:var(--text);}
+  .fbtn.on{border-color:var(--red);background:var(--redLight);color:var(--red);}
+  .fpanel{position:absolute;top:calc(100% + 6px);left:0;background:var(--white);border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.14);padding:8px 12px 12px;z-index:5;min-width:300px;max-height:300px;overflow:auto;display:none;}
+  .fpanel.open{display:block;}
+  .fpanel .fp-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--textMuted);margin:10px 0 4px;}
+  .fpanel label{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;padding:4px 2px;cursor:pointer;border-radius:6px;}
+  .fpanel label:hover{background:var(--bg);}
+  .fpanel label .cnt-op{margin-left:auto;color:var(--textMuted);font-weight:600;font-size:10.5px;}
+  .fpanel input{accent-color:var(--red);cursor:pointer;margin:0;}
+  .fclear{border:none;background:none;color:var(--blue);font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;padding:5px 6px;}
+  .fclear:hover{text-decoration:underline;}
+  .group-pill{position:absolute;display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:6px 14px;box-shadow:0 1px 4px rgba(0,0,0,.07);font-size:11px;font-weight:800;letter-spacing:.4px;}
+  .group-pill .sample{width:22px;height:0;border-top-width:3px;border-radius:2px;}
+  .group-pill .g-val{font-weight:600;color:var(--textSec);font-size:11px;}
+  .gp-reint{top:6px;right:14px;color:var(--red);}
+  .gp-reint .sample{border-top:3px solid var(--red);}
+  .gp-indef{top:6px;left:14px;color:var(--navy);}
+  .gp-indef .sample{border-top:3px dashed var(--navy);}
+
+  /* ===== Coluna direita ===== */
+  .group-card{border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:14px;position:relative;overflow:hidden;}
+  .group-card .accent{position:absolute;top:0;left:0;bottom:0;width:4px;}
+  .gc-head{display:flex;align-items:baseline;gap:10px;}
+  .gc-head .g-lbl{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+  .gc-head .g-num{font-size:22px;font-weight:800;margin-left:auto;}
+  .gc-head .g-pct{font-size:12px;color:var(--textSec);font-weight:600;}
+  .gc-track{height:8px;background:#F1F3F4;border-radius:4px;margin:10px 0 12px;overflow:hidden;display:flex;}
+  .gc-track div{height:100%;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:16px;font-size:11px;font-weight:600;cursor:pointer;background:var(--white);transition:all .12s;}
+  .chip:hover{border-color:currentColor;transform:translateY(-1px);box-shadow:0 2px 5px rgba(0,0,0,.08);}
+  .chip .c-dot{width:8px;height:8px;border-radius:50%;}
+  .chip .c-n{color:var(--textSec);font-weight:700;}
+  .hint{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--textSec);background:var(--bg);border-radius:8px;padding:10px 14px;line-height:1.45;}
+
+  /* ===== Modal ===== */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:50;overflow-y:auto;}
+  .overlay.open{display:flex;}
+  .modal{background:var(--white);border-radius:14px;max-width:1000px;width:100%;padding:28px;position:relative;box-shadow:0 10px 40px rgba(0,0,0,.2);}
+  .modal .close{position:absolute;top:16px;right:18px;border:none;background:#F1F3F4;color:var(--textSec);width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;}
+  .modal .close:hover{background:var(--redLight);color:var(--red);}
+  .m-badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px;}
+  .mini-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mini-kpi{background:var(--bg);border-radius:8px;padding:10px 12px;}
+  .mini-kpi .mk-num{font-size:20px;font-weight:800;}
+  .mini-kpi .mk-lbl{font-size:10px;color:var(--textSec);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;line-height:1.3;}
+  .mini-kpi.navy{background:var(--navyLight);}
+  .mini-kpi.navy .mk-num{color:var(--navy);}
+  .mini-kpi.red{background:var(--redLight);}
+  .mini-kpi.red .mk-num{color:var(--red);}
+  .board-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--textSec);margin-bottom:10px;}
+  .insight{background:var(--blueLight);border-left:3px solid var(--blue);border-radius:6px;padding:10px 12px;font-size:11.5px;line-height:1.5;margin-top:14px;}
+  .m-legend{display:flex;gap:16px;font-size:11px;color:var(--textSec);margin-top:12px;}
+  .m-legend span{display:flex;align-items:center;gap:6px;}
+  .m-legend .dot{width:8px;height:8px;border-radius:50%;}
+
+  /* Quadro espelhado estilo Marcha */
+  .ms-split{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  .ms-side{padding:14px 16px;}
+  .ms-side.indef{background:var(--navyBg);border-right:1px solid var(--border);border-top:3px solid var(--navy);}
+  .ms-side.def{background:var(--redBg);border-top:3px solid var(--red);}
+  .ms-side .side-head{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:800;margin-bottom:12px;}
+  .ms-side.indef .side-head{color:var(--navy);}
+  .ms-side.def .side-head{color:var(--red);}
+  .ms-side .side-head .sh-n{font-size:18px;}
+  .ms-row{display:grid;grid-template-columns:1fr 72px 34px 34px;align-items:center;gap:8px;font-size:11.5px;margin-bottom:9px;}
+  .ms-row .mr-lbl{font-weight:600;}
+  .ms-row .mr-track{height:6px;background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+  .ms-row .mr-fill{height:100%;border-radius:3px;display:block;}
+  .ms-row .mr-n{font-weight:800;text-align:right;}
+  .ms-row .mr-p{color:var(--textSec);font-size:10.5px;text-align:right;}
+
+  @media(max-width:1000px){
+    .main-grid{grid-template-columns:1fr;}
+    .ms-split{grid-template-columns:1fr;}
+    .ms-side.indef{border-right:none;border-bottom:1px solid var(--border);}
+    .mini-kpis{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header-row">
+    <div>
+      <div class="section-title"><div class="bar"></div><h2>Decisões do pedido de reintegração</h2></div>
+      <div class="subtitle">Fotografia viva do pedido de reintegração: cada processo aparece uma única vez, classificado pelo seu <b>último status</b> e pela fase em que se encontra. As cores traduzem a favorabilidade do desfecho atual — Reintegrado ou Indeferido — e os percentuais consideram apenas processos com decisão.</div>
+    </div>
+    <span class="badge b-green" style="flex-shrink:0;"><span class="dot" style="background:var(--green)"></span>Dados atualizados</span>
+  </div>
+
+  <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+    <span class="badge b-green"><span class="dot" style="background:var(--green)"></span>62,2% com decisão</span>
+  </div>
+
+  <div class="main-grid">
+    <div class="donut-wrap">
+      <div class="group-pill gp-indef"><span class="sample"></span>INDEFERIDO<span class="g-val">168 · 53%</span></div>
+      <div class="group-pill gp-reint"><span class="sample"></span>REINTEGRADO<span class="g-val">149 · 47%</span></div>
+      <svg viewBox="0 0 400 300" id="donutSvg"></svg>
+      <div class="donut-center">
+        <div class="center-btn" onclick="openList(null)" title="Ver todos os processos">
+          <div class="num">317</div>
+          <div class="lbl">processos<br>com decisão</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Dados simulados para mockup. Pedido de reintegração avaliado de forma binária. Terminologia alinhada à Marcha da Reintegração; MS cabível apenas na fase de liminar.</div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="close" onclick="closeModal()">✕</button>
+    <div class="section-title"><div class="bar" id="mBar"></div><h2 id="mTitle"></h2><span class="desc" id="mDesc"></span></div>
+    <div class="subtitle" id="mSub"></div>
+    <div id="mBody" style="margin-top:14px;"></div>
+    <div class="m-legend"><span><span class="dot" style="background:var(--navy)"></span>favorável ao Banco</span><span><span class="dot" style="background:var(--red)"></span>favorável ao Reclamante</span></div>
+    <div class="note">Dados simulados para mockup.</div>
+  </div>
+</div>
+
+<!-- ===== LISTA DE PROCESSOS ===== -->
+<div class="overlay" id="overlay2" style="z-index:60;" onclick="if(event.target===this)closeList()">
+  <div class="modal" style="max-width:880px;">
+    <button class="close" onclick="closeList()">✕</button>
+    <div class="section-title"><div class="bar" style="background:var(--red)"></div><h2 id="lTitle"></h2><span class="desc" id="lDesc"></span></div>
+    <div class="subtitle" style="margin-bottom:12px;">O número CNJ direciona para a tela de detalhamento do processo.</div>
+    <div class="fbar" id="lFilters"></div>
+    <div class="plist" id="lTable"></div>
+    <div class="note">Dados simulados para mockup.</div>
+  </div>
+</div>
+
+<script>
+const TOTAL = 317;
+const CONCEITO = 'Visão viva: cada processo é classificado pelo seu <b>último status</b> e aparece uma única vez.';
+
+/*
+  LÓGICA JURÍDICA POR FASE (terminologia da Marcha da Reintegração):
+  · Liminar (tutela de urgência): decisão deferida/indeferida; MS é cabível apenas aqui.
+    O resultado do MS integra o status (visão viva).
+  · Sentença (1ª instância): status lido frente à decisão anterior —
+    Mantida liminar / Mantida decisão MS / Reformada liminar / sem liminar.
+  · 2ª Instância (TRT · acórdão): status lido frente à sentença —
+    Mantida sentença / Reformada sentença.
+  · TST (instância superior): status lido frente ao acórdão —
+    Mantido acórdão / Reformado acórdão.
+  Sem MS a partir da sentença.
+*/
+const FASES = [
+  {
+    id:'liminar', nome:'Liminar', desc:'tutela de urgência',
+    reint:58, indef:52,
+    corR:'#CC092F', corI:'#1F2A7A',
+    ms:{impetrados:41, banco:37, reclamante:4},
+    boardTitulo:'Status da liminar — último status, MS incorporado',
+    board:{
+      indef:{rows:[
+        {lbl:'Sem MS', val:36, pct:69, cor:'#9AA0A6'},
+        {lbl:'MS · Reintegração indeferida', val:14, pct:27, cor:'#3A49A8'},
+        {lbl:'MS · Indeferimento mantido', val:1, pct:2, cor:'#6674C7'},
+        {lbl:'MS · Aguardando decisão', val:1, pct:2, cor:'#F57F17'}
+      ]},
+      def:{rows:[
+        {lbl:'Sem MS', val:33, pct:57, cor:'#9AA0A6'},
+        {lbl:'MS · Deferimento mantido', val:14, pct:24, cor:'#E84667'},
+        {lbl:'MS · Aguardando decisão', val:9, pct:16, cor:'#F57F17'},
+        {lbl:'MS · Reintegração determinada', val:2, pct:3, cor:'#CC092F'}
+      ]}
+    },
+    insight:'Cada processo aparece uma única vez, pelo último status — MS julgado sobrescreve a decisão original da liminar.'
+  },
+  {
+    id:'sentenca', nome:'Sentença', desc:'1ª instância',
+    reint:49, indef:57,
+    corR:'#E84667', corI:'#3A49A8',
+    boardTitulo:'Status da sentença frente à decisão anterior',
+    board:{
+      indef:{rows:[
+        {lbl:'Mantida liminar de indeferimento', val:24, pct:42, cor:'#3A49A8'},
+        {lbl:'Mantida decisão MS de indeferimento', val:8, pct:14, cor:'#6674C7'},
+        {lbl:'Reformada liminar de deferimento', val:9, pct:16, cor:'#1F2A7A'},
+        {lbl:'Indeferido sem liminar', val:16, pct:28, cor:'#9AA0A6'}
+      ]},
+      def:{rows:[
+        {lbl:'Mantida liminar de deferimento', val:22, pct:45, cor:'#E84667'},
+        {lbl:'Mantida decisão MS de deferimento', val:5, pct:10, cor:'#F08BA0'},
+        {lbl:'Reformada liminar de indeferimento', val:7, pct:14, cor:'#CC092F'},
+        {lbl:'Deferido sem liminar', val:15, pct:31, cor:'#9AA0A6'}
+      ]}
+    },
+    insight:'A sentença mantém a decisão anterior na maioria dos casos — a fase liminar tende a definir o jogo.'
+  },
+  {
+    id:'trt', nome:'2ª Instância', desc:'TRT · acórdão',
+    reint:30, indef:41,
+    corR:'#F08BA0', corI:'#6674C7',
+    boardTitulo:'Status do acórdão frente à sentença',
+    board:{
+      indef:{rows:[
+        {lbl:'Mantida sentença de indeferimento', val:27, pct:66, cor:'#3A49A8'},
+        {lbl:'Reformada sentença de deferimento', val:14, pct:34, cor:'#1F2A7A'}
+      ]},
+      def:{rows:[
+        {lbl:'Mantida sentença de deferimento', val:21, pct:70, cor:'#E84667'},
+        {lbl:'Reformada sentença de indeferimento', val:9, pct:30, cor:'#CC092F'}
+      ]}
+    },
+    insight:'68% dos acórdãos mantêm a sentença — a reforma em 2ª instância é minoritária.'
+  },
+  {
+    id:'tst', nome:'TST', desc:'instância superior',
+    reint:12, indef:18,
+    corR:'#F8C1CC', corI:'#98A2DE',
+    boardTitulo:'Status da decisão do TST frente ao acórdão',
+    board:{
+      indef:{rows:[
+        {lbl:'Mantido acórdão de indeferimento', val:13, pct:72, cor:'#3A49A8'},
+        {lbl:'Reformado acórdão de deferimento', val:5, pct:28, cor:'#1F2A7A'}
+      ]},
+      def:{rows:[
+        {lbl:'Mantido acórdão de deferimento', val:9, pct:75, cor:'#E84667'},
+        {lbl:'Reformado acórdão de indeferimento', val:3, pct:25, cor:'#CC092F'}
+      ]}
+    },
+    insight:'73% dos acórdãos do TRT são mantidos — o TST raramente reverte o desfecho.'
+  }
+];
+
+/* ================= DONUT ================= */
+const svg = document.getElementById('donutSvg');
+const CX=200, CY=152, R=74, SW=28;
+const R_CONT=94;
+const GAP=1.1;
+
+function polar(r,deg){const rad=(deg-90)*Math.PI/180;return[CX+r*Math.cos(rad),CY+r*Math.sin(rad)];}
+function arcPath(r,a1,a2){
+  const [x1,y1]=polar(r,a1),[x2,y2]=polar(r,a2);
+  return `M ${x1} ${y1} A ${r} ${r} 0 ${(a2-a1)>180?1:0} 1 ${x2} ${y2}`;
+}
+function el(tag,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+
+function drawDonut(){
+  let ang=0;const segs=[];
+  FASES.forEach(f=>{segs.push({fase:f,val:f.reint,cor:f.corR,grupo:'Reintegrado',a1:ang,a2:ang+=f.reint/TOTAL*360});});
+  const reintEnd=ang;
+  [...FASES].reverse().forEach(f=>{segs.push({fase:f,val:f.indef,cor:f.corI,grupo:'Indeferido',a1:ang,a2:ang+=f.indef/TOTAL*360});});
+
+  svg.appendChild(el('path',{d:arcPath(R_CONT,2,reintEnd-2),stroke:'#CC092F','stroke-width':3,fill:'none','stroke-linecap':'round'}));
+  svg.appendChild(el('path',{d:arcPath(R_CONT,reintEnd+2,358),stroke:'#1F2A7A','stroke-width':3,fill:'none','stroke-linecap':'round','stroke-dasharray':'5 4'}));
+
+  segs.forEach(s=>{
+    const p=el('path',{class:'seg',d:arcPath(R,s.a1+GAP/2,s.a2-GAP/2),stroke:s.cor,'stroke-width':SW,fill:'none'});
+    p.onclick=()=>openModal(s.fase.id);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','title');
+    t.textContent=`${s.fase.nome} — ${s.grupo}: ${s.val}`;p.appendChild(t);
+    svg.appendChild(p);
+  });
+
+  // Legendas sem linhas: cada label posicionado radialmente, colado ao seu segmento.
+  // Âncora do texto segue o lado do gráfico; o par TST (base) recebe um leve
+  // afastamento lateral para respirar.
+  const R_LBL=R_CONT+12;
+  segs.forEach(s=>{
+    const mid=(s.a1+s.a2)/2;
+    const [lxRaw,ly]=polar(R_LBL,mid);
+    let lx=lxRaw;
+    if(mid>150&&mid<210) lx += (s.grupo==='Reintegrado'? 14 : -14);
+    const anchor = Math.abs(lx-CX)<20 ? 'middle' : (lx>CX ? 'start' : 'end');
+    const tx=el('text',{class:'seg-label',x:lx,y:ly+2.5,'text-anchor':anchor});
+    tx.innerHTML=`${s.fase.nome} <tspan class="cnt">· ${s.val}</tspan>`;
+    tx.onclick=()=>openModal(s.fase.id);
+    svg.appendChild(tx);
+  });
+}
+
+/* ================= MODAL ================= */
+/* Base simulada de processos: gerada a partir dos quadros de status.
+   CNJ no padrão da Justiça do Trabalho (J=5, TRT-2). MS relacionado apenas
+   para os status de MS da fase Liminar. */
+function pad(n,l){return String(n).padStart(l,'0');}
+function genCNJ(i,ms){
+  const num=pad((137*i+(ms?4503219:1234567))%9000000+1000000,7);
+  const dv=pad((i*7+(ms?11:29))%90+10,2);
+  const ano=2023+(i%4);
+  const vara=pad((i%89)+1,4);
+  return `${num}-${dv}.${ano}.5.02.${vara}`;
+}
+const PROCESSOS=[];
+(function(){
+  let pid=0;
+  FASES.forEach(f=>{
+    ['indef','def'].forEach(k=>{
+      f.board[k].rows.forEach(r=>{
+        for(let i=0;i<r.val;i++){
+          pid++;
+          PROCESSOS.push({
+            cnj:genCNJ(pid,false),
+            fase:f.nome, faseId:f.id,
+            resultado:r.lbl, side:k,
+            ms:(f.id==='liminar'&&r.lbl.indexOf('MS ·')===0)?genCNJ(pid,true):null
+          });
+        }
+      });
+    });
+  });
+})();
+
+const overlay2=document.getElementById('overlay2');
+let LSTATE={selInst:new Set(),selRes:new Set()};
+let RPANEL=false;
+
+function openList(faseId){
+  const f=faseId?FASES.find(x=>x.id===faseId):null;
+  LSTATE={selInst:new Set(f?[f.nome]:[]),selRes:new Set()};
+  RPANEL=false;
+  renderList();
+  overlay2.classList.add('open');
+}
+function closeList(){overlay2.classList.remove('open');RPANEL=false;}
+
+function toggleInst(nome){
+  LSTATE.selInst.has(nome)?LSTATE.selInst.delete(nome):LSTATE.selInst.add(nome);
+  // remove resultados selecionados que deixaram de ser válidos
+  const validos=new Set(instRows().map(p=>p.resultado));
+  LSTATE.selRes.forEach(r=>{if(!validos.has(r))LSTATE.selRes.delete(r);});
+  renderList();
+}
+function toggleRes(lbl){
+  LSTATE.selRes.has(lbl)?LSTATE.selRes.delete(lbl):LSTATE.selRes.add(lbl);
+  renderList();
+}
+function toggleRPanel(){RPANEL=!RPANEL;renderList();}
+function clearF(){LSTATE={selInst:new Set(),selRes:new Set()};renderList();}
+
+function instRows(){
+  return LSTATE.selInst.size?PROCESSOS.filter(p=>LSTATE.selInst.has(p.fase)):PROCESSOS;
+}
+function renderList(){
+  const base=instRows();
+  const rows=LSTATE.selRes.size?base.filter(p=>LSTATE.selRes.has(p.resultado)):base;
+  const temFiltro=LSTATE.selInst.size||LSTATE.selRes.size;
+
+  // ----- barra de filtros -----
+  const chips=FASES.map(f=>{
+    const on=LSTATE.selInst.has(f.nome);
+    return `<label class="fchip${on?' on':''}"><input type="checkbox" ${on?'checked':''} onclick="toggleInst('${f.nome}')">${f.nome}</label>`;
+  }).join('');
+
+  // opções de resultado agrupadas por instância (respeitando o filtro de instância)
+  const grupos=[];
+  FASES.forEach(f=>{
+    if(LSTATE.selInst.size&&!LSTATE.selInst.has(f.nome))return;
+    const ops=[];const vistos=new Set();
+    ['indef','def'].forEach(k=>f.board[k].rows.forEach(r=>{
+      if(vistos.has(r.lbl))return;vistos.add(r.lbl);
+      ops.push({lbl:r.lbl,cnt:base.filter(p=>p.fase===f.nome&&p.resultado===r.lbl).length});
+    }));
+    grupos.push({fase:f.nome,ops});
+  });
+  const panel=`
+    <div class="fpanel${RPANEL?' open':''}">
+      ${grupos.map(g=>`
+        <div class="fp-head">${g.fase}</div>
+        ${g.ops.map(o=>`<label><input type="checkbox" ${LSTATE.selRes.has(o.lbl)?'checked':''} onclick="toggleRes('${o.lbl}')">${o.lbl}<span class="cnt-op">${o.cnt}</span></label>`).join('')}
+      `).join('')}
+    </div>`;
+
+  document.getElementById('lFilters').innerHTML=`
+    <span class="fgroup-lbl">Instância atual</span>${chips}
+    <span class="fgroup-lbl" style="margin-left:10px;">Resultado</span>
+    <div class="fdrop">
+      <button class="fbtn${LSTATE.selRes.size?' on':''}" onclick="toggleRPanel()">${LSTATE.selRes.size?LSTATE.selRes.size+' selecionado'+(LSTATE.selRes.size>1?'s':''):'Todos'} ▾</button>
+      ${panel}
+    </div>
+    ${temFiltro?'<button class="fclear" onclick="clearF()">Limpar filtros</button>':''}`;
+
+  // ----- tabela -----
+  const showMS=rows.some(p=>p.faseId==='liminar');
+  document.getElementById('lTitle').textContent='Processos com decisão';
+  document.getElementById('lDesc').textContent=rows.length===PROCESSOS.length?`${rows.length} processos`:`${rows.length} de ${PROCESSOS.length} processos`;
+  document.getElementById('lTable').innerHTML=`
+    <table>
+      <thead><tr>
+        <th>Processo</th>
+        <th>Instância atual</th>
+        <th>Resultado da instância atual</th>
+        ${showMS?'<th>MS relacionado</th>':''}
+      </tr></thead>
+      <tbody>${rows.map(p=>`
+        <tr>
+          <td><a class="cnj" href="#" onclick="return false;" title="Abrir detalhamento do processo">${p.cnj}</a></td>
+          <td>${p.fase}</td>
+          <td><span class="res-cell"><span class="dot" style="background:${p.side==='def'?'var(--red)':'var(--navy)'}"></span>${p.resultado}</span></td>
+          ${showMS?`<td>${p.ms?`<a class="cnj" href="#" onclick="return false;" title="Abrir detalhamento do MS">${p.ms}</a>`:'<span style="color:var(--textMuted)">—</span>'}</td>`:''}
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+// fecha o dropdown de resultado ao clicar fora dele
+document.addEventListener('click',e=>{
+  if(RPANEL&&!e.target.closest('.fdrop')){RPANEL=false;renderList();}
+});
+
+
+const overlay=document.getElementById('overlay');
+function sideRows(rows){
+  return rows.map(r=>`
+    <div class="ms-row">
+      <span class="mr-lbl">${r.lbl}</span>
+      <span class="mr-track"><span class="mr-fill" style="width:${r.pct}%;background:${r.cor}"></span></span>
+      <span class="mr-n">${r.val}</span><span class="mr-p">${r.pct}%</span>
+    </div>`).join('');
+}
+function boardHtml(f,tot){
+  return `
+    <div class="board-title">${f.boardTitulo}</div>
+    <div class="ms-split">
+      <div class="ms-side indef">
+        <div class="side-head"><span>Indeferido · ${Math.round(f.indef/tot*100)}%</span><span class="sh-n">${f.indef}</span></div>
+        ${sideRows(f.board.indef.rows)}
+      </div>
+      <div class="ms-side def">
+        <div class="side-head"><span>Deferido · ${Math.round(f.reint/tot*100)}%</span><span class="sh-n">${f.reint}</span></div>
+        ${sideRows(f.board.def.rows)}
+      </div>
+    </div>`;
+}
+function openModal(id){
+  const f=FASES.find(x=>x.id===id);
+  const tot=f.reint+f.indef;
+  document.getElementById('mBar').style.background=f.corR;
+  document.getElementById('mTitle').textContent=f.nome;
+  document.getElementById('mDesc').textContent=`${f.desc} · ${tot}`;
+  document.getElementById('mSub').innerHTML=CONCEITO;
+
+  let html='';
+  if(f.ms){
+    html+=`
+      <div class="mini-kpis">
+        <div class="mini-kpi"><div class="mk-num">${f.ms.impetrados}</div><div class="mk-lbl">MS impetrados na fase</div></div>
+        <div class="mini-kpi navy"><div class="mk-num">${f.ms.banco}</div><div class="mk-lbl">Impetrante · Banco</div></div>
+        <div class="mini-kpi red"><div class="mk-num">${f.ms.reclamante}</div><div class="mk-lbl">Impetrante · Reclamante</div></div>
+      </div>`;
+  }
+  html+=boardHtml(f,tot);
+  html+=`<button class="list-link" onclick="openList('${f.id}')">Ver os ${tot} processos da fase →</button>`;
+  document.getElementById('mBody').innerHTML=html;
+  overlay.classList.add('open');
+}
+
+function closeModal(){overlay.classList.remove('open');}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(overlay2.classList.contains('open'))closeList();
+    else closeModal();
+  }
+});
+
+drawDonut();
+</script>
+</body>
+</html>
