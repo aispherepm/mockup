@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="pt-br"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Funil da Liminar de Reintegração — Marcha por Instância</title>
+<style>
+  :root{
+    --red:#CC092F;--navy:#2B3A91;--redSoft:#E8889B;--navySoft:#9AA4D0;
+    --navyLight:#E7EAF6;--redLight:#FDE8EC;--white:#fff;--bg:#F5F6FA;--border:#E3E6EB;
+    --text:#1a1a2e;--textSec:#5f6368;--textMuted:#9AA0A6;
+    --green:#2E7D32;--greenLight:#E7F4E8;--amber:#B7791F;--amberLight:#FBEFD9;
+    --slate:#94A3B8;--slateLt:#CBD2DC;--greyLight:#EEF1F4;
+    --sp1:6px;--sp2:10px;--sp3:12px;--sp4:14px;--sp5:18px;--sp6:22px;--sp7:28px;
+  }
+  *{box-sizing:border-box}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);margin:0;padding:14px;color:var(--text)}
+  .wrap{max-width:1100px;margin:0 auto}
+
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+  .top{padding:10px var(--sp4);border-bottom:1px solid var(--border)}
+  .top-head{display:flex;align-items:center;gap:8px}
+  .top-head .ico{width:22px;height:22px;border-radius:6px;background:var(--redLight);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:11px}
+  .top-head h2{font-size:13px;font-weight:800;margin:0}
+  .top-head .upd{margin-left:auto;background:var(--greenLight);color:var(--green);font-weight:800;font-size:9.5px;border-radius:20px;padding:2px 9px;display:flex;align-items:center;gap:5px;white-space:nowrap}
+  .top-head .upd::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block}
+  .top-sub{font-size:10.5px;color:var(--textSec);margin-top:3px;line-height:1.4}
+
+  /* ===== grade de fases ===== */
+  .stages{padding:8px var(--sp4) 10px;display:flex;flex-direction:column;gap:4px}
+
+  .phase{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:box-shadow .15s}
+  .phase:hover{box-shadow:0 2px 6px rgba(16,24,40,.05)}
+
+  .phase-head{display:grid;grid-template-columns:160px 1fr auto auto;align-items:center;column-gap:10px;padding:5px 10px;background:var(--bg);border-bottom:1px solid var(--border);min-height:28px}
+  .phase-head.expandable{cursor:pointer;transition:background .12s}
+  .phase-head.expandable:hover{background:#eef1f5}
+  .phase-head.expandable:focus-visible{outline:2px solid var(--navy);outline-offset:-2px}
+  .phase-chev{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.06);color:var(--textSec);font-size:12px;font-weight:800;line-height:1;transition:background .12s,transform .2s,color .12s}
+  .phase-head.expandable:hover .phase-chev{background:rgba(0,0,0,.12);color:var(--text)}
+  .phase.open .phase-chev{transform:rotate(180deg);background:var(--text);color:#fff}
+  .phase-name{font-size:11.5px;font-weight:800;display:flex;align-items:baseline;gap:6px}
+  .phase-name small{font-size:9.5px;font-weight:600;color:var(--textMuted)}
+  .phase-meta{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--textSec)}
+  .phase-meta b{color:var(--text);font-weight:800;font-size:10.5px}
+  .phase-pill{font-size:9.5px;font-weight:800;border-radius:20px;padding:1px 8px}
+  .phase-pill.good{background:var(--greenLight);color:var(--green)}
+  .phase-pill.warn{background:var(--amberLight);color:var(--amber)}
+
+  /* split cells — visualmente independentes, expansão SÓ do lado clicado */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+  .cell{background:#fff;padding:6px 12px;cursor:pointer;position:relative;transition:background .15s;border-left:3px solid transparent;min-height:38px}
+  .cell:hover{background:var(--bg)}
+  .cell:focus-visible{outline:2px solid var(--navy);outline-offset:-2px}
+  .cell.nv{border-left-color:var(--navy)}
+  .cell.rd{border-left-color:var(--red)}
+  .cell.open{background:var(--bg)}
+  .cell.nv.open{background:var(--navyLight)}
+  .cell.rd.open{background:var(--redLight)}
+  .cell.final::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--green);opacity:.5}
+  .cell .ctitle{font-size:11.5px;font-weight:800;margin-top:2px;line-height:1.25;text-transform:capitalize}
+  .cell.nv .ctitle{color:var(--navy)}.cell.rd .ctitle{color:var(--red)}
+  .cell .cnum{position:absolute;top:50%;right:14px;transform:translateY(-50%);font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;cursor:pointer;padding:4px 6px;margin:-4px -6px;border-radius:5px;transition:background .12s}
+  .cell .cnum:hover{background:rgba(0,0,0,.06)}
+  .cell.nv .cnum{color:var(--navy)}.cell.rd .cnum{color:var(--red)}
+
+  /* expansão fica DENTRO da mesma metade — usa grid de 2 colunas, mostra só uma e esconde a outra */
+  .detail-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border)}
+  .phase-hint{font-size:10.5px;color:var(--textSec);text-align:center;padding:6px 12px;background:var(--bg);border-top:1px solid var(--border);font-style:italic;letter-spacing:.2px}
+  .phase-hint::before{content:"↓ ";color:var(--textMuted);font-style:normal}
+  .detail-side{background:#fff;display:none}
+  .detail-side.show{display:block;padding:var(--sp2) var(--sp3)}
+  .detail-side.nv.show{background:var(--navyLight)}
+  .detail-side.rd.show{background:var(--redLight)}
+
+  .drow{display:grid;grid-template-columns:240px 1fr 42px 38px;align-items:center;column-gap:10px;padding:0 6px;height:30px;border-bottom:1px solid rgba(0,0,0,.06);border-radius:6px;transition:background .12s;cursor:pointer}
+  .drow:hover{background:rgba(0,0,0,.03)}
+  .drow:focus-visible{outline:2px solid var(--navy);outline-offset:-2px;background:rgba(0,0,0,.03)}
+  .drow[role="button"]{cursor:pointer}
+  .drow[role="button"]:hover{background:rgba(255,255,255,.55)}
+  .drow:last-child{border-bottom:none}
+  .drow .dlabel{font-size:10.5px;font-weight:700;color:var(--textSec);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .drow .dtrack{height:8px;border-radius:5px;background:#fff;border:1px solid var(--border);overflow:hidden}
+  .drow .dtrack .fill{height:100%;border-radius:5px}
+  .drow .dnum{text-align:right;font-size:13px;font-weight:800;color:var(--text);line-height:1}
+  .drow .dpct{text-align:right;font-size:10px;color:var(--textMuted);line-height:1}
+
+  /* legenda de transição entre fases */
+  .taper{display:flex;align-items:center;justify-content:center;gap:5px;font-size:9.5px;font-weight:700;color:var(--textMuted);padding:0;height:14px}
+  .taper::before{content:"↓";font-size:9px}
+
+  .legend{display:flex;gap:12px;flex-wrap:wrap;padding:5px var(--sp4);font-size:9.5px;color:var(--textSec);align-items:center;border-top:1px solid var(--border);background:var(--bg)}
+  .legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:-1px}
+  .legend .div{width:1px;height:10px;background:var(--border)}
+
+  /* ==== MODAL — padrão da plataforma ==== */
+  .ov{position:fixed;inset:0;background:rgba(16,20,40,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .ov.on{display:flex}
+  .modal{background:#fff;border-radius:14px;border-top:3px solid var(--red);max-width:960px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column}
+  @media (max-width:640px){
+    .ov{padding:0;align-items:stretch}
+    .modal{border-radius:0;max-height:100vh;max-width:100%}
+  }
+
+  .mhead{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:2}
+  .mt{font-size:14px;font-weight:800;flex:1;min-width:0;line-height:1.3}
+  .mt .c{color:var(--textMuted);font-weight:600}
+  .x{border:none;background:var(--greyLight);width:28px;height:28px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--textSec);flex:0 0 auto}
+  .x:hover{background:#e0e5eb}
+
+  .mbody{padding:16px 20px 22px;overflow-y:auto}
+  @media (max-width:640px){
+    .mhead{padding:12px 14px}
+    .mbody{padding:14px}
+  }
+
+  /* Trilha de contexto — hierarquia visual limpa, sem truncamento */
+  .mtrail{background:linear-gradient(180deg,var(--bg) 0%,#fff 100%);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+  .mtrail-crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;font-size:12px;line-height:1.4}
+  .mtrail-crumbs .step{font-weight:700;color:var(--text);white-space:nowrap}
+  .mtrail-crumbs .step.muted{color:var(--textSec);font-weight:600}
+  .mtrail-crumbs .step.nv{color:var(--navy)}
+  .mtrail-crumbs .step.rd{color:var(--red)}
+  .mtrail-crumbs .sep{color:var(--textMuted);font-weight:600;font-size:11px;opacity:.7}
+  .mtrail-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);font-size:11px}
+  .mtrail-meta .kv{display:inline-flex;align-items:center;gap:5px;color:var(--textSec)}
+  .mtrail-meta .kv .k{font-weight:700;text-transform:uppercase;letter-spacing:.3px;font-size:9.5px;color:var(--textMuted)}
+  .mtrail-meta .kv .v{font-weight:700;color:var(--text)}
+  .mtrail-meta .kv .v.nv{color:var(--navy)}
+  .mtrail-meta .kv .v.rd{color:var(--red)}
+  .mtrail-meta .kv .v.amber{color:var(--amber)}
+
+  .mdesc{font-size:12px;line-height:1.55;margin:0 0 14px;color:var(--textSec)}
+  .mdesc b{color:var(--text);font-weight:700}
+
+  .blocklbl{font-size:11px;font-weight:800;color:var(--textSec);margin:0 0 8px;text-transform:uppercase;letter-spacing:.3px}
+
+  /* Wrapper da tabela — fontes reduzidas para caber sem scroll na maioria das telas */
+  .mtbl-wrap{border:1px solid var(--border);border-radius:10px;overflow-x:auto;background:#fff}
+  .mtbl{width:100%;border-collapse:collapse;margin:0}
+  .mtbl th,.mtbl td{padding:7px 9px;text-align:left;font-size:10.5px;border-bottom:1px solid var(--greyLight);white-space:nowrap;vertical-align:middle}
+  .mtbl td.polo{white-space:normal;min-width:120px}
+  .mtbl thead th{font-size:8.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--textSec);font-weight:800;background:var(--bg);border-bottom:1px solid var(--border);position:sticky;top:0}
+  .mtbl tbody tr:last-child td{border-bottom:none}
+  .mtbl tbody tr:hover{background:var(--bg)}
+  .mtbl .bdg{font-size:9px;padding:1px 6px}
+  .mtbl .bdg-empty{font-size:10px}
+
+  .cnj{color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline;text-decoration-color:rgba(43,58,145,.3);text-underline-offset:2px}
+  .cnj:hover{text-decoration-color:var(--navy)}
+  .listnote{font-size:10.5px;color:var(--textMuted);margin-top:10px;font-style:italic;text-align:right}
+  .bdg{display:inline-block;font-size:10px;font-weight:800;border-radius:20px;padding:2px 8px;white-space:nowrap;letter-spacing:.1px}
+  .bdg-nv{background:var(--navyLight);color:var(--navy)}
+  .bdg-rd{background:var(--redLight);color:var(--red)}
+  .bdg-am{background:var(--amberLight);color:var(--amber)}
+  .bdg-sl{background:var(--greyLight);color:var(--textSec)}
+  .bdg-gr-good{background:var(--greenLight);color:var(--green)}
+  .bdg-gr-warn{background:var(--amberLight);color:var(--amber)}
+  .bdg-empty{color:var(--textMuted);font-size:11px}
+</style></head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="top">
+      <div class="top-head">
+        <div class="ico">⚖</div>
+        <h2>Marcha da Reintegração por Instância</h2>
+        <div class="upd">Dados atualizados</div>
+      </div>
+      <div class="top-sub">Resultado por instância. Clique em um lado para abrir o detalhamento.</div>
+    </div>
+
+    <div class="stages" id="funnel"></div>
+
+    <div class="legend">
+      <span><i style="background:var(--navy)"></i>favorável ao Banco</span>
+      <span><i style="background:var(--red)"></i>favorável ao Reclamante</span>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="ov" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="mhead"><div class="mt" id="mt">—</div><button class="x" onclick="closeM()" aria-label="Fechar">✕</button></div>
+    <div class="mbody" id="mbody"></div>
+  </div>
+</div>
+
+<script>
+const GATES=[
+ {key:'liminar', n:'Liminar', ph:'tutela de urgência', vol:398, banco:148, recl:250, pct:37, out:'sentenca', ms:true},
+ {key:'sentenca',n:'Sentença',ph:'1ª instância',      vol:505, banco:290, recl:215, pct:57, out:'acordao'},
+ {key:'acordao', n:'2ª Instância', ph:'TRT · acórdão', vol:290, banco:178, recl:112, pct:61, out:'tst'},
+ {key:'tst',     n:'TST', ph:'instância superior',    vol:98,  banco:64,  recl:34,  pct:65, out:null}
+];
+const TRANS={
+ liminar:{
+   // Somas validadas — cada lado bate com o total da fase:
+   // Banco (liminar indeferida): 102 + 24 + 10 + 12 = 148 ✓
+   // Reclamante (liminar deferida): 154 + 58 + 20 + 18 = 250 ✓
+   // Somas do MS: banco 24+10+12=46 (MS do reclamante) ✓; reclamante 58+20+18=96 (MS do banco) ✓
+   bancoSeg:{total:148, semMs:102, msReintDet:24, msIndefMant:10, msAguardando:12},
+   reclSeg :{total:250, semMs:154, msReintIndef:58, msDefMant:20, msAguardando:18}
+ },
+ sentenca:{
+   // Somas validadas — os totais de MS na sentença batem com os resultados de MS na Liminar:
+   //   Mantida decisão MS de indeferimento (68) = 58 (Reint. indeferida, lado recl liminar) + 10 (Indef. mantido, lado banco liminar)
+   //   Mantida decisão MS de deferimento (44)  = 24 (Reint. determinada, lado banco liminar) + 20 (Def. mantido, lado recl liminar)
+   // Outros vínculos:
+   //   Banco 167+68+55 = 290 ✓
+   //   Reclamante 119+44+52 = 215 ✓
+   //   Sem liminar prévia: 55 + 52 = 107 ✓ (bate com o taper)
+   //   Com liminar prévia: 167+119+68+44 = 398 ✓ (bate com o volume da Liminar)
+   bancoSeg:{total:290, manteveLimIndef:167, manteveMsIndef:68, semLimIndef:55},
+   reclSeg :{total:215, manteveLimDef:119,  manteveMsDef:44,   semLimDef:52}
+ },
+ acordao:{
+   // Somas validadas:
+   //   Banco (favorável ao banco em 2ª Instância, total 178): 140 (Mantida sent. indef) + 38 (Reformada sent. def) = 178 ✓
+   //   Reclamante (favorável ao reclamante, total 112): 80 (Mantida sent. def) + 32 (Reformada sent. indef) = 112 ✓
+   //   Total 2ª Instância: 178 + 112 = 290 ✓
+   // Coerência com a Sentença:
+   //   Sentenças de indeferimento que foram a TRT: 140 (mantida) + 32 (reformada em favor recl) = 172 dos 290 indeferidos
+   //   Sentenças de deferimento que foram a TRT: 80 (mantida) + 38 (reformada em favor banco) = 118 dos 215 deferidos
+   bancoSeg:{total:178, manteveSentIndef:140, reformouSentDef:38},
+   reclSeg :{total:112, manteveSentDef:80,   reformouSentIndef:32}
+ },
+ tst:{
+   // Somas validadas:
+   //   Banco TST (total 64): 48 (Mantido acórdão de indef.) + 16 (Reformado acórdão de def.) = 64 ✓
+   //   Reclamante TST (total 34): 22 (Mantido acórdão de def.) + 12 (Reformado acórdão de indef.) = 34 ✓
+   //   Total TST: 98 ✓
+   // Coerência com o Acórdão:
+   //   Acórdãos de indef que foram ao TST: 48 + 12 = 60 (dos 178 indef do TRT)
+   //   Acórdãos de def que foram ao TST: 16 + 22 = 38 (dos 112 def do TRT)
+   bancoSeg:{total:64, manteveAcIndef:48, reformouAcDef:16},
+   reclSeg :{total:34, manteveAcDef:22,  reformouAcIndef:12}
+ }
+};
+const POOL=[
+ {cnj:'0010234-55.2024.5.01.0067',polo:'Maria S. Oliveira',uf:'RJ',comarca:'Rio de Janeiro',cnjMs:'0100234-15.2025.5.01.0000',teveMs:true,msStatus:'cassada',limin:'deferida',sent:'procedente',trans:'confirmada',trt:'mantida',tst:'provido'},
+ {cnj:'0100876-12.2023.5.02.0311',polo:'João P. Almeida',uf:'SP',comarca:'São Bernardo do Campo',cnjMs:null,teveMs:false,msStatus:null,limin:'indeferida',sent:'improcedente',trans:'confirmada',trt:'mantida',tst:'não provido'},
+ {cnj:'0008451-77.2024.5.04.0022',polo:'Carla M. Souza',uf:'RS',comarca:'Porto Alegre',cnjMs:'0108451-22.2025.5.04.0000',teveMs:true,msStatus:'cassada',limin:'deferida',sent:'improcedente',trans:'revertida',trt:'reformada',tst:null},
+ {cnj:'0021190-08.2023.5.15.0099',polo:'Roberto T. Lima',uf:'SP',comarca:'Campinas',cnjMs:null,teveMs:false,msStatus:null,limin:'indeferida',sent:'procedente',trans:'revertida',trt:'mantida',tst:null},
+ {cnj:'0034567-90.2025.5.01.0045',polo:'Ana B. Ferreira',uf:'RJ',comarca:'Niterói',cnjMs:'0134567-77.2025.5.01.0000',teveMs:true,msStatus:'suspensa',limin:'deferida',sent:null,trans:'sem_sentenca',trt:null,tst:null},
+ {cnj:'0005678-33.2024.5.03.0014',polo:'Pedro H. Costa',uf:'MG',comarca:'Belo Horizonte',cnjMs:null,teveMs:false,msStatus:null,limin:'indeferida',sent:'improcedente',trans:'confirmada',trt:'reformada',tst:'provido'},
+ {cnj:'0044120-19.2024.5.02.0055',polo:'Luciana R. Prado',uf:'SP',comarca:'Osasco',cnjMs:'0144120-40.2025.5.02.0000',teveMs:true,msStatus:'denegado',limin:'deferida',sent:'procedente',trans:'confirmada',trt:'mantida',tst:null},
+ {cnj:'0067890-45.2024.5.04.0088',polo:'Fernando A. Kaster',uf:'RS',comarca:'Caxias do Sul',cnjMs:'0167890-11.2025.5.04.0000',teveMs:true,msStatus:'cassada',limin:'indeferida',sent:'improcedente',trans:'confirmada',trt:null,tst:null}
+];
+// badges de status coloridos, reutilizados nas tabelas dos modais
+const STATUS_STYLE={
+ // resultado padronizado do pedido de reintegração
+ indeferido:    ['bdg-nv','indeferido'],
+ deferido:      ['bdg-rd','deferido'],
+ // formas específicas de fase (mantidas para compatibilidade com POOL de dados)
+ deferida:      ['bdg-rd','deferida'],
+ indeferida:    ['bdg-nv','indeferida'],
+ procedente:    ['bdg-rd','procedente'],
+ improcedente:  ['bdg-nv','improcedente'],
+ provido:       ['bdg-rd','provido'],
+ 'não provido': ['bdg-nv','não provido'],
+ // resultado do MS
+ cassada:       ['bdg-nv','cassada'],
+ determinada:   ['bdg-rd','reintegração determinada'],
+ suspensa:      ['bdg-am','suspensa'],
+ denegado:      ['bdg-sl','denegado'],
+ // status da transição
+ confirmada:    ['bdg-gr-good','confirmada'],
+ revertida:     ['bdg-gr-warn','revertida'],
+ sem_sentenca:  ['bdg-sl','sem sentença'],
+ mantida:       ['bdg-gr-good','mantida'],
+ reformada:     ['bdg-gr-warn','reformada']
+};
+function statusBdg(v){
+ if(v===null||v===undefined) return '<span class="bdg-empty">—</span>';
+ const s=STATUS_STYLE[v];
+ return s ? `<span class="bdg ${s[0]}">${s[1]}</span>` : `<span class="bdg">${v}</span>`;
+}
+
+// tabela flexível de processos — recebe lista de colunas e formata cada uma
+function procTable(cols, rows){
+ const head = '<thead><tr>'+cols.map(c=>`<th>${c.label}</th>`).join('')+'</tr></thead>';
+ const body = '<tbody>'+rows.map(r=>{
+   return '<tr>'+cols.map(c=>{
+     const v = c.get(r);
+     const cls = c.cls?` class="${c.cls}"`:'';
+     return `<td${cls}>${v}</td>`;
+   }).join('')+'</tr>';
+ }).join('')+'</tbody>';
+ return `<table class="mtbl">${head}${body}</table>`;
+}
+
+// atalhos usados nas colunas
+const colCNJ = {label:'CNJ',get:r=>`<span class="cnj" onclick="alert('Abre o detalhamento do processo')">${r.cnj}</span>`};
+const colCNJMs = {label:'CNJ do MS',get:r=>r.cnjMs?`<span class="cnj" onclick="alert('Abre o detalhamento do Mandado de Segurança')">${r.cnjMs}</span>`:'<span class="bdg-empty">—</span>'};
+const colPolo = {label:'Polo ativo',get:r=>`<span class="polo-name">${r.polo}</span>`,cls:'polo'};
+const colEstado = {label:'Estado',get:r=>r.uf};
+const colComarca = {label:'Comarca',get:r=>r.comarca||'—'};
+function pct(n,total){return Math.round(n/total*100)+'%';}
+
+function drow(name,value,total,fillColor,extra,onclick){
+ return `<div class="drow"${onclick?` onclick="${onclick}" tabindex="0" role="button"`:''}>
+   <div class="dlabel">${name}</div>
+   <div class="dtrack"><div class="fill" style="width:${pct(value,total)};background:${fillColor}"></div></div>
+   <div class="dnum">${value}</div>
+   <div class="dpct">${pct(value,total)}</div>
+ </div>`;
+}
+function detailRows(seg,side,phaseKey){
+ // --- Liminar: classificação pelo efeito do MS sobre a liminar ---
+ if(phaseKey==='liminar'){
+   const manteveColor = side==='nv' ? 'var(--navySoft)' : 'var(--redSoft)';
+   const mudouColor   = side==='nv' ? 'var(--redSoft)'  : 'var(--navySoft)';
+   const rows = side==='nv'
+     ? [
+         ['Sem MS',                       seg.semMs,        'var(--slateLt)', 'semMs'],
+         ['MS · Reintegração determinada', seg.msReintDet,   mudouColor,       'msReintDet'],
+         ['MS · Indeferimento mantido',    seg.msIndefMant,  manteveColor,     'msIndefMant'],
+         ['MS · Aguardando decisão',       seg.msAguardando, 'var(--amber)',   'msAguardando']
+       ]
+     : [
+         ['Sem MS',                       seg.semMs,        'var(--slateLt)', 'semMs'],
+         ['MS · Reintegração indeferida',  seg.msReintIndef, mudouColor,       'msReintIndef'],
+         ['MS · Deferimento mantido',      seg.msDefMant,    manteveColor,     'msDefMant'],
+         ['MS · Aguardando decisão',       seg.msAguardando, 'var(--amber)',   'msAguardando']
+       ];
+   return rows.map(([label,val,color,key]) =>
+     drow(label,val,seg.total,color,'',`openLiminarSubset('${side}','${key}')`)
+   ).join('');
+ }
+
+ // --- Sentença: classificação pela origem/tipo do resultado ---
+ if(phaseKey==='sentenca'){
+   // Todas as linhas do lado seguem a cor "soft" do lado (o resultado é favorável a esse lado)
+   const rowColor = side==='nv' ? 'var(--navySoft)' : 'var(--redSoft)';
+   const rows = side==='nv'
+     ? [
+         ['Mantida liminar de indeferimento', seg.manteveLimIndef, rowColor,         'manteveLimIndef'],
+         ['Mantida decisão MS de indeferimento', seg.manteveMsIndef, rowColor,       'manteveMsIndef'],
+         ['Indeferido sem liminar',              seg.semLimIndef, 'var(--slateLt)',  'semLimIndef']
+       ]
+     : [
+         ['Mantida liminar de deferimento',    seg.manteveLimDef, rowColor,          'manteveLimDef'],
+         ['Mantida decisão MS de deferimento', seg.manteveMsDef, rowColor,           'manteveMsDef'],
+         ['Deferido sem liminar',              seg.semLimDef, 'var(--slateLt)',      'semLimDef']
+       ];
+   return rows.map(([label,val,color,key]) =>
+     drow(label,val,seg.total,color,'',`openSentencaSubset('${side}','${key}')`)
+   ).join('');
+ }
+
+ // --- 2ª Instância: classificação pela decisão do TRT sobre a sentença ---
+ if(phaseKey==='acordao'){
+   // "Mantida" (confirmou a sentença do lado atual) → cor soft do lado atual
+   // "Reformada" (reverteu a sentença do lado oposto) → cor soft do lado OPOSTO (indica origem invertida)
+   const manteveColor = side==='nv' ? 'var(--navySoft)' : 'var(--redSoft)';
+   const reformouColor = side==='nv' ? 'var(--redSoft)' : 'var(--navySoft)';
+   const rows = side==='nv'
+     ? [
+         ['Mantida sentença de indeferimento', seg.manteveSentIndef, manteveColor,  'manteveSentIndef'],
+         ['Reformada sentença de deferimento', seg.reformouSentDef, reformouColor,  'reformouSentDef']
+       ]
+     : [
+         ['Mantida sentença de deferimento',    seg.manteveSentDef, manteveColor,   'manteveSentDef'],
+         ['Reformada sentença de indeferimento',seg.reformouSentIndef, reformouColor,'reformouSentIndef']
+       ];
+   return rows.map(([label,val,color,key]) =>
+     drow(label,val,seg.total,color,'',`openAcordaoSubset('${side}','${key}')`)
+   ).join('');
+ }
+
+ // --- TST: classificação pela decisão definitiva sobre o acórdão do TRT ---
+ if(phaseKey==='tst'){
+   const manteveColor = side==='nv' ? 'var(--navySoft)' : 'var(--redSoft)';
+   const reformouColor = side==='nv' ? 'var(--redSoft)' : 'var(--navySoft)';
+   const rows = side==='nv'
+     ? [
+         ['Mantido acórdão de indeferimento', seg.manteveAcIndef, manteveColor,  'manteveAcIndef'],
+         ['Reformado acórdão de deferimento', seg.reformouAcDef, reformouColor,  'reformouAcDef']
+       ]
+     : [
+         ['Mantido acórdão de deferimento',    seg.manteveAcDef, manteveColor,   'manteveAcDef'],
+         ['Reformado acórdão de indeferimento',seg.reformouAcIndef, reformouColor,'reformouAcIndef']
+       ];
+   return rows.map(([label,val,color,key]) =>
+     drow(label,val,seg.total,color,'',`openTstSubset('${side}','${key}')`)
+   ).join('');
+ }
+
+ // --- Fallback (não deve ser atingido — todas as fases têm branch específico) ---
+ return '';
+}
+
+// Terminologia padronizada: sempre "indeferido/deferido" referindo-se ao pedido de reintegração.
+// nv = resultado indeferido (favorece o polo passivo). rd = resultado deferido (favorece o polo ativo).
+const TERMS={
+ liminar :{nv:'indeferido', rd:'deferido'},
+ sentenca:{nv:'indeferido', rd:'deferido'},
+ acordao :{nv:'indeferido', rd:'deferido'},
+ tst     :{nv:'indeferido', rd:'deferido'}
+};
+
+function cellHtml(g,side){
+ const total = side==='nv'?g.banco:g.recl;
+ const isFinal = g.out===null;
+ const subLab = TERMS[g.key][side];
+ const id=`cell-${g.key}-${side}`;
+ // TST: cnum chama openFinal (modal de decisão definitiva). Outras fases: cnum chama openStats.
+ const numHandler = isFinal ? `openFinal('${g.key}','${side}')` : `event.stopPropagation();openStats('${g.key}','${side}')`;
+ const numTitle = isFinal ? 'Ver decisão definitiva' : 'Ver lista de processos';
+ const head=`<div class="ctitle">${subLab} · ${pct(total,g.vol)}</div><div class="cnum" onclick="${numHandler}" title="${numTitle}">${total}</div>`;
+ return `<div class="cell ${side}${isFinal?' final':''}" id="${id}">${head}</div>`;
+}
+
+function renderFunnel(){
+ let html='';
+ GATES.forEach((g,i)=>{
+   const t=TRANS[g.key];
+   const pill=g.pct>=50?'good':'warn';
+   const isExpandable = !!t;
+   const headClass = isExpandable ? 'phase-head expandable' : 'phase-head';
+   const headAttrs = isExpandable ? ` onclick="togglePhase('${g.key}')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter')togglePhase('${g.key}')"` : '';
+   const chevron = isExpandable ? '<span class="phase-chev" id="chev-'+g.key+'">▾</span>' : '<span></span>';
+   html+=`<div class="phase" id="phase-${g.key}">
+     <div class="${headClass}"${headAttrs}>
+       <div class="phase-name">${g.n} <small>${g.ph} · ${g.vol}</small></div>
+       <span class="phase-pill ${pill}">${g.pct}% indeferido</span>
+       ${chevron}
+     </div>
+     <div class="split">
+       ${cellHtml(g,'nv')}
+       ${cellHtml(g,'rd')}
+     </div>
+     ${g.key==='liminar'?`<div class="phase-hint">Reflexo do mandado sobre o resultado da liminar</div>`:''}
+     ${t?`<div class="detail-row" id="detailrow-${g.key}">
+       <div class="detail-side nv" id="detail-${g.key}-nv"></div>
+       <div class="detail-side rd" id="detail-${g.key}-rd"></div>
+     </div>`:''}
+   </div>`;
+
+   if(i<GATES.length-1){
+     const next=GATES[i+1];
+     const lbl = g.key==='liminar' && next.vol>g.vol
+       ? `${next.vol} sentenças = ${g.vol} vindas da liminar + ${next.vol-g.vol} sem liminar prévia`
+       : `${next.vol} seguem para ${next.n}`;
+     html+=`<div class="taper">${lbl}</div>`;
+   }
+ });
+ document.getElementById('funnel').innerHTML=html;
+}
+renderFunnel();
+
+function togglePhase(key){
+ const phase=document.getElementById(`phase-${key}`);
+ const head=phase.querySelector('.phase-head');
+ const chev=document.getElementById(`chev-${key}`);
+ const detailNv=document.getElementById(`detail-${key}-nv`);
+ const detailRd=document.getElementById(`detail-${key}-rd`);
+ const cellNv=document.getElementById(`cell-${key}-nv`);
+ const cellRd=document.getElementById(`cell-${key}-rd`);
+ const open=!phase.classList.contains('open');
+ phase.classList.toggle('open',open);
+ head.setAttribute('aria-expanded',open?'true':'false');
+ if(open){
+   const t=TRANS[key];
+   detailNv.innerHTML = detailRows(t.bancoSeg,'nv',key);
+   detailRd.innerHTML = detailRows(t.reclSeg,'rd',key);
+   detailNv.classList.add('show');
+   detailRd.classList.add('show');
+   cellNv.classList.add('open');
+   cellRd.classList.add('open');
+ } else {
+   detailNv.classList.remove('show');
+   detailRd.classList.remove('show');
+   detailNv.innerHTML='';
+   detailRd.innerHTML='';
+   cellNv.classList.remove('open');
+   cellRd.classList.remove('open');
+ }
+}
+
+function openM(){document.getElementById('ov').classList.add('on')}
+function closeM(){document.getElementById('ov').classList.remove('on')}
+
+// Helper unificado — todos os modais usam a mesma estrutura de corpo.
+// opts: {title, trail:[{t,cls}|string], meta:[{k,v,cls}], desc, sectionLabel, tableCols, tableRows, note}
+function renderModal(opts){
+ document.getElementById('mt').innerHTML = opts.title || '—';
+ // Trilha de breadcrumb (sem truncamento — flex-wrap natural)
+ let trailBlock = '';
+ if((opts.trail && opts.trail.length) || (opts.meta && opts.meta.length)){
+   const crumbs = (opts.trail||[]).map((step,i)=>{
+     const s = typeof step==='string' ? {t:step} : step;
+     const sep = i>0 ? '<span class="sep">›</span>' : '';
+     return `${sep}<span class="step${s.cls?' '+s.cls:''}">${s.t}</span>`;
+   }).join('');
+   const metaLine = (opts.meta||[]).map(m=>
+     `<span class="kv"><span class="k">${m.k}</span><span class="v${m.cls?' '+m.cls:''}">${m.v}</span></span>`
+   ).join('');
+   trailBlock = `<div class="mtrail">
+     ${crumbs?`<div class="mtrail-crumbs">${crumbs}</div>`:''}
+     ${metaLine?`<div class="mtrail-meta">${metaLine}</div>`:''}
+   </div>`;
+ }
+ const sec = opts.sectionLabel ? `<div class="blocklbl">${opts.sectionLabel}</div>` : '';
+ const table = opts.tableCols && opts.tableRows
+   ? `<div class="mtbl-wrap">${procTable(opts.tableCols,opts.tableRows)}</div>`
+   : '';
+ const note = opts.note ? `<div class="listnote">${opts.note}</div>` : '';
+ const desc = opts.desc ? `<p class="mdesc">${opts.desc}</p>` : '';
+ document.getElementById('mbody').innerHTML = trailBlock + desc + sec + table + note;
+ openM();
+}
+// Modal ao clicar na linha da expansão — lista TODOS os processos daquela transição (não só os que passaram por MS).
+// Modal ao clicar em uma linha da nova expansão da Liminar (efeito do MS sobre a liminar).
+// side: 'nv' (Banco) ou 'rd' (Reclamante) — lado favorecido pela liminar original.
+// group: semMs | msReintDet | msIndefMant | msReintIndef | msDefMant | msAguardando
+function openLiminarSubset(side,group){
+ const g=GATES.find(x=>x.key==='liminar');
+ const seg = side==='nv'?TRANS.liminar.bancoSeg:TRANS.liminar.reclSeg;
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const term = TERMS.liminar[side]; // 'indeferida' ou 'deferida'
+ // Impetrante do MS = parte contrária ao lado favorecido pela liminar original.
+ const impetrante = side==='nv'?'Reclamante':'Banco';
+ const impCls = impetrante==='Banco'?'nv':'rd';
+ // Metadados por grupo
+ const groupMeta = {
+   semMs:        {qtd:seg.semMs,        label:'Sem MS',                       msStatus:null,          hasMs:false},
+   msReintDet:   {qtd:seg.msReintDet,   label:'MS · Reintegração determinada', msStatus:'determinada', hasMs:true},
+   msIndefMant:  {qtd:seg.msIndefMant,  label:'MS · Indeferimento mantido',    msStatus:'denegado',    hasMs:true},
+   msReintIndef: {qtd:seg.msReintIndef, label:'MS · Reintegração indeferida',  msStatus:'cassada',     hasMs:true},
+   msDefMant:    {qtd:seg.msDefMant,    label:'MS · Deferimento mantido',      msStatus:'denegado',    hasMs:true},
+   msAguardando: {qtd:seg.msAguardando, label:'MS · Aguardando decisão',       msStatus:'suspensa',    hasMs:true}
+ };
+ const info = groupMeta[group];
+ // Colunas — mudam conforme "Sem MS" vs "com MS"
+ const colDec = {label:'Decisão da liminar',get:r=>statusBdg(term)};
+ let cols;
+ if(!info.hasMs){
+   cols = [colCNJ,colPolo,colEstado,colComarca,colDec,
+     {label:'Mandado de Segurança',get:r=>'<span class="bdg-empty">não impetrado</span>'}];
+ } else {
+   const colImpetr = {label:'Impetrante do MS',get:r=>impetrante==='Banco'?'<span class="bdg bdg-nv">Banco</span>':'<span class="bdg bdg-rd">Reclamante</span>'};
+   const colMsStatus = {label:'Resultado do MS',get:r=>statusBdg(info.msStatus)};
+   cols = [colCNJMs,colCNJ,colPolo,colEstado,colComarca,colDec,colImpetr,colMsStatus];
+ }
+ // Rows do POOL: sem MS pega os que não têm CNJ de MS; com MS pega os que têm
+ let rows;
+ if(!info.hasMs){
+   rows = POOL.filter(r=>!r.cnjMs).slice(0,6);
+   while(rows.length<5){rows.push(POOL[rows.length%POOL.length]);}
+ } else {
+   rows = POOL.filter(r=>r.cnjMs).slice(0,6);
+   while(rows.length<5){rows.push(POOL.filter(r=>r.cnjMs)[rows.length%POOL.filter(r=>r.cnjMs).length]);}
+ }
+ // Descrição contextual
+ const descTxt = !info.hasMs
+   ? `Processos com liminar ${term} favorável ao ${sideLab} que <b>não tiveram Mandado de Segurança impetrado</b>. A decisão da liminar segue vigente até a sentença.`
+   : group==='msAguardando'
+     ? `Processos com liminar ${term} cujo MS foi impetrado pelo ${impetrante} e ainda <b>aguarda decisão de mérito</b>. O efeito provisório sobre a liminar pode mudar quando o mérito for julgado.`
+     : `Processos com liminar ${term} favorável ao ${sideLab} cujo MS foi impetrado pelo ${impetrante} e teve o efeito de <b>${info.label.replace('MS · ','').toLowerCase()}</b>.`;
+ renderModal({
+   title:`${g.n} <span class="c">·</span> ${sideLab} (${term}) <span class="c">·</span> ${info.label}`,
+   trail:[
+     {t:g.n},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:info.label},
+     {t:`${info.qtd} processos`, cls:'muted'}
+   ],
+   meta: info.hasMs ? [{k:'Impetrante do MS', v:impetrante, cls:impCls}] : null,
+   desc:descTxt,
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando ${rows.length} de ${info.qtd} · dados simulados`
+ });
+}
+
+// Modal ao clicar em uma linha da nova expansão da Sentença.
+// side: 'nv' (Banco) ou 'rd' (Reclamante) — lado favorecido pela sentença.
+// group: manteveLimIndef | manteveMsIndef | semLimIndef | manteveLimDef | manteveMsDef | semLimDef
+function openSentencaSubset(side,group){
+ const g=GATES.find(x=>x.key==='sentenca');
+ const seg = side==='nv'?TRANS.sentenca.bancoSeg:TRANS.sentenca.reclSeg;
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const term = TERMS.sentenca[side]; // improcedente / procedente
+ const groupMeta = {
+   // Banco (favorável ao banco na sentença)
+   manteveLimIndef: {qtd:seg.manteveLimIndef, label:'Mantida liminar de indeferimento',    origem:'Liminar indeferida'},
+   manteveMsIndef:  {qtd:seg.manteveMsIndef,  label:'Mantida decisão MS de indeferimento', origem:'MS · Reintegração indeferida'},
+   semLimIndef:     {qtd:seg.semLimIndef,     label:'Indeferido sem liminar',              origem:'Sem liminar prévia'},
+   // Reclamante (favorável ao reclamante na sentença)
+   manteveLimDef:   {qtd:seg.manteveLimDef,   label:'Mantida liminar de deferimento',      origem:'Liminar deferida'},
+   manteveMsDef:    {qtd:seg.manteveMsDef,    label:'Mantida decisão MS de deferimento',   origem:'MS · Reintegração determinada'},
+   semLimDef:       {qtd:seg.semLimDef,       label:'Deferido sem liminar',                origem:'Sem liminar prévia'}
+ };
+ const info = groupMeta[group];
+ const isSemLim = group==='semLimIndef' || group==='semLimDef';
+ const colDec = {label:'Decisão da sentença',get:r=>statusBdg(term)};
+ const colOrigem = {label:'Origem do resultado',get:r=>isSemLim
+   ? '<span class="bdg-empty">— sem liminar prévia</span>'
+   : `<span class="bdg bdg-${side==='nv'?'nv':'rd'}">${info.origem}</span>`};
+ const cols = [colCNJ,colPolo,colEstado,colComarca,colDec,colOrigem];
+ // Filtro dos mocks: sem liminar = processos que não têm liminar; com liminar = com liminar
+ const rows = isSemLim
+   ? POOL.filter(r=>!r.limin).slice(0,6)
+   : POOL.slice(0,6);
+ while(rows.length<5){rows.push(POOL[rows.length%POOL.length]);}
+ const descTxt = isSemLim
+   ? `Processos que <b>não passaram por liminar</b> e receberam decisão de sentença ${term} favorável ao ${sideLab}.`
+   : `Processos com sentença ${term} favorável ao ${sideLab} cujo resultado da fase anterior (${info.origem.toLowerCase()}) foi mantido pela sentença.`;
+ renderModal({
+   title:`${g.n} <span class="c">·</span> ${sideLab} (${term}) <span class="c">·</span> ${info.label}`,
+   trail:[
+     {t:g.n},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:info.label},
+     {t:`${info.qtd} processos`, cls:'muted'}
+   ],
+   desc:descTxt,
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando ${rows.length} de ${info.qtd} · dados simulados`
+ });
+}
+
+// Modal ao clicar em uma linha da nova expansão da 2ª Instância.
+// side: 'nv' (Banco) ou 'rd' (Reclamante) — lado favorecido pela decisão do TRT.
+// group: manteveSentIndef | reformouSentDef | manteveSentDef | reformouSentIndef
+function openAcordaoSubset(side,group){
+ const g=GATES.find(x=>x.key==='acordao');
+ const seg = side==='nv'?TRANS.acordao.bancoSeg:TRANS.acordao.reclSeg;
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const term = TERMS.acordao[side]; // não provido / provido
+ const groupMeta = {
+   // Banco (favorável ao banco em 2ª Instância)
+   manteveSentIndef: {qtd:seg.manteveSentIndef, label:'Mantida sentença de indeferimento', origem:'Sentença indeferida', isReformada:false},
+   reformouSentDef:  {qtd:seg.reformouSentDef,  label:'Reformada sentença de deferimento', origem:'Sentença deferida',  isReformada:true},
+   // Reclamante (favorável ao reclamante em 2ª Instância)
+   manteveSentDef:    {qtd:seg.manteveSentDef,    label:'Mantida sentença de deferimento',    origem:'Sentença deferida',   isReformada:false},
+   reformouSentIndef: {qtd:seg.reformouSentIndef, label:'Reformada sentença de indeferimento',origem:'Sentença indeferida', isReformada:true}
+ };
+ const info = groupMeta[group];
+ const colDec = {label:'Decisão do TRT',get:r=>statusBdg(term)};
+ // Cor da badge de origem: se manteve, mesmo lado; se reformou, lado oposto
+ const origemCls = info.isReformada ? (side==='nv'?'rd':'nv') : (side==='nv'?'nv':'rd');
+ const colOrigem = {label:'Origem (sentença)',get:r=>`<span class="bdg bdg-${origemCls}">${info.origem}</span>`};
+ const cols = [colCNJ,colPolo,colEstado,colComarca,colDec,colOrigem];
+ const rows = POOL.slice(0,6);
+ while(rows.length<5){rows.push(POOL[rows.length%POOL.length]);}
+ const descTxt = info.isReformada
+   ? `Processos onde a sentença era <b>${info.origem.toLowerCase()}</b> (favorável ao ${side==='nv'?'Reclamante':'Banco'}) e a 2ª Instância <b>reformou</b>, revertendo em favor do ${sideLab}.`
+   : `Processos onde a sentença era <b>${info.origem.toLowerCase()}</b> (favorável ao ${sideLab}) e a 2ª Instância <b>manteve</b>.`;
+ renderModal({
+   title:`${g.n} <span class="c">·</span> ${sideLab} (${term}) <span class="c">·</span> ${info.label}`,
+   trail:[
+     {t:g.n},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:info.label},
+     {t:`${info.qtd} processos`, cls:'muted'}
+   ],
+   desc:descTxt,
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando ${rows.length} de ${info.qtd} · dados simulados`
+ });
+}
+
+// Modal ao clicar em uma linha da nova expansão do TST.
+// side: 'nv' (Banco) ou 'rd' (Reclamante) — lado favorecido pela decisão do TST.
+// group: manteveAcIndef | reformouAcDef | manteveAcDef | reformouAcIndef
+function openTstSubset(side,group){
+ const g=GATES.find(x=>x.key==='tst');
+ const seg = side==='nv'?TRANS.tst.bancoSeg:TRANS.tst.reclSeg;
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const term = TERMS.tst[side];
+ const groupMeta = {
+   // Banco (favorável ao banco no TST)
+   manteveAcIndef: {qtd:seg.manteveAcIndef, label:'Mantido acórdão de indeferimento', origem:'Acórdão indeferido', isReformada:false},
+   reformouAcDef:  {qtd:seg.reformouAcDef,  label:'Reformado acórdão de deferimento', origem:'Acórdão deferido',  isReformada:true},
+   // Reclamante (favorável ao reclamante no TST)
+   manteveAcDef:    {qtd:seg.manteveAcDef,    label:'Mantido acórdão de deferimento',    origem:'Acórdão deferido',   isReformada:false},
+   reformouAcIndef: {qtd:seg.reformouAcIndef, label:'Reformado acórdão de indeferimento',origem:'Acórdão indeferido', isReformada:true}
+ };
+ const info = groupMeta[group];
+ const colDec = {label:'Decisão do TST',get:r=>statusBdg(term)};
+ // Cor da badge de origem: se manteve, mesmo lado; se reformou, lado oposto
+ const origemCls = info.isReformada ? (side==='nv'?'rd':'nv') : (side==='nv'?'nv':'rd');
+ const colOrigem = {label:'Origem (2ª Instância)',get:r=>`<span class="bdg bdg-${origemCls}">${info.origem}</span>`};
+ const cols = [colCNJ,colPolo,colEstado,colComarca,colDec,colOrigem];
+ const rows = POOL.slice(0,6);
+ while(rows.length<5){rows.push(POOL[rows.length%POOL.length]);}
+ const descTxt = info.isReformada
+   ? `Processos onde o acórdão da 2ª Instância era <b>${info.origem.toLowerCase()}</b> (favorável ao ${side==='nv'?'Reclamante':'Banco'}) e o TST <b>reformou</b>, revertendo em favor do ${sideLab}. Decisão definitiva.`
+   : `Processos onde o acórdão da 2ª Instância era <b>${info.origem.toLowerCase()}</b> (favorável ao ${sideLab}) e o TST <b>manteve</b>. Decisão definitiva.`;
+ renderModal({
+   title:`${g.n} <span class="c">·</span> ${sideLab} (${term}) <span class="c">·</span> ${info.label}`,
+   trail:[
+     {t:g.n},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:info.label},
+     {t:`${info.qtd} processos`, cls:'muted'}
+   ],
+   desc:descTxt,
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando ${rows.length} de ${info.qtd} · decisão definitiva · dados simulados`
+ });
+}
+
+function openStats(phaseKey,side){
+ const g=GATES.find(x=>x.key===phaseKey);
+ const total = side==='nv'?g.banco:g.recl;
+ const term = TERMS[phaseKey][side];
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const colDec = {label:'Decisão da fase',get:r=>statusBdg(term)};
+ const colTrans = {label:phaseKey==='liminar'?'Teve MS?':'Status na próxima fase',get:r=>{
+   if(phaseKey==='liminar') return r.cnjMs
+     ? '<span class="bdg bdg-am">com MS</span>'
+     : '<span class="bdg-empty">sem MS</span>';
+   if(phaseKey==='sentenca') return statusBdg(r.trt);
+   if(phaseKey==='acordao') return statusBdg(r.tst);
+   return '<span class="bdg-empty">—</span>';
+ }};
+ const cols = [colCNJ,colPolo,colEstado,colComarca,colDec,colTrans];
+ const rows = POOL.slice(0,6);
+ renderModal({
+   title:`${g.n} <span class="c">·</span> ${sideLab} — ${term}`,
+   trail:[
+     {t:g.n},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:`${total} processos`, cls:'muted'}
+   ],
+   meta:[
+     {k:'Representa', v:`${pct(total,g.vol)} da fase`}
+   ],
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando 6 de ${total} · a coluna "Status na próxima fase" mostra o desdobramento do processo após esta decisão · dados simulados`
+ });
+}
+
+function openFinal(key,side){
+ const g=GATES.find(x=>x.key===key);
+ const total = side==='nv'?g.banco:g.recl;
+ const term = TERMS[key][side];
+ const sideLab = side==='nv'?'Banco':'Reclamante';
+ const colDec = {label:'Decisão do TST',get:r=>statusBdg(term)};
+ const cols = [colCNJ,colPolo,colEstado,colComarca,colDec];
+ const rows = POOL.slice(0,6);
+ renderModal({
+   title:`${g.n} <span class="c">·</span> Decisão definitiva — ${sideLab}: ${term}`,
+   trail:[
+     {t:'TST — instância superior'},
+     {t:`${sideLab}: ${term}`, cls:side==='nv'?'nv':'rd'},
+     {t:`${total} processos`, cls:'muted'}
+   ],
+   desc:'Por ser a última instância da Marcha Processual, não há próxima fase — o resultado é definitivo, salvo embargos ou recurso extraordinário.',
+   sectionLabel:'Processos',
+   tableCols:cols, tableRows:rows,
+   note:`Mostrando 6 de ${total} · dados simulados`
+ });
+}
+</script>
+</body></html>
