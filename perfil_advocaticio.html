@@ -193,6 +193,9 @@
   .cnj-link:hover{text-decoration:underline}
 
   .footnote{font-size:11px;color:var(--textMuted);font-style:italic;text-align:center;margin-top:8px}
+  .legenda{display:flex;align-items:flex-start;gap:8px;margin-top:12px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:11px;line-height:1.5;color:var(--textSec)}
+  .legenda .leg-ico{color:var(--blue);font-weight:800;flex-shrink:0;font-size:13px;line-height:1.3}
+  .legenda b{color:var(--text);font-weight:700}
 
   .overlay2{position:fixed;inset:0;background:rgba(16,20,40,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:60;overflow-y:auto}
   .overlay2.open{display:flex}
@@ -263,6 +266,7 @@
       </tr></thead>
       <tbody id="advTable"></tbody>
     </table>
+    <div class="legenda"><span class="leg-ico">&#8505;</span><span><b>% no estado:</b> processos deste advogado &divide; total de processos de reintegração no estado. Para o médico, o denominador considera apenas processos <b>com atestado médico</b> (ver detalhe do médico).</span></div>
   </div>
 
   <div class="footnote" style="margin-top:22px">Dados simulados para mockup</div>
@@ -316,14 +320,15 @@ const medicos = {
     ]}
 };
 
-/* Universo por estado — denominadores das taxas de representatividade.
-   reint  = total de processos de reintegração no estado (denominador do advogado)
-   doenca = total de processos de reintegração por doença ocupacional (denominador do médico) */
+/* Universo por estado — denominadores das taxas de representatividade (decisão Dani: opção 2).
+   reint       = total de processos de reintegração no estado (denominador do advogado)
+   comAtestado = total de processos de reintegração com atestado médico no estado
+                 (doença ocupacional + dispensa discriminatória) — denominador do médico */
 const universoUF = {
-  RO:{reint:250, doenca:120},
-  BA:{reint:420, doenca:190},
-  RJ:{reint:380, doenca:150},
-  SP:{reint:610, doenca:240}
+  RO:{reint:250, comAtestado:150},
+  BA:{reint:420, comAtestado:230},
+  RJ:{reint:380, comAtestado:180},
+  SP:{reint:610, comAtestado:290}
 };
 
 /* mandala = visão viva (último status): cada processo aparece 1x, na fase onde está hoje.
@@ -669,11 +674,11 @@ function openMed(mid, fromAdv){
   const crmChips=m.crms.map(c=>'<div class="crm-chip"><div class="crm-num">CRM '+c.n+'</div><div class="crm-uf">'+ufNome[c.uf]+'</div>'+(c.dup?'<div class="crm-note">Registro secundário</div>':'')+'</div>').join('');
   const porUF=procPorUFMedico(mid);
   const ufRows=Object.keys(porUF).sort((x,y)=>porUF[y]-porUF[x]).map(uf=>{
-    const n=porUF[uf], u=universoUF[uf], p=u?pctv(n,u.doenca):0;
+    const n=porUF[uf], u=universoUF[uf], p=u?pctv(n,u.comAtestado):0;
     const cls = p>=20 ? 'b-red' : p>=10 ? 'b-amber' : 'b-green';
     return '<tr><td>'+ufNome[uf]+' <span class="badge b-gray">'+uf+'</span></td>'
       +'<td class="num">'+n+'</td>'
-      +'<td class="num"><span class="badge '+cls+'">'+p+'%</span><div class="cellsub">de '+(u?u.doenca:0)+' processos no estado</div></td></tr>';
+      +'<td class="num"><span class="badge '+cls+'">'+p+'%</span><div class="cellsub">de '+(u?u.comAtestado:0)+' com atestado no estado</div></td></tr>';
   }).join('');
 
   const mProcRows=m.procList.map(p=>'<tr><td><span class="cnj-link" onclick="abrirProcesso(\''+p.cnj+'\')">'+p.cnj+'</span></td><td>'+p.polo+'</td><td>'+p.comarca+'</td><td>'+p.adv+'</td><td style="text-align:right">'+faseBadge(p.fase)+'</td></tr>').join('');
@@ -689,7 +694,8 @@ function openMed(mid, fromAdv){
     +'<div class="mblock"><div class="sec-title">CIDs emitidos</div><table><thead><tr><th>CID</th><th>Descrição</th><th class="num">Processos</th><th style="text-align:center">Especialidade &#215; CID</th></tr></thead><tbody>'+cidRows+'</tbody></table></div>'
     +'<div class="mblock"><div class="sec-title">Registros profissionais (CRM)</div><div class="crm-grid">'+crmChips+'</div></div>'
     +'<div class="mblock"><div class="sec-title">Atuação por estado</div>'
-    +'<table><thead><tr><th>Estado</th><th class="num">Processos com atestado</th><th class="num">% dos processos de reintegração por doença ocupacional no estado</th></tr></thead><tbody>'+ufRows+'</tbody></table></div>'
+    +'<table><thead><tr><th>Estado</th><th class="num">Processos com atestado</th><th class="num">Representatividade no estado</th></tr></thead><tbody>'+ufRows+'</tbody></table>'
+    +'<div class="legenda"><span class="leg-ico">&#8505;</span><span><b>Representatividade do médico:</b> processos com atestado deste médico &divide; total de processos de reintegração <b>com atestado médico</b> no estado (doença ocupacional + dispensa discriminatória).</span></div></div>'
     +'<div class="mblock"><div class="sec-title">Processos deste médico</div><table><thead><tr><th>CNJ</th><th>Polo Ativo</th><th>Comarca</th><th>Advogado</th><th style="text-align:right">Fase atual</th></tr></thead><tbody>'+mProcRows+'</tbody></table>'
     +'<div class="listnote">Exibindo '+m.procList.length+' de '+pt+' processos. Clique no CNJ para abrir o detalhamento do processo.</div></div>'
     +'</div>';
