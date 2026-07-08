@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Inteligência Pericial — Reintegrados (v3)</title>
+<style>
+:root{
+  --red:#CC092F; --redMid:#E84667; --redLight:#FDE8EC;
+  --purple:#7B2D8E; --purpleLight:#F3E8F7;
+  --green:#2E7D32; --greenLight:#E8F5E9;
+  --amber:#F57F17; --amberLight:#FFF8E1;
+  --blue:#1565C0; --blueLight:#E3F2FD;
+  --navy:#1a1a2e;
+  --bg:#F5F6FA; --white:#fff; --border:#E8EAED;
+  --text:#1a1a2e; --textSec:#5f6368; --textMuted:#9AA0A6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Roboto',-apple-system,sans-serif;font-size:13px;line-height:1.4}
+.wrap{display:flex;min-height:100vh}
+
+.side{width:230px;background:var(--white);border-right:1px solid var(--border);padding:22px 16px;flex-shrink:0}
+.logo{font-weight:800;font-size:24px;letter-spacing:2px;color:var(--navy)}
+.logo span{color:var(--red)}
+.logo small{display:block;font-size:8px;letter-spacing:3px;color:var(--textMuted);font-weight:600;margin-top:2px}
+.navlbl{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--textMuted);margin:30px 0 10px}
+.navitem{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;color:var(--textSec);font-weight:600;margin-bottom:4px}
+.navitem.on{background:var(--red);color:#fff}
+
+.main{flex:1;padding:22px 26px 60px;max-width:1520px}
+.head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.head h1{font-size:22px;font-weight:700}
+.head p{font-size:12px;color:var(--textSec)}
+.headicon{width:38px;height:38px;border-radius:10px;background:var(--redLight);display:flex;align-items:center;justify-content:center;font-size:19px}
+
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.fld{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--textSec);font-size:12px;min-width:165px;display:flex;justify-content:space-between;gap:14px}
+.tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.tab{background:var(--white);border:1px solid var(--border);border-radius:9px;padding:13px 20px;font-size:12px;font-weight:600;color:var(--textSec)}
+.tab.on{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 3px 10px rgba(204,9,47,.28)}
+.tab.off{opacity:.45}
+
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.08);display:flex;justify-content:space-between;align-items:flex-start}
+.kpi .lbl{font-size:11px;color:var(--textSec);font-weight:600}
+.kpi .val{font-size:27px;font-weight:700;margin:6px 0 2px}
+.kpi .sub{font-size:10.5px;color:var(--textMuted)}
+.ic{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0}
+.ic.r{background:var(--red)}.ic.p{background:var(--purple)}.ic.n{background:var(--navy)}.ic.b{background:var(--blue)}.ic.g{background:var(--green)}
+
+.sec{margin-top:26px}
+.sechd{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.sechd .vb{width:4px;height:17px;background:var(--red);border-radius:2px}
+.sechd h2{font-size:14.5px;font-weight:700}
+.secsub{font-size:11.5px;color:var(--textSec);margin:0 0 12px 13px}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cardttl{font-size:13.5px;font-weight:700;margin-bottom:3px;display:flex;align-items:center}
+.cardsub{font-size:11px;color:var(--textMuted);margin-bottom:16px}
+
+.info{position:relative;display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#E8EAED;color:#5f6368;font-size:9px;font-weight:700;cursor:help;margin-left:6px;vertical-align:middle;flex-shrink:0}
+.info .bubble{display:none;position:absolute;top:165%;left:0;width:250px;background:var(--navy);color:#fff;font-size:11px;font-weight:400;line-height:1.5;padding:10px 12px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:200;text-align:left;text-transform:none;letter-spacing:0;white-space:normal}
+.info:hover .bubble{display:block}
+.info.rt .bubble{left:auto;right:0}
+
+.lg{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:12.5px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.lg .n{margin-left:auto;color:var(--textSec);font-size:12px;font-variant-numeric:tabular-nums}
+.lg.muted{border-top:1px dashed var(--border);margin-top:8px;padding-top:12px;color:var(--textSec)}
+
+.mxbar{display:flex;gap:9px;align-items:center;margin-bottom:14px}
+.mxbar .lbl{font-size:10px;font-weight:700;color:var(--textSec);text-transform:uppercase;letter-spacing:.6px}
+.toggle{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.toggle button{border:none;background:#fff;padding:7px 15px;font-size:12px;font-weight:600;color:var(--textSec);cursor:pointer;font-family:inherit}
+.toggle button.active{background:var(--red);color:#fff}
+
+/* ===== matriz: colunas uniformes ===== */
+table.mx{border-collapse:separate;border-spacing:3px;width:100%;table-layout:fixed}
+table.mx th.rowh{width:172px}
+table.mx thead th{padding:0 3px 6px;vertical-align:bottom;text-align:center}
+table.mx thead th .colhd{height:38px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+table.mx thead th .cl{font-size:10.5px;font-weight:600;color:var(--textSec);letter-spacing:0;line-height:1.25;text-align:center}
+table.mx th.rowh{text-align:left;font-size:12px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0;padding:9px 11px;border-radius:6px;background:var(--bg);vertical-align:middle;white-space:normal;line-height:1.25}
+table.mx th.tot{background:var(--navy);color:#fff;border-radius:6px;padding:0}
+table.mx th.tot .colhd{color:#fff;justify-content:center;height:38px}
+table.mx th.tot .cl{color:#fff;font-weight:700;font-size:9.5px;text-transform:uppercase;letter-spacing:.5px}
+table.mx td{text-align:center;font-size:13px;font-weight:700;height:46px;border-radius:6px;font-variant-numeric:tabular-nums}
+table.mx td.empty{color:var(--textMuted);background:#FAFBFC;font-weight:400}
+table.mx td.tot{background:var(--navy);color:#fff;font-weight:800}
+table.mx tr.totrow td{background:#EEF0F4;color:var(--text);font-weight:800;font-size:12px}
+table.mx tr.totrow td.grand{background:var(--navy);color:#fff}
+tr.gap td,tr.gap th{height:8px;padding:0;background:transparent!important;border:none}
+
+/* faixa qualificadores + card ntep */
+.qualrow{display:grid;grid-template-columns:1.9fr 1fr;gap:14px;margin-top:14px;align-items:stretch}
+
+/* NTEP — composição */
+.ntep{background:var(--white);border:1px solid var(--border);border-left:5px solid var(--red);border-radius:10px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.stackhd{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 8px}
+.stackhd .base{font-size:12px;color:var(--textSec)}
+.stackhd .base b{font-size:17px;color:var(--text);font-variant-numeric:tabular-nums}
+.stack{display:flex;height:38px;border-radius:8px;overflow:hidden}
+.seg{display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.stacklg{display:flex;gap:28px;margin-top:14px}
+.stacklg .it{display:flex;align-items:center;gap:9px;font-size:12px}
+.stacklg .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.stacklg .n{color:var(--textSec);font-variant-numeric:tabular-nums}
+.residual{display:flex;align-items:center;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.residual .big{font-size:24px;font-weight:700;color:var(--purple);font-variant-numeric:tabular-nums;line-height:1}
+.residual .tx{font-size:11.5px;color:var(--textSec);line-height:1.45}
+
+/* Qualidade — card de diagnóstico, discreto */
+.qual{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px 24px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.q{margin-bottom:14px}
+.q:last-child{margin-bottom:0}
+.q .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.q .k{font-size:11.5px;color:var(--textSec);font-weight:600;display:flex;align-items:center}
+.q .v{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.q .v span{font-size:10.5px;color:var(--textMuted);font-weight:400;margin-left:5px}
+.q .track{height:5px;background:#F1F2F5;border-radius:4px;overflow:hidden}
+.q .fill{height:100%;border-radius:4px}
+
+.bar{margin-bottom:15px}
+.barhd{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.barhd span{color:var(--textSec);font-size:11.5px;font-variant-numeric:tabular-nums}
+.track{height:8px;background:#F1F2F5;border-radius:5px;overflow:hidden}
+.fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--red),var(--redMid))}
+.fill.p{background:var(--purple)}.fill.m{background:var(--textMuted)}.fill.n{background:var(--navy)}
+.chev{color:var(--textMuted);font-size:11px;cursor:pointer;user-select:none;display:inline-block;transition:transform .15s}
+.cids{margin:2px 0 12px 14px;padding-left:12px;border-left:2px solid var(--border);display:none}
+.cids.open{display:block}
+.cidrow{display:flex;justify-content:space-between;font-size:11.5px;color:var(--textSec);padding:5px 0;font-variant-numeric:tabular-nums}
+
+/* ===== TRT accordion expansível ===== */
+.trt{border:1px solid var(--border);border-radius:9px;margin-bottom:10px;overflow:hidden}
+.trt .top{height:4px}
+.trt .body{display:flex;align-items:center;gap:14px;padding:13px 15px;cursor:pointer}
+.trt .body:hover{background:#FCFCFD}
+.pct{width:76px;text-align:center;border:1px solid var(--border);border-radius:8px;padding:8px 4px;flex-shrink:0}
+.pct b{display:block;font-size:16px;font-weight:700}
+.pct small{font-size:7.5px;letter-spacing:.5px;color:var(--textMuted);font-weight:700}
+.trt.open .chev{transform:rotate(180deg)}
+.trt .panel{display:none;border-top:1px solid var(--border);background:#FBFBFC;padding:14px 16px 16px}
+.trt.open .panel{display:block}
+.comhd{display:grid;grid-template-columns:1.4fr .7fr 1.6fr .6fr;gap:12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--textMuted);padding:0 0 8px}
+.com{display:grid;grid-template-columns:1.4fr .7fr 1.6fr .6fr;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-size:12px}
+.com .nm{font-weight:600}
+.com .np{color:var(--textSec);font-size:11.5px;font-variant-numeric:tabular-nums}
+.com .pv{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.mini{height:6px;background:#EDEEF1;border-radius:4px;overflow:hidden}
+.mini i{display:block;height:100%;border-radius:4px}
+.morecom{font-size:11px;color:var(--textMuted);font-style:italic;padding-top:10px}
+
+/* tabela */
+table.dt{width:100%;border-collapse:collapse}
+table.dt th{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--textSec);font-weight:700;text-align:left;padding:12px 10px;border-bottom:1px solid var(--border)}
+table.dt td{padding:15px 10px;border-bottom:1px solid var(--border);font-size:12.5px}
+table.dt tr:last-child td{border-bottom:none}
+.pnome{font-weight:700}
+.pcrm{font-size:10.5px;color:var(--textMuted)}
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700}
+.b-esp{background:var(--blueLight);color:var(--blue)}
+.b-alt{background:var(--redLight);color:var(--red)}
+.b-ok{background:var(--greenLight);color:var(--green)}
+.btn{border:1px solid var(--border);background:#fff;border-radius:7px;padding:8px 13px;font-size:11.5px;font-weight:600;color:var(--textSec);cursor:pointer}
+.note{font-size:10.5px;color:var(--textMuted);font-style:italic;margin-top:12px}
+
+/* CNJ link */
+a.cnj{color:var(--blue);font-weight:700;text-decoration:none;border-bottom:1px solid transparent;display:inline-flex;align-items:center;gap:5px}
+a.cnj:hover{border-bottom-color:var(--blue);background:var(--blueLight);border-radius:4px;padding:0 3px;margin:0 -3px}
+a.cnj .ext{font-size:9px;opacity:.65}
+
+/* modal */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto;z-index:300}
+.ovl.on{display:flex}
+
+/* clicáveis */
+.clickable{cursor:pointer}
+svg .seg-donut{cursor:pointer;transition:opacity .12s}
+svg .seg-donut:hover{opacity:.82}
+.lg.click{cursor:pointer;border-radius:6px;padding-left:6px;margin-left:-6px}
+.lg.click:hover{background:#FAFBFC}
+.stack .seg{cursor:pointer;transition:opacity .12s}
+.stack .seg:hover{opacity:.85}
+table.mx td:not(.empty):not(.tot){cursor:pointer}
+table.mx td:not(.empty):not(.tot):hover{outline:2px solid rgba(26,26,46,.25);outline-offset:-2px}
+
+/* drawer */
+.drawer-ovl{position:fixed;inset:0;background:rgba(0,0,0,.42);display:none;z-index:400}
+.drawer-ovl.on{display:block}
+.drawer{position:fixed;top:0;right:0;height:100%;width:640px;max-width:94vw;background:var(--white);box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column;z-index:401}
+.drawer.on{transform:translateX(0)}
+.dwhead{padding:22px 26px;border-bottom:1px solid var(--border);border-left:5px solid var(--red);display:flex;align-items:flex-start;gap:14px}
+.dwhead .t{flex:1}
+.dwhead .lbl{font-size:9.5px;letter-spacing:1px;color:var(--textMuted);font-weight:700;text-transform:uppercase}
+.dwhead h3{font-size:17px;font-weight:700;margin-top:3px}
+.dwhead .cnt{font-size:12px;color:var(--textSec);margin-top:5px}
+.dwhead .x{border:1px solid var(--border);background:#fff;border-radius:8px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--textSec);flex-shrink:0}
+.dwtools{padding:14px 26px;border-bottom:1px solid var(--border);display:flex;gap:10px}
+.dwtools .fld{flex:1;min-width:0}
+.dwbody{flex:1;overflow:auto;padding:6px 0}
+table.dw{width:100%;border-collapse:collapse}
+table.dw th{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--textMuted);font-weight:700;text-align:left;padding:11px 26px;position:sticky;top:0;background:var(--white);border-bottom:1px solid var(--border)}
+table.dw td{padding:13px 26px;border-bottom:1px solid #F1F2F5;font-size:12.5px;vertical-align:top}
+table.dw tr:hover td{background:#FCFCFD}
+.dwfoot{padding:14px 26px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:#FAFBFC}
+.dwfoot .exp{border:1px solid var(--border);background:#fff;border-radius:7px;padding:8px 14px;font-size:11.5px;font-weight:600;color:var(--textSec);cursor:pointer}
+.modal{background:var(--white);border-radius:14px;max-width:1100px;width:100%;overflow:hidden}
+.mhead{display:flex;align-items:center;gap:16px;padding:24px 26px;border-left:5px solid var(--red);background:linear-gradient(90deg,#FFF9FA,#fff)}
+.av{width:48px;height:48px;border-radius:11px;background:linear-gradient(135deg,var(--red),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
+.mhead .x{margin-left:auto;border:1px solid var(--border);background:#fff;border-radius:8px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--textSec)}
+.mbody{padding:22px 26px 30px;background:var(--bg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<aside class="side">
+  <div class="logo">d<span>ᴈ</span>ep<small>TURN-ON DATA</small></div>
+  <div class="navlbl">VISÃO GERAL</div>
+  <div class="navitem on">🧰 Reintegrados</div>
+  <div class="navitem">💬 Chat</div>
+  <div class="navitem">⚙️ Configurações</div>
+  <div class="navitem">📈 Uso do painel</div>
+</aside>
+
+<main class="main">
+  <div class="head">
+    <div class="headicon">🩺</div>
+    <div><h1>Processos Trabalhistas Bradesco</h1><p>Análise de Reintegrados</p></div>
+  </div>
+
+  <div class="filters">
+    <div class="fld">🔍 Buscar</div>
+    <div class="fld">Todos os Estados <span>▾</span></div>
+    <div class="fld">Todas as Decisões <span>▾</span></div>
+    <div class="fld">Todos os motivos do pedido <span>▾</span></div>
+    <div class="fld">Todos os submotivos <span>▾</span></div>
+    <div class="fld">Pedido e menção <span>▾</span></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">🔻 Assessment</div>
+    <div class="tab">🎯 Insights Estratégicos</div>
+    <div class="tab">📄 Processos</div>
+    <div class="tab on">🩺 Inteligência Pericial</div>
+    <div class="tab">💼 Perfil Advocatício</div>
+    <div class="tab off">🏛 Performance Passiva</div>
+  </div>
+
+  <div class="grid4">
+    <div class="kpi"><div><div class="lbl">Total de Processos</div><div class="val">5.380</div><div class="sub">Base ativa Bradesco</div></div><div class="ic n">📋</div></div>
+    <div class="kpi"><div><div class="lbl">Decisões</div><div class="val">1.204</div><div class="sub">Processos com decisão</div></div><div class="ic r">⚖️</div></div>
+    <div class="kpi"><div><div class="lbl">Segredo de Justiça</div><div class="val">312</div><div class="sub">Acesso restrito</div></div><div class="ic p">🔒</div></div>
+    <div class="kpi"><div><div class="lbl">Mandado de Segurança</div><div class="val">87</div><div class="sub">Impetrados</div></div><div class="ic b">📜</div></div>
+  </div>
+
+  <div class="sec">
+    <div class="sechd"><div class="vb"></div><h2>Inteligência Pericial</h2></div>
+    <p class="secsub">Peritos e médicos do juízo em processos com perícia · recorte atual</p>
+    <div class="grid5">
+      <div class="kpi"><div><div class="lbl">Processos com laudo</div><div class="val">561</div><div class="sub">10,4% da base</div></div><div class="ic r">📑</div></div>
+      <div class="kpi"><div><div class="lbl">Laudos</div><div class="val">605</div><div class="sub">44 processos com +1 laudo</div></div><div class="ic n">🗂</div></div>
+      <div class="kpi"><div><div class="lbl">Peritos identificados</div><div class="val">428</div><div class="sub">Peritos distintos</div></div><div class="ic p">🩺</div></div>
+      <div class="kpi"><div><div class="lbl">Nexo reconhecido<span class="info">i<span class="bubble">Soma de nexo causal (154) e concausal (94). Se o DEJUR quiser ler apenas nexo direto, o indicador cai para 25,5%.</span></span></div><div class="val">41,0%</div><div class="sub">248 de 605 laudos</div></div><div class="ic r">📈</div></div>
+      <div class="kpi"><div><div class="lbl">Conclusão desfavorável ao banco</div><div class="val">38,2%</div><div class="sub">231 de 605 laudos</div></div><div class="ic g">🛡</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sechd"><div class="vb"></div><h2>Indicadores do Laudo</h2></div>
+    <p class="secsub">Base de contagem: <b>laudos (605)</b>, não processos. Um processo pode ter mais de um laudo quando há mais de uma especialidade pericial.</p>
+
+    <div style="display:grid;grid-template-columns:0.82fr 1.6fr;gap:14px;align-items:stretch">
+      <div class="card">
+        <div class="cardttl">Nexo Causal<span class="info">i<span class="bubble">Conclusão pericial sobre a relação entre a doença e o trabalho. Eixo único: causal, concausal ou não reconhecido.</span></span></div>
+        <div class="cardsub">605 laudos · perfil de conclusão</div>
+        <div style="display:flex;justify-content:center;padding:12px 0 4px">
+          <svg viewBox="0 0 200 200" width="176" height="176">
+            <circle class="seg-donut" onclick="openList('nexo','causal')" cx="100" cy="100" r="72" fill="none" stroke="#CC092F" stroke-width="22" stroke-dasharray="115.3 337.1" stroke-dashoffset="0" transform="rotate(-90 100 100)"><title>Nexo causal · 154</title></circle>
+            <circle class="seg-donut" onclick="openList('nexo','concausal')" cx="100" cy="100" r="72" fill="none" stroke="#7B2D8E" stroke-width="22" stroke-dasharray="70.4 382.0" stroke-dashoffset="-115.3" transform="rotate(-90 100 100)"><title>Concausal · 94</title></circle>
+            <circle class="seg-donut" onclick="openList('nexo','nao_reconhecido')" cx="100" cy="100" r="72" fill="none" stroke="#1a1a2e" stroke-width="22" stroke-dasharray="189.4 263.0" stroke-dashoffset="-185.7" transform="rotate(-90 100 100)"><title>Não reconhecido · 253</title></circle>
+            <circle class="seg-donut" onclick="openList('nexo','sem_conclusao')" cx="100" cy="100" r="72" fill="none" stroke="#C9CCD1" stroke-width="22" stroke-dasharray="77.8 374.6" stroke-dashoffset="-375.1" transform="rotate(-90 100 100)"><title>Sem conclusão / ilegível · 104</title></circle>
+            <text x="100" y="108" text-anchor="middle" font-size="29" font-weight="700" fill="#1a1a2e">605</text>
+          </svg>
+        </div>
+        <div style="margin-top:10px">
+          <div class="lg click" onclick="openList('nexo','causal')"><span class="dot" style="background:#CC092F"></span> Nexo causal <span class="n">154 · 25,5%</span></div>
+          <div class="lg click" onclick="openList('nexo','concausal')"><span class="dot" style="background:#7B2D8E"></span> Concausal <span class="n">94 · 15,5%</span></div>
+          <div class="lg click" onclick="openList('nexo','nao_reconhecido')"><span class="dot" style="background:#1a1a2e"></span> Nexo não reconhecido <span class="n">253 · 41,8%</span></div>
+          <div class="lg muted click" onclick="openList('nexo','sem_conclusao')"><span class="dot" style="background:#C9CCD1"></span> Sem conclusão / ilegível <span class="n">104 · 17,2%</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cardttl">Matriz Nexo × <span id="dimttl" style="margin-left:4px">Grau</span><span class="info rt">i<span class="bubble">A coluna TOTAL reproduz exatamente a mandala ao lado. Intensidade da célula = volume; matiz = tipo de nexo.</span></span></div>
+        <div class="cardsub">Cruzamento do eixo de nexo com grau de incapacidade ou grupo de doença</div>
+        <div class="mxbar">
+          <span class="lbl">Colunas</span>
+          <div class="toggle" id="tg"><button class="active" data-dim="grau">Grau</button><button data-dim="doenca">Doença</button></div>
+        </div>
+        <div id="matrix"></div>
+      </div>
+    </div>
+
+    <div class="qualrow">
+      <div class="ntep">
+        <div class="cardttl" style="font-size:14.5px;margin-bottom:2px">NTEP × conclusão do laudo<span class="info">i<span class="bubble">NTEP: presunção previdenciária por CID × CNAE (art. 21-A), derivada da espécie acidentária do benefício do INSS (B91/B92/B94). Origem do dado a confirmar com a área médica.</span></span></div>
+        <div class="cardsub" style="margin-bottom:0">O que o perito concluiu nos laudos cujo histórico tem afastamento acidentário</div>
+
+        <div class="stackhd">
+          <div class="base">Base: <b>63</b> laudos com NTEP <span style="color:var(--textMuted)">· 10,4% dos 605</span></div>
+        </div>
+        <div class="stack">
+          <div class="seg" onclick="openList('ntep','causal')" style="width:60.3%;background:var(--red)">38</div>
+          <div class="seg" onclick="openList('ntep','concausal')" style="width:25.4%;background:var(--purple)">16</div>
+          <div class="seg" onclick="openList('ntep','nao_reconhecido')" style="width:14.3%;background:var(--navy)">9</div>
+        </div>
+        <div class="stacklg">
+          <div class="it"><span class="sw" style="background:var(--red)"></span> Nexo causal <span class="n">38 · 60,3%</span></div>
+          <div class="it"><span class="sw" style="background:var(--purple)"></span> Concausal <span class="n">16 · 25,4%</span></div>
+          <div class="it"><span class="sw" style="background:var(--navy)"></span> Não reconhecido <span class="n">9 · 14,3%</span></div>
+        </div>
+
+        <div class="residual">
+          <div class="big">54</div>
+          <div class="tx">laudos com NTEP <b>e</b> nexo reconhecido — equivalem a <b>21,8%</b> dos 248 laudos com nexo reconhecido.<br><span style="color:var(--textMuted)">Nos 9 restantes, o perito não reconheceu o nexo.</span></div>
+        </div>
+      </div>
+
+      <div class="qual">
+        <div class="cardttl" style="font-size:12.5px;color:var(--textSec)">Qualidade do laudo</div>
+        <div class="cardsub" style="margin-bottom:18px">Confiabilidade da extração</div>
+        <div class="q">
+          <div class="top"><span class="k">Legível<span class="info">i<span class="bubble">Laudos cuja leitura permite extração e classificação automática.</span></span></span><span class="v">501<span>82,8%</span></span></div>
+          <div class="track"><div class="fill" style="background:var(--red);width:82.8%"></div></div>
+        </div>
+        <div class="q">
+          <div class="top"><span class="k">Ilegível<span class="info rt">i<span class="bubble">Documento digitalizado sem OCR ou com qualidade insuficiente. Não classificável.</span></span></span><span class="v">62<span>10,2%</span></span></div>
+          <div class="track"><div class="fill" style="background:var(--navy);width:10.2%"></div></div>
+        </div>
+        <div class="q">
+          <div class="top"><span class="k">Sem conclusão expressa<span class="info rt">i<span class="bubble">Laudo legível, mas que não conclui sobre o nexo. Ilegíveis + sem conclusão = os 104 do bucket cinza da mandala.</span></span></span><span class="v">42<span>7,0%</span></span></div>
+          <div class="track"><div class="fill" style="background:var(--textMuted);width:7%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="grid2">
+      <div class="card">
+        <div class="cardttl">Grupo de Doença<span class="info">i<span class="bubble">Classificação macro do laudo. Dupla barreira: a IA classifica pelo padrão universal de mercado e a taxonomia DEJUR valida. O que não encaixa cai em “Outros”, sinalizado.</span></span></div>
+        <div class="cardsub">Clique no grupo para abrir os CIDs · 605 laudos</div>
+
+        <div class="bar"><div class="barhd"><b>LER/DORT</b><span>236 · 39,0% <span class="chev" onclick="tg2('c1',this)">▾</span></span></div><div class="track"><div class="fill" style="width:39%"></div></div></div>
+        <div class="cids" id="c1">
+          <div class="cidrow"><span>M75 · Lesões do ombro</span><span>88</span></div>
+          <div class="cidrow"><span>G56.0 · Síndrome do túnel do carpo</span><span>71</span></div>
+          <div class="cidrow"><span>M65 · Sinovite e tenossinovite</span><span>46</span></div>
+          <div class="cidrow"><span>M77 · Outras entesopatias</span><span>31</span></div>
+        </div>
+
+        <div class="bar"><div class="barhd"><b>Transtorno Psíquico</b><span>211 · 34,9% <span class="chev" onclick="tg2('c2',this)">▾</span></span></div><div class="track"><div class="fill p" style="width:34.9%"></div></div></div>
+        <div class="cids" id="c2">
+          <div class="cidrow"><span>F32 · Episódios depressivos</span><span>96</span></div>
+          <div class="cidrow"><span>F41 · Transtornos ansiosos</span><span>74</span></div>
+          <div class="cidrow"><span>F43 · Reação ao estresse grave</span><span>41</span></div>
+        </div>
+
+        <div class="bar"><div class="barhd"><b>Perda Auditiva</b><span>42 · 6,9% <span class="chev" onclick="tg2('c3',this)">▾</span></span></div><div class="track"><div class="fill" style="width:6.9%"></div></div></div>
+        <div class="cids" id="c3"><div class="cidrow"><span>H83.3 · Efeitos do ruído sobre o ouvido interno</span><span>42</span></div></div>
+
+        <div class="bar"><div class="barhd"><b>Doença Cardiovascular</b><span>38 · 6,3%</span></div><div class="track"><div class="fill p" style="width:6.3%"></div></div></div>
+        <div class="bar"><div class="barhd"><b>Doença da Coluna</b><span>30 · 5,0%</span></div><div class="track"><div class="fill" style="width:5%"></div></div></div>
+        <div class="bar" style="margin-bottom:0"><div class="barhd"><b style="color:var(--textSec);font-weight:600">Outros — não classificados</b><span>48 · 7,9%</span></div><div class="track"><div class="fill m" style="width:7.9%"></div></div></div>
+        <div class="note">Taxonomia pendente de validação da área médica.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardttl">Exposição Pericial por TRT / Comarca<span class="info rt">i<span class="bubble">Taxa de conclusão desfavorável ao banco por TRT. O filtro global da plataforma é por Estado — enquanto não houver filtro por TRT, os dois recortes não conversam.</span></span></div>
+        <div class="cardsub">Clique no TRT para abrir as comarcas</div>
+        <div id="trts"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="card">
+      <div class="sechd"><div class="vb"></div><h2>Análise Pericial — Peritos / Médicos do Juízo</h2></div>
+      <p class="secsub">428 peritos no recorte atual</p>
+      <div class="filters" style="margin:16px 0">
+        <div class="fld" style="flex:1">🔍 Buscar perito, CRM ou comarca</div>
+        <div class="fld">Todas as Comarcas <span>▾</span></div>
+        <div class="fld">Todas as Especialidades <span>▾</span></div>
+        <div class="fld">Últimos 12 meses <span>▾</span></div>
+      </div>
+      <table class="dt">
+        <thead><tr><th style="width:24%">Perito</th><th>Especialidade</th><th>Comarca</th><th style="text-align:center">Laudos</th><th style="text-align:center">Desfavorável ao banco</th><th style="text-align:right">Ações</th></tr></thead>
+        <tbody>
+          <tr><td><div class="pnome">Lyvia Caroline Barbosa e Silva</div><div class="pcrm">CRM/MG 81496</div></td><td><span class="badge b-esp">Ortopedia</span></td><td>Muriaé</td><td style="text-align:center">7</td><td style="text-align:center"><b style="color:var(--red)">100%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
+          <tr><td><div class="pnome">Danilo de Noronha Nunes</div><div class="pcrm">CRM/RO 5569</div></td><td><span class="badge b-esp">Clínica Médica</span></td><td>Machadinho D'Oeste</td><td style="text-align:center">4</td><td style="text-align:center"><b>0%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
+          <tr><td><div class="pnome">Joao Antonio Rechtenwald</div><div class="pcrm">CRM/SP 27282</div></td><td><span class="badge b-esp">Psiquiatria</span></td><td>São Caetano do Sul</td><td style="text-align:center">6</td><td style="text-align:center"><b>33%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
+          <tr><td><div class="pnome">Gustavo Berbel Faidiga</div><div class="pcrm">CRM/SP 112622</div></td><td><span class="badge b-esp">Ortopedia</span></td><td>Diadema</td><td style="text-align:center">3</td><td style="text-align:center"><b>0%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
+        </tbody>
+      </table>
+      <div class="note">Removidos nesta versão: coluna Recomendação, filtro Recomendações e coluna Tempo médio — retornam quando o DEJUR definir a diretriz de impugnação (nomeação vs. resultado) e o marco processual do prazo.</div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:24px;text-align:center">Dados simulados para mockup · Plataforma Reintegrados · DeepCenter</div>
+</main>
+</div>
+
+<div class="drawer-ovl" id="dwovl" onclick="closeList()"></div>
+<div class="drawer" id="drawer">
+  <div class="dwhead">
+    <div class="t">
+      <div class="lbl">Laudos do recorte</div>
+      <h3 id="dwtitle">—</h3>
+      <div class="cnt" id="dwcount">—</div>
+    </div>
+    <button class="x" onclick="closeList()">✕</button>
+  </div>
+  <div class="dwtools">
+    <div class="fld" style="flex:1">🔍 Buscar CNJ, perito ou comarca</div>
+    <div class="fld">Ordenar <span>▾</span></div>
+  </div>
+  <div class="dwbody">
+    <table class="dw">
+      <thead><tr><th>Processo</th><th>Perito</th><th>Nexo</th><th>NTEP</th></tr></thead>
+      <tbody id="dwrows"></tbody>
+    </table>
+  </div>
+  <div class="dwfoot">
+    <span style="font-size:11px;color:var(--textMuted)">Clique no CNJ para abrir o detalhamento do processo</span>
+  </div>
+</div>
+
+<div class="ovl" id="ovl">
+  <div class="modal">
+    <div class="mhead">
+      <div class="av">LC</div>
+      <div>
+        <div style="font-size:9.5px;letter-spacing:1px;color:var(--textMuted);font-weight:700">DETALHE PERICIAL</div>
+        <div style="font-size:19px;font-weight:700">Lyvia Caroline Barbosa e Silva</div>
+        <div style="font-size:11.5px;color:var(--textSec);margin-top:3px">CRM/MG 81496 · Muriaé · <span class="badge b-esp">Ortopedia e Traumatologia</span></div>
+      </div>
+      <button class="x" onclick="cl()">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="grid2">
+        <div class="kpi"><div><div class="lbl">Laudos</div><div class="val">7</div><div class="sub">Em 7 processos</div></div><div class="ic n">📄</div></div>
+        <div class="kpi"><div><div class="lbl">Desfavorável ao banco</div><div class="val">100%</div><div class="sub">7 de 7 laudos</div></div><div class="ic r">🛡</div></div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="cardttl">Indicadores do Laudo — deste perito</div>
+        <div class="cardsub">7 laudos</div>
+        <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:26px;align-items:start">
+          <div>
+            <div class="lg"><span class="dot" style="background:#CC092F"></span> Nexo causal <span class="n">5 · 71,4%</span></div>
+            <div class="lg"><span class="dot" style="background:#7B2D8E"></span> Concausal <span class="n">2 · 28,6%</span></div>
+            <div class="lg"><span class="dot" style="background:#1a1a2e"></span> Nexo não reconhecido <span class="n">0</span></div>
+            <div class="lg muted"><span class="dot" style="background:#C9CCD1"></span> Sem conclusão / ilegível <span class="n">0</span></div>
+          </div>
+          <div>
+            <div class="bar"><div class="barhd"><b>LER/DORT</b><span>6 · 85,7%</span></div><div class="track"><div class="fill" style="width:85.7%"></div></div></div>
+            <div class="bar" style="margin-bottom:0"><div class="barhd"><b>Doença da Coluna</b><span>1 · 14,3%</span></div><div class="track"><div class="fill" style="width:14.3%"></div></div></div>
+            <div class="note">Grupo de doença restrito à especialidade do perito. Exige variável de doença por perito no back — hoje só consolidada.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="cardttl">Comparativo Regional</div>
+        <div class="cardsub">Taxa desfavorável ao banco · perito vs. média da comarca</div>
+        <div style="display:flex;align-items:center;gap:30px">
+          <div style="flex:1"><div style="font-size:12px;margin-bottom:6px">Perito: <b>100%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
+          <div style="flex:1"><div style="font-size:12px;margin-bottom:6px">Média Muriaé: <b>44%</b></div><div class="track"><div class="fill m" style="width:44%"></div></div></div>
+          <span class="badge b-alt">2,3× a média</span>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px">
+        <div class="cardttl">Histórico de Processos com Laudo</div>
+        <div class="cardsub">Clique no CNJ para abrir o detalhe do processo</div>
+        <table class="dt">
+          <thead><tr><th>Processo</th><th>CID</th><th>Enquadramento</th><th>Nexo</th><th>NTEP</th><th>Vara / Juiz</th></tr></thead>
+          <tbody>
+            <tr><td><a class="cnj" href="#" onclick="return proc('0000163-59.2026.5.14.0161')">0000163-59.2026.5.14.0161 <span class="ext">↗</span></a><div class="pcrm">20/05/2026</div></td><td>G56.0</td><td>LER/DORT</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>Vara do Trabalho de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
+            <tr><td><a class="cnj" href="#" onclick="return proc('0010422-18.2025.5.03.0079')">0010422-18.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">11/03/2026</div></td><td>M75.1</td><td>LER/DORT</td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">Concausal</span></td><td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td><td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td></tr>
+            <tr><td><a class="cnj" href="#" onclick="return proc('0010988-04.2025.5.03.0079')">0010988-04.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">02/02/2026</div></td><td>M51.1</td><td>Doença da Coluna</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>1ª VT de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- matriz ---------- */
+const NX={
+ 'Nexo causal':{c:'#CC092F',def:'Conclusão do perito: o trabalho é causa direta e determinante da doença. Maior exposição para o banco.'},
+ 'Concausal':{c:'#7B2D8E',def:'Conclusão do perito: o trabalho é causa concorrente — soma-se a fatores extralaborais.'},
+ 'Nexo não reconhecido':{c:'#1a1a2e',def:'O perito afasta o nexo entre doença e trabalho. Favorável ao banco.'},
+ 'Sem conclusão / ilegível':{c:'#C9CCD1',def:'Estado do dado, não classificação médica: laudo ilegível, em processamento ou sem conclusão expressa.'}
+};
+const nexos=Object.keys(NX);
+const graus=['Total permanente','Total temporária','Parcial permanente','Parcial temporária','Sem incapacidade','Não informado'];
+const doencas=['LER/DORT','Transtorno Psíquico','Perda Auditiva','Doença Cardiovascular','Doença da Coluna','Outros'];
+const ABBR={'Total permanente':'Total<br>perm.','Total temporária':'Total<br>temp.','Parcial permanente':'Parcial<br>perm.','Parcial temporária':'Parcial<br>temp.','Sem incapacidade':'Sem<br>incap.','Não informado':'Não<br>inform.',
+ 'LER/DORT':'LER/<br>DORT','Transtorno Psíquico':'Transt.<br>psíquico','Perda Auditiva':'Perda<br>auditiva','Doença Cardiovascular':'Cardio-<br>vascular','Doença da Coluna':'Coluna','Outros':'Outros'};
+
+const rec=[
+ ['Nexo causal','Parcial permanente','LER/DORT',64],
+ ['Nexo causal','Total permanente','LER/DORT',22],
+ ['Nexo causal','Total temporária','Transtorno Psíquico',38],
+ ['Nexo causal','Parcial permanente','Doença da Coluna',30],
+ ['Concausal','Parcial permanente','LER/DORT',40],
+ ['Concausal','Parcial temporária','Transtorno Psíquico',28],
+ ['Concausal','Parcial permanente','Perda Auditiva',26],
+ ['Nexo não reconhecido','Sem incapacidade','Transtorno Psíquico',120],
+ ['Nexo não reconhecido','Sem incapacidade','LER/DORT',95],
+ ['Nexo não reconhecido','Sem incapacidade','Doença Cardiovascular',38],
+ ['Sem conclusão / ilegível','Não informado','Transtorno Psíquico',25],
+ ['Sem conclusão / ilegível','Não informado','Perda Auditiva',16],
+ ['Sem conclusão / ilegível','Não informado','LER/DORT',15],
+ ['Sem conclusão / ilegível','Não informado','Outros',48]
+].map(r=>({nexo:r[0],grau:r[1],doenca:r[2],n:r[3]}));
+const TOTAL=rec.reduce((s,r)=>s+r.n,0);
+const hexA=(h,a)=>{h=h.replace('#','');return `rgba(${parseInt(h.substr(0,2),16)},${parseInt(h.substr(2,2),16)},${parseInt(h.substr(4,2),16)},${a})`};
+const info=nx=>`<span class="info">i<span class="bubble">${NX[nx].def}</span></span>`;
+
+function render(dim){
+  const cols=dim==='grau'?graus:doencas;
+  const other=dim==='grau'?'doenca':'grau';
+  const cell={};nexos.forEach(n=>cell[n]={});
+  rec.forEach(r=>{const k=r[dim];const c=cell[r.nexo][k]=cell[r.nexo][k]||{n:0,d:[]};c.n+=r.n;c.d.push(`${r[other]} (${r.n})`)});
+  const colTot={};cols.forEach(c=>{let t=0;nexos.forEach(n=>t+=(cell[n][c]||{}).n||0);colTot[c]=t});
+  let max=0;nexos.forEach(n=>cols.forEach(c=>{const v=(cell[n][c]||{}).n||0;if(v>max)max=v}));
+
+  let h='<table class="mx"><colgroup><col class="rowh">'+cols.map(()=>'<col>').join('')+'<col></colgroup>';
+  h+='<thead><tr><th class="rowh" style="background:transparent"></th>';
+  cols.forEach(c=>h+=`<th title="${c}"><div class="colhd"><div class="cl">${ABBR[c]}</div></div></th>`);
+  h+='<th class="tot"><div class="colhd"><div class="cl">Total</div></div></th></tr></thead><tbody>';
+
+  nexos.forEach((n,i)=>{
+    if(i===3)h+=`<tr class="gap"><td colspan="${cols.length+2}"></td></tr>`;
+    const col=NX[n].c;let rt=0,cells='';
+    cols.forEach(c=>{const o=cell[n][c];const v=o?o.n:0;rt+=v;
+      if(!v){cells+='<td class="empty">·</td>';return}
+      const a=.15+.85*(v/max);
+      const key=(dim==='grau'?'grau':'doenca');
+      cells+=`<td onclick="openList('matriz',{nexo:'${n}',dim:'${dim}',col:'${c}'})" title="${n} · ${c} — ${v} laudos&#10;${o.d.join(', ')}" style="background:${hexA(col,a)};color:${a>.5?'#fff':'#1a1a2e'}">${v}</td>`});
+    h+=`<tr><th class="rowh" style="border-left:4px solid ${col};${i===3?'color:#5f6368;':''}">${n}${info(n)}</th>${cells}<td class="tot"${i===3?' style="background:#5f6368"':''}>${rt}</td></tr>`;
+  });
+  h+=`<tr class="gap"><td colspan="${cols.length+2}"></td></tr><tr class="totrow"><th class="rowh" style="background:#EEF0F4">Total</th>`;
+  cols.forEach(c=>h+=`<td>${colTot[c]}</td>`);
+  h+=`<td class="grand">${TOTAL}</td></tr></tbody></table>`;
+  document.getElementById('matrix').innerHTML=h;
+  document.getElementById('dimttl').textContent=dim==='grau'?'Grau':'Doença';
+}
+document.getElementById('tg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#tg button').forEach(x=>x.classList.remove('active'));b.classList.add('active');render(b.dataset.dim)});
+render('grau');
+
+/* ---------- TRT accordion ---------- */
+const TRT=[
+ {k:'TRT-3',pct:72,tag:'crítico',cor:'#CC092F',proc:86,com:14,list:[
+   {nm:'Muriaé',n:12,p:92},{nm:'Belo Horizonte',n:34,p:78},{nm:'Contagem',n:9,p:67},{nm:'Juiz de Fora',n:7,p:57}]},
+ {k:'TRT-2',pct:48,tag:'monitorar',cor:'#F57F17',proc:204,com:31,list:[
+   {nm:'São Paulo',n:96,p:52},{nm:'Guarulhos',n:22,p:45},{nm:'São Caetano do Sul',n:18,p:39},{nm:'Diadema',n:14,p:36}]},
+ {k:'TRT-14',pct:31,tag:'estável',cor:'#1a1a2e',proc:37,com:6,list:[
+   {nm:'Porto Velho',n:18,p:33},{nm:"Machadinho D'Oeste",n:7,p:29},{nm:'Ji-Paraná',n:6,p:17}]},
+ {k:'TRT-15',pct:24,tag:'estável',cor:'#1a1a2e',proc:112,com:22,list:[
+   {nm:'Campinas',n:41,p:27},{nm:'Ribeirão Preto',n:19,p:21},{nm:'Sorocaba',n:15,p:20}]}
+];
+const tagCls={'crítico':'b-alt','estável':'b-ok'};
+function barCol(p){return p>=60?'#CC092F':p>=40?'#F57F17':'#1a1a2e'}
+document.getElementById('trts').innerHTML=TRT.map((t,i)=>{
+  const badge=t.tag==='monitorar'?`<span class="badge" style="background:#FFF8E1;color:#8a5a00">monitorar</span>`:`<span class="badge ${tagCls[t.tag]}">${t.tag}</span>`;
+  const rows=t.list.map(c=>`<div class="com">
+      <div class="nm">${c.nm}</div>
+      <div class="np">${c.n} proc.</div>
+      <div class="mini"><i style="width:${c.p}%;background:${barCol(c.p)}"></i></div>
+      <div class="pv" style="color:${barCol(c.p)}">${c.p}%</div></div>`).join('');
+  const rest=t.com-t.list.length;
+  return `<div class="trt" id="trt${i}">
+    <div class="top" style="background:${t.cor}"></div>
+    <div class="body" onclick="tgTrt(${i})">
+      <div class="pct"><b style="color:${t.cor}">${t.pct}%</b><small>DESFAVORÁVEL</small></div>
+      <div><b>${t.k}</b> ${badge}<div style="font-size:11px;color:var(--textSec)">${t.proc} processos · ${t.com} comarcas</div></div>
+      <div style="margin-left:auto" class="chev">▾</div>
+    </div>
+    <div class="panel">
+      <div class="comhd"><div>Comarca</div><div>Volume</div><div>Taxa desfavorável ao banco</div><div style="text-align:right">%</div></div>
+      ${rows}
+      ${rest>0?`<div class="morecom">+ ${rest} comarcas com volume inferior a 5 processos</div>`:''}
+    </div></div>`;
+}).join('');
+function tgTrt(i){document.getElementById('trt'+i).classList.toggle('open')}
+
+/* ---------- misc ---------- */
+function tg2(id,el){const c=document.getElementById(id);c.classList.toggle('open');el.style.transform=c.classList.contains('open')?'rotate(180deg)':'';}
+function op(){document.getElementById('ovl').classList.add('on')}
+function cl(){document.getElementById('ovl').classList.remove('on')}
+/* ---------- drawer: lista de laudos ---------- */
+const NEXOLBL={causal:['Nexo causal','#CC092F'],concausal:['Concausal','#7B2D8E'],nao_reconhecido:['Nexo não reconhecido','#1a1a2e'],sem_conclusao:['Sem conclusão / ilegível','#C9CCD1']};
+const PERITOS=['Lyvia C. Barbosa e Silva','Danilo de Noronha Nunes','Joao A. Rechtenwald','Gustavo B. Faidiga','Marcos V. Pereira','Patrícia N. Gomes','Rafael C. Dias','Camila T. Rocha'];
+const COMARCAS=['Muriaé','São Paulo','Campinas','Porto Velho','Diadema','Guarulhos','Belo Horizonte'];
+function cnjGen(i){const a=String(10000+i*137).slice(0,7);return `${a.slice(0,7)}-${String(10+i%80).padStart(2,'0')}.2026.5.0${1+i%9}.0${String(100+i%90)}`}
+function badgeNexo(k){if(k==='sem_conclusao')return `<span class="badge" style="background:#F1F2F5;color:var(--textSec)">—</span>`;const[l,c]=NEXOLBL[k];const bg=k==='causal'?'var(--redLight)':k==='concausal'?'var(--purpleLight)':k==='nao_reconhecido'?'#EDEEF1':'#F1F2F5';const fg=k==='causal'?'var(--red)':k==='concausal'?'var(--purple)':'var(--textSec)';return `<span class="badge" style="background:${bg};color:${fg}">${l}</span>`}
+function badgeNtep(v){if(v===null||v===undefined)return `<span class="badge" style="background:#F1F2F5;color:var(--textMuted)">n/a</span>`;return v?`<span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span>`:`<span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span>`}
+
+function buildRows(n,nexoKey,ntepForce){
+  let h='';
+  for(let i=0;i<n;i++){
+    const cnj=cnjGen(i+ (nexoKey?nexoKey.length:3)*7);
+    const per=PERITOS[i%PERITOS.length];
+    const com=COMARCAS[i%COMARCAS.length];
+    const nx=nexoKey||['causal','concausal','nao_reconhecido'][i%3];
+    // laudo sem conclusão / ilegível não tem nexo nem NTEP apurável
+    const semConcl=(nx==='sem_conclusao');
+    const ntep=semConcl?null:(ntepForce!==undefined?ntepForce:(i%4===0));
+    const doc=semConcl?(i%3===0?'Ilegível':'Sem conclusão expressa'):'Laudo pericial';
+    h+=`<tr>
+      <td><a class="cnj" href="#" onclick="return proc('${cnj}')">${cnj} <span class="ext">↗</span></a><div class="pcrm">${com} · 2026</div></td>
+      <td>${per}<div class="pcrm">${doc}</div></td>
+      <td>${badgeNexo(nx)}</td>
+      <td>${badgeNtep(ntep)}</td></tr>`;
+  }
+  return h;
+}
+
+function openList(origem,arg){
+  let title='',count=0,rows='';
+  if(origem==='nexo'){
+    const[l]=NEXOLBL[arg];const map={causal:154,concausal:94,nao_reconhecido:253,sem_conclusao:104};
+    count=map[arg];title=`Laudos · ${l}`;
+    rows=buildRows(Math.min(count,25),arg);
+  }else if(origem==='ntep'){
+    const[l]=NEXOLBL[arg];const map={causal:38,concausal:16,nao_reconhecido:9};
+    count=map[arg];title=`Laudos com NTEP · ${l}`;
+    rows=buildRows(count,arg,true);
+  }else if(origem==='matriz'){
+    const cellObj=(function(){const cell={};rec.forEach(r=>{if(r.nexo===arg.nexo && r[arg.dim]===arg.col){cell.n=(cell.n||0)+r.n}});return cell})();
+    count=cellObj.n||0;
+    const nk=arg.nexo==='Nexo causal'?'causal':arg.nexo==='Concausal'?'concausal':arg.nexo==='Nexo não reconhecido'?'nao_reconhecido':'sem_conclusao';
+    title=`${arg.nexo} · ${arg.col}`;
+    rows=buildRows(Math.min(count,25),nk);
+  }
+  document.getElementById('dwtitle').textContent=title;
+  document.getElementById('dwcount').textContent=`${count} laudo${count!==1?'s':''} no recorte`+(count>25?' · exibindo 25':'');
+  document.getElementById('dwrows').innerHTML=rows;
+  document.getElementById('drawer').classList.add('on');
+  document.getElementById('dwovl').classList.add('on');
+}
+function closeList(){document.getElementById('drawer').classList.remove('on');document.getElementById('dwovl').classList.remove('on')}
+function proc(cnj){alert('Abrir detalhe do processo '+cnj+'\n\n(mockup: navega para a tela Processos › Detalhes)');return false}
+</script>
+</body>
+</html>
