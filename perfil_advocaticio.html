@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil Advocatício e Rede Médica — Reintegrados</title>
+<style>
+  :root{
+    --red:#CC092F; --redMid:#E84667; --redLight:#FDE8EC; --redBg:#FDF2F4;
+    --purple:#7B2D8E; --purpleLight:#F3E8F7;
+    --green:#2E7D32; --greenLight:#E8F5E9;
+    --amber:#F57F17; --amberLight:#FFF8E1;
+    --blue:#1565C0; --blueLight:#E3F2FD;
+    --navy:#1F2A7A; --navyMid:#3A49A8; --navyLight:#E8EAF6; --navyBg:#F0F1F9;
+    --ink:#1a1a2e;
+    --bg:#F5F6FA; --white:#FFFFFF; --border:#E8EAED; --greyLight:#EEF1F4;
+    --text:#1a1a2e; --textSec:#5f6368; --textMuted:#9AA0A6;
+    --shadow:0 1px 3px rgba(0,0,0,0.08);
+    --shadowMd:0 4px 16px rgba(0,0,0,0.12);
+    --mnavy:#1F2A7A; --mred:#CC092F;
+    --mgreen:#2E7D32; --mgreenLight:#E7F4E8; --mamber:#B7791F; --mamberLight:#FBEFD9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI','Roboto',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;padding:24px}
+  .wrap{max-width:1280px;margin:0 auto}
+
+  .platform-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .platform-head .brand{display:flex;align-items:center;gap:12px}
+  .platform-head .logo{width:34px;height:34px;border-radius:8px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px}
+  .platform-head .brand h1{font-size:16px;font-weight:700}
+  .platform-head .brand span{font-size:11px;color:var(--textSec);display:block;font-weight:400}
+  .platform-head .env{font-size:11px;color:var(--textMuted)}
+
+  .search{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+  .search input{border:none;background:none;outline:none;flex:1;font-size:13px;color:var(--text)}
+  .search .ico{color:var(--textMuted)}
+  .tbl-search{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+  .tbl-search .search{flex:1;min-width:240px}
+
+  .tabs{display:flex;gap:10px;margin-bottom:18px;align-items:stretch}
+  .tab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+       background:#F1F3F5;border:1px solid #E3E6EA;border-radius:8px;padding:13px 10px;min-height:72px;
+       cursor:pointer;transition:.14s;text-align:center}
+  .tab .ti{width:21px;height:21px;flex-shrink:0;color:#5f6368}
+  .tab .tl{font-size:12.5px;font-weight:700;color:#3c4043;line-height:1.25;letter-spacing:.1px}
+  .tab:hover:not(.active):not(.disabled){background:#EAECEF;border-color:#D4D8DD}
+  .tab.active{background:linear-gradient(180deg,#D81B3F 0%,#B80527 100%);border-color:#A30422;
+              box-shadow:0 3px 10px rgba(204,9,47,.30)}
+  .tab.active .ti{color:#fff}
+  .tab.active .tl{color:#fff;font-weight:800}
+  .tab.disabled{background:#F7F8F9;border-color:transparent;cursor:default}
+  .tab.disabled .ti{color:#C4C8CD}
+  .tab.disabled .tl{color:#B8BCC4}
+  @media(max-width:1000px){.tabs{flex-wrap:wrap}.tab{flex:1 1 30%}}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .kpi{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--shadow);display:flex;justify-content:space-between;align-items:flex-start}
+  .kpi .v{font-size:30px;font-weight:800;line-height:1;color:var(--ink)}
+  .kpi .l{font-size:11px;color:var(--textSec);margin-top:8px;line-height:1.35}
+  .kpi .ico{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .kpi.clickable{cursor:pointer;transition:.14s}
+  .kpi.clickable:hover{border-color:var(--redMid);box-shadow:0 4px 14px rgba(204,9,47,.12);transform:translateY(-1px)}
+  .kpi.clickable .v::after{content:"\203A";font-size:18px;color:var(--textMuted);margin-left:8px;vertical-align:2px;font-weight:700}
+  .ico-red{background:var(--redLight)} .ico-purple{background:var(--purpleLight)}
+  .ico-blue{background:var(--blueLight)} .ico-amber{background:var(--amberLight)}
+
+  .card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px;box-shadow:var(--shadow);margin-bottom:16px}
+  .sec-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;margin-bottom:16px}
+  .sec-title::before{content:"";width:4px;height:18px;background:var(--red);border-radius:2px}
+
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--textSec);padding:10px 12px;border-bottom:1px solid var(--border)}
+  thead th.num{text-align:right}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+  tbody td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+  tbody tr.clickable{cursor:pointer}
+  tbody tr.clickable:hover{background:#FCFCFD}
+  .adv-name{font-weight:700;color:var(--ink)}
+  .adv-oab{font-size:11px;color:var(--textMuted);font-weight:400}
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable .arr{color:var(--textMuted);font-size:9px}
+  .cellsub{font-size:10px;color:var(--textMuted);margin-top:4px;font-weight:400;white-space:nowrap}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap}
+  .b-red{background:var(--redLight);color:var(--red)}
+  .b-purple{background:var(--purpleLight);color:var(--purple)}
+  .b-green{background:var(--greenLight);color:var(--green)}
+  .b-amber{background:var(--amberLight);color:var(--amber)}
+  .b-blue{background:var(--blueLight);color:var(--blue)}
+  .b-gray{background:#EEF0F3;color:var(--textSec)}
+  .b-navy{background:var(--navyLight);color:var(--navy)}
+
+  .btn-det{display:inline-flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border);border-radius:7px;padding:6px 11px;font-size:11px;font-weight:600;color:var(--textSec);cursor:pointer}
+  .btn-det:hover{border-color:var(--red);color:var(--red)}
+
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:50;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:var(--white);border-radius:14px;max-width:1140px;width:100%;box-shadow:var(--shadowMd);animation:pop .18s ease}
+  @keyframes pop{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--border)}
+  .modal-head .title{font-size:18px;font-weight:800;color:var(--ink)}
+  .modal-head .meta{font-size:12px;color:var(--textSec);margin-top:6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .cascade{display:inline-flex;align-items:center;gap:6px}
+  .cascade .chip{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 9px;font-size:11px;color:var(--text)}
+  .cascade .arr{color:var(--textMuted)}
+  .close-x{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-size:16px;color:var(--textSec);flex-shrink:0}
+  .close-x:hover{background:var(--bg)}
+  .modal-body{padding:24px 26px}
+  .back-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--red);cursor:pointer;margin-bottom:16px;background:none;border:none;padding:0}
+  .back-link:hover{text-decoration:underline}
+
+  .mblock{margin-bottom:28px}
+  .mblock:last-child{margin-bottom:4px}
+  .listnote{font-size:10px;color:var(--textMuted);margin-top:8px}
+
+  .med-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;cursor:pointer;transition:.12s}
+  .med-row:hover{border-color:var(--redMid);background:#FCFCFD}
+  .med-row.static{cursor:default;background:var(--bg);border-style:dashed}
+  .med-row.static:hover{border-color:var(--border)}
+  .med-row .info{display:flex;flex-direction:column;gap:2px}
+  .med-row .mname{font-weight:700;font-size:13px;color:var(--ink)}
+  .med-row.static .mname{color:var(--textSec);font-weight:600}
+  .med-row .msub{font-size:11px;color:var(--textMuted)}
+  .med-row .metrics{display:flex;align-items:center;gap:18px}
+  .med-row .metric{text-align:right}
+  .med-row .metric .mv{font-size:16px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+  .med-row .metric .ml{font-size:9px;text-transform:uppercase;letter-spacing:.3px;color:var(--textMuted)}
+  .med-row .chev{color:var(--textMuted);font-size:16px}
+
+  /* ===== Dual: marcha + mandala lado a lado ===== */
+  .dual{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start;justify-items:center}
+  @media(max-width:980px){.dual{grid-template-columns:1fr}}
+  .dual-col{width:100%;max-width:500px}
+  .dual-col .sec-title{margin-bottom:12px}
+
+  /* Marcha compacta */
+  .mar-phase{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:3px}
+  .mar-head{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:8px;padding:5px 11px;background:var(--bg);border-bottom:1px solid var(--border);min-height:26px}
+  .mar-name{font-size:10.5px;font-weight:800;display:flex;align-items:baseline;gap:5px;color:var(--ink)}
+  .mar-name small{font-size:8.5px;font-weight:600;color:var(--textMuted);letter-spacing:.1px}
+  .mar-pill{font-size:8.5px;font-weight:800;border-radius:20px;padding:1px 7px;letter-spacing:.2px}
+  .mar-pill.good{background:var(--mgreenLight);color:var(--mgreen)}
+  .mar-pill.warn{background:var(--mamberLight);color:var(--mamber)}
+  .mar-phase.final{border-color:#CBE7CD}
+  .mar-phase.final .mar-head{background:var(--mgreenLight)}
+
+  .mar-barwrap{padding:9px 12px 12px}
+  .mb-tags{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:10px}
+  .mb-tag{display:inline-flex;align-items:baseline;gap:6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .mb-tag .n{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:0}
+  .mb-tag .p{font-size:9.5px;font-weight:600;color:var(--textMuted);letter-spacing:0}
+  .mb-tag.nv{color:var(--mnavy)} .mb-tag.rd{color:var(--mred)}
+  .mb-tag.rd{text-align:right}
+  .mar-bar{display:flex;height:8px;border-radius:999px;overflow:hidden;background:var(--greyLight)}
+  .mb-seg{cursor:pointer;transition:opacity .14s}
+  .mb-seg:hover{opacity:.78}
+  .mb-seg.nv{background:var(--mnavy)}
+  .mb-seg.rd{background:var(--mred)}
+  .mb-seg.nv + .mb-seg.rd{box-shadow:-2px 0 0 0 #fff}
+  .mar-taper{display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:var(--textMuted);height:16px;letter-spacing:.2px}
+  .mar-taper::before{content:"\2193";font-size:8.5px;margin-right:4px}
+  .mar-legend{display:flex;gap:16px;padding:10px 2px 0;font-size:9px;color:var(--textMuted);letter-spacing:.2px}
+  .mar-legend i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:5px;vertical-align:-1px}
+
+  /* Mandala (donut) */
+  .lb-pills{display:flex;justify-content:center;gap:10px;margin-top:18px;margin-bottom:8px;flex-wrap:wrap}
+  .gpill{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:22px;padding:6px 14px;font-size:10.5px;font-weight:800;letter-spacing:.3px}
+  .gpill .sample{width:20px;height:0;border-top-width:3px;flex-shrink:0}
+  .gpill .g-val{font-weight:600;color:var(--textSec)}
+  .gp-indef{color:var(--navy)} .gp-indef .sample{border-top:3px dashed var(--navy)}
+  .gp-def{color:var(--red)} .gp-def .sample{border-top:3px solid var(--red)}
+  .dwrap{position:relative;width:100%;max-width:470px;margin:0 auto;height:330px}
+  .dwrap svg{width:100%;height:100%;overflow:visible}
+  .dwrap svg path.seg{cursor:pointer;transition:all .18s ease}
+  .dwrap svg path.seg:hover{stroke-width:33;filter:brightness(1.07)}
+  .seg-label{font-size:7.6px;font-weight:600;fill:var(--text);cursor:pointer}
+  .seg-label:hover{fill:var(--red)}
+  .seg-label .cnt{font-weight:700;fill:var(--textSec)}
+  .dcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;text-align:center}
+  .dcenter .num{font-size:28px;font-weight:800;line-height:1;color:var(--ink)}
+  .dcenter .lbl{font-size:10.5px;color:var(--textSec);margin-top:4px;line-height:1.35}
+
+  .cid-tag{font-family:'JetBrains Mono','Consolas',monospace;font-weight:700;font-size:12px;color:var(--ink)}
+  .compat-ok{color:var(--green);font-weight:600}
+  .compat-warn{color:var(--red);font-weight:700}
+
+  .crm-grid{display:flex;gap:10px;flex-wrap:wrap}
+  .crm-chip{border:1px solid var(--border);border-radius:9px;padding:12px 16px;min-width:140px}
+  .crm-chip .crm-num{font-family:'JetBrains Mono','Consolas',monospace;font-size:15px;font-weight:800;color:var(--ink)}
+  .crm-chip .crm-uf{font-size:11px;color:var(--textSec);margin-top:3px}
+  .crm-chip .crm-note{font-size:10px;color:var(--amber);margin-top:5px;font-weight:600}
+
+  .cnj-link{font-family:'JetBrains Mono','Consolas',monospace;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer}
+  .cnj-link:hover{text-decoration:underline}
+
+  .footnote{font-size:11px;color:var(--textMuted);font-style:italic;text-align:center;margin-top:8px}
+
+  .overlay2{position:fixed;inset:0;background:rgba(16,20,40,.5);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;z-index:60;overflow-y:auto}
+  .overlay2.open{display:flex}
+  .modal2{background:#fff;border-radius:14px;border-top:3px solid var(--mred);max-width:920px;width:100%;box-shadow:var(--shadowMd)}
+  .m2head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+  .m2title{font-size:14px;font-weight:800;color:var(--ink)}
+  .m2body{padding:16px 20px}
+  .am-trail{font-size:12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:12px;line-height:1.5}
+  .am-tbl{width:100%;border-collapse:collapse}
+  .am-tbl th{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:var(--textSec);font-weight:800;text-align:left;padding:7px 9px;border-bottom:1px solid var(--border);background:var(--bg)}
+  .am-tbl td{font-size:11px;padding:8px 9px;border-bottom:1px solid var(--greyLight)}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:10px;font-size:12px;box-shadow:var(--shadowMd);opacity:0;transition:.2s;z-index:100;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="platform-head">
+    <div class="brand"><div class="logo">R</div>
+      <div><h1>Reintegrados</h1><span>DeepCenter · Bradesco DEJUR</span></div></div>
+    <div class="env">Perfil Advocatício e Rede Médica</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 8.5V20l-4-2.2v-4.3z"/></svg>
+      <span class="tl">Assessment</span>
+    </div>
+    <div class="tab">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.2l2.4 2.4 4.6-4.9"/></svg>
+      <span class="tl">Insights Estratégicos</span>
+    </div>
+    <div class="tab">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+      <span class="tl">Processos</span>
+    </div>
+    <div class="tab">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M6 3H4.5M14 3h1.5"/><path d="M10 12v3a4.5 4.5 0 0 0 9 0v-1"/><circle cx="19" cy="10.5" r="2"/></svg>
+      <span class="tl">Inteligência Pericial</span>
+    </div>
+    <div class="tab active">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+      <span class="tl">Perfil Advocatício e Rede Médica</span>
+    </div>
+    <div class="tab disabled">
+      <svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 4l9 5.5"/><path d="M5 10v8M10 10v8M14 10v8M19 10v8"/><path d="M3 20h18"/></svg>
+      <span class="tl">Performance Passiva</span>
+    </div>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <div class="sec-title">Advogados da parte autora</div>
+    <div class="tbl-search">
+      <div class="search"><span class="ico">&#128269;</span><input type="text" placeholder="Buscar advogado por nome ou OAB…"></div>
+      <div class="search"><span class="ico">&#129658;</span><input type="text" placeholder="Buscar médico por nome ou CRM…"></div>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Advogado</th><th>Estado(s)</th>
+        <th class="num sortable">Nº de processos <span class="arr">&#9660;</span></th>
+        <th class="num">Médicos atestantes</th>
+        <th class="num sortable">Vínculo médico <span class="arr">&#8597;</span></th>
+        <th style="text-align:right">Detalhe</th>
+      </tr></thead>
+      <tbody id="advTable"></tbody>
+    </table>
+  </div>
+
+  <div class="footnote" style="margin-top:22px">Dados simulados para mockup</div>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal"><div id="modalContent"></div></div></div>
+<div class="overlay2" id="ov2" onclick="if(event.target===this)closeOv2()">
+  <div class="modal2"><div class="m2head"><div class="m2title" id="ov2title">—</div><button class="close-x" onclick="closeOv2()">&#10005;</button></div><div class="m2body" id="ov2body"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const LIMIAR_INDICIO = 5;   /* Dani: 5+ processos com um mesmo médico = indício de atuação conjunta */
+const ufNome = {RO:'Rondônia',BA:'Bahia',RJ:'Rio de Janeiro',SP:'São Paulo'};
+
+const medicos = {
+  m1:{ nome:'Dr. Emanuel Ferro', especialidade:'Ortopedia', crms:[{n:'528',uf:'RO'},{n:'18.853',uf:'RJ',dup:true}],
+    cids:[{cid:'M54.5',desc:'Dor lombar baixa',proc:22,compat:true},{cid:'M75.1',desc:'Síndrome do manguito rotador',proc:14,compat:true},{cid:'F32.1',desc:'Episódio depressivo moderado',proc:9,compat:false}],
+    procList:[
+      {cnj:'0010234-56.2023.5.14.0001',polo:'José A. da Silva',comarca:'Porto Velho',adv:'Daniela Ramos Vieira',fase:'Liminar'},
+      {cnj:'0011456-77.2024.5.14.0003',polo:'Cláudia R. Nunes',comarca:'Porto Velho',adv:'Daniela Ramos Vieira',fase:'2ª Instância'},
+      {cnj:'0300234-99.2023.5.01.0001',polo:'Bruno A. Teixeira',comarca:'Rio de Janeiro',adv:'Thiago Matias Correia',fase:'Liminar'},
+      {cnj:'0300789-10.2024.5.01.0003',polo:'Larissa P. Cunha',comarca:'Niterói',adv:'Thiago Matias Correia',fase:'Sentença'},
+      {cnj:'0201890-88.2024.5.05.0004',polo:'Sônia M. Braga',comarca:'Salvador',adv:'Vinícius Andrade Lima',fase:'2ª Instância'}
+    ]},
+  m2:{ nome:'Dra. Helena Costa', especialidade:'Ginecologia', crms:[{n:'525',uf:'RO'}],
+    cids:[{cid:'N80.0',desc:'Endometriose do útero',proc:11,compat:true},{cid:'F41.1',desc:'Ansiedade generalizada',proc:8,compat:false},{cid:'M54.5',desc:'Dor lombar baixa',proc:6,compat:false}],
+    procList:[
+      {cnj:'0011002-33.2024.5.14.0001',polo:'Antônio P. Lima',comarca:'Ji-Paraná',adv:'Daniela Ramos Vieira',fase:'Liminar'},
+      {cnj:'0012001-10.2025.5.14.0001',polo:'Rafael M. Dias',comarca:'Porto Velho',adv:'Daniela Ramos Vieira',fase:'Sentença'},
+      {cnj:'0301345-21.2024.5.01.0002',polo:'Gustavo H. Reis',comarca:'Rio de Janeiro',adv:'Thiago Matias Correia',fase:'Liminar'},
+      {cnj:'0400678-41.2024.5.02.0005',polo:'Diego S. Moura',comarca:'Campinas',adv:'Cristina Alves Pereira',fase:'Liminar'}
+    ]},
+  m3:{ nome:'Dr. Ricardo Menezes', especialidade:'Clínica Médica', crms:[{n:'6278',uf:'BA'}],
+    cids:[{cid:'M51.1',desc:'Radiculopatia lombar',proc:20,compat:true},{cid:'G56.0',desc:'Síndrome do túnel do carpo',proc:15,compat:true}],
+    procList:[
+      {cnj:'0200123-55.2022.5.05.0003',polo:'Roberto C. Dias',comarca:'Salvador',adv:'Vinícius Andrade Lima',fase:'Liminar'},
+      {cnj:'0200567-66.2023.5.05.0001',polo:'Patrícia N. Gomes',comarca:'Salvador',adv:'Vinícius Andrade Lima',fase:'Sentença'},
+      {cnj:'0201234-77.2024.5.05.0002',polo:'Eduardo L. Faria',comarca:'Salvador',adv:'Vinícius Andrade Lima',fase:'Liminar'},
+      {cnj:'0100234-11.2022.5.05.0001',polo:'Carlos E. Rocha',comarca:'Salvador',adv:'Irã Nogueira Santana',fase:'2ª Instância'}
+    ]},
+  m4:{ nome:'Dr. Paulo Tavares', especialidade:'Psiquiatria', crms:[{n:'62',uf:'BA'},{n:'9.104',uf:'SP',dup:true}],
+    cids:[{cid:'F32.2',desc:'Episódio depressivo grave',proc:5,compat:true},{cid:'F43.1',desc:'Transtorno de estresse pós-traumático',proc:3,compat:true}],
+    procList:[
+      {cnj:'0100789-22.2023.5.05.0004',polo:'Fernanda G. Alves',comarca:'Salvador',adv:'Irã Nogueira Santana',fase:'Sentença'},
+      {cnj:'0400123-30.2023.5.02.0001',polo:'Renata F. Barros',comarca:'São Paulo',adv:'Cristina Alves Pereira',fase:'Sentença'}
+    ]}
+};
+
+/* mandala = visão viva (último status): cada processo aparece 1x, na fase onde está hoje.
+   marcha  = histórico: cada processo conta em toda fase por onde passou.
+   Identidade: V_fase = M_fase + V_fase_seguinte  →  soma(mandala) = processos com decisão. */
+const advogados = [
+  { id:'a1', nome:'Daniela Ramos Vieira', oab:'OAB/RO 4.512', uf:'RO', comarca:'Porto Velho', processos:50, procComMedico:40,
+    medicoLinks:[{mid:'m1',proc:26},{mid:'m2',proc:18}], outrosMedicos:{qtd:0,processos:0},
+    mandala:{liminar:{def:12,indef:6}, sentenca:{def:9,indef:6}, trt:{def:4,indef:4}, tst:{def:2,indef:3}},
+    marcha:{liminar:{def:32,indef:14}, sentenca:{def:17,indef:11}, trt:{def:7,indef:6}, tst:{def:2,indef:3}},
+    procList:[
+      {cnj:'0010234-56.2023.5.14.0001',polo:'José A. da Silva',comarca:'Porto Velho',meds:['Dr. Emanuel Ferro','Dra. Helena Costa'],fase:'Liminar'},
+      {cnj:'0010567-89.2023.5.14.0002',polo:'Maria L. Souza',comarca:'Porto Velho',meds:['Dr. Emanuel Ferro'],fase:'Sentença'},
+      {cnj:'0011002-33.2024.5.14.0001',polo:'Antônio P. Lima',comarca:'Ji-Paraná',meds:['Dra. Helena Costa'],fase:'Liminar'},
+      {cnj:'0011456-77.2024.5.14.0003',polo:'Cláudia R. Nunes',comarca:'Porto Velho',meds:['Dr. Emanuel Ferro'],fase:'2ª Instância'},
+      {cnj:'0012001-10.2025.5.14.0001',polo:'Rafael M. Dias',comarca:'Porto Velho',meds:['Dra. Helena Costa'],fase:'Sentença'}
+    ]},
+  { id:'a2', nome:'Irã Nogueira Santana', oab:'OAB/BA 18.204', uf:'BA', comarca:'Salvador', processos:46, procComMedico:40,
+    medicoLinks:[{mid:'m3',proc:4},{mid:'m4',proc:3}], outrosMedicos:{qtd:12,processos:35},
+    mandala:{liminar:{def:6,indef:8}, sentenca:{def:5,indef:8}, trt:{def:4,indef:6}, tst:{def:2,indef:3}},
+    marcha:{liminar:{def:18,indef:24}, sentenca:{def:12,indef:16}, trt:{def:6,indef:9}, tst:{def:2,indef:3}},
+    procList:[
+      {cnj:'0100234-11.2022.5.05.0001',polo:'Carlos E. Rocha',comarca:'Salvador',meds:['Dr. Ricardo Menezes'],fase:'2ª Instância'},
+      {cnj:'0100789-22.2023.5.05.0004',polo:'Fernanda G. Alves',comarca:'Salvador',meds:['Dr. Paulo Tavares'],fase:'Sentença'},
+      {cnj:'0101345-33.2023.5.05.0002',polo:'Marcos V. Pinto',comarca:'Feira de Santana',meds:[],fase:'TST'},
+      {cnj:'0102001-44.2024.5.05.0001',polo:'Juliana S. Melo',comarca:'Salvador',meds:['Dr. Ricardo Menezes'],fase:'Liminar'}
+    ]},
+  { id:'a3', nome:'Vinícius Andrade Lima', oab:'OAB/BA 21.887', uf:'BA', comarca:'Salvador', processos:38, procComMedico:34,
+    medicoLinks:[{mid:'m3',proc:29},{mid:'m1',proc:5}], outrosMedicos:{qtd:1,processos:3},
+    mandala:{liminar:{def:11,indef:4}, sentenca:{def:7,indef:4}, trt:{def:3,indef:3}, tst:{def:1,indef:2}},
+    marcha:{liminar:{def:27,indef:8}, sentenca:{def:14,indef:6}, trt:{def:5,indef:4}, tst:{def:1,indef:2}},
+    procList:[
+      {cnj:'0200123-55.2022.5.05.0003',polo:'Roberto C. Dias',comarca:'Salvador',meds:['Dr. Ricardo Menezes'],fase:'Liminar'},
+      {cnj:'0200567-66.2023.5.05.0001',polo:'Patrícia N. Gomes',comarca:'Salvador',meds:['Dr. Ricardo Menezes'],fase:'Sentença'},
+      {cnj:'0201234-77.2024.5.05.0002',polo:'Eduardo L. Faria',comarca:'Salvador',meds:['Dr. Ricardo Menezes'],fase:'Liminar'},
+      {cnj:'0201890-88.2024.5.05.0004',polo:'Sônia M. Braga',comarca:'Salvador',meds:['Dr. Ricardo Menezes','Dr. Emanuel Ferro'],fase:'2ª Instância'}
+    ]},
+  { id:'a4', nome:'Thiago Matias Correia', oab:'OAB/RJ 132.556', uf:'RJ', comarca:'Rio de Janeiro', processos:16, procComMedico:13,
+    medicoLinks:[{mid:'m1',proc:10},{mid:'m2',proc:4}], outrosMedicos:{qtd:0,processos:0},
+    mandala:{liminar:{def:5,indef:2}, sentenca:{def:3,indef:2}, trt:{def:1,indef:1}, tst:{def:1,indef:0}},
+    marcha:{liminar:{def:10,indef:5}, sentenca:{def:5,indef:3}, trt:{def:2,indef:1}, tst:{def:1,indef:0}},
+    procList:[
+      {cnj:'0300234-99.2023.5.01.0001',polo:'Bruno A. Teixeira',comarca:'Rio de Janeiro',meds:['Dr. Emanuel Ferro'],fase:'Liminar'},
+      {cnj:'0300789-10.2024.5.01.0003',polo:'Larissa P. Cunha',comarca:'Niterói',meds:['Dr. Emanuel Ferro','Dra. Helena Costa'],fase:'Sentença'},
+      {cnj:'0301345-21.2024.5.01.0002',polo:'Gustavo H. Reis',comarca:'Rio de Janeiro',meds:['Dra. Helena Costa'],fase:'Liminar'}
+    ]},
+  { id:'a5', nome:'Cristina Alves Pereira', oab:'OAB/SP 245.901', uf:'SP', comarca:'São Paulo', processos:12, procComMedico:12,
+    medicoLinks:[{mid:'m4',proc:4},{mid:'m2',proc:3}], outrosMedicos:{qtd:3,processos:5},
+    mandala:{liminar:{def:2,indef:2}, sentenca:{def:2,indef:2}, trt:{def:1,indef:1}, tst:{def:0,indef:1}},
+    marcha:{liminar:{def:5,indef:6}, sentenca:{def:3,indef:4}, trt:{def:1,indef:2}, tst:{def:0,indef:1}},
+    procList:[
+      {cnj:'0400123-30.2023.5.02.0001',polo:'Renata F. Barros',comarca:'São Paulo',meds:['Dr. Paulo Tavares'],fase:'Sentença'},
+      {cnj:'0400678-41.2024.5.02.0005',polo:'Diego S. Moura',comarca:'Campinas',meds:['Dra. Helena Costa'],fase:'Liminar'}
+    ]}
+];
+
+/* ===== Derivações (garantem coerência numérica) ===== */
+const advById = id => advogados.find(a=>a.id===id);
+function pctv(n,d){return d?Math.round(n/d*100):0;}
+function maxVinculo(a){ return Math.max.apply(null, a.medicoLinks.map(l=>l.proc)); }
+function medicoDominante(a){ const l=a.medicoLinks.slice().sort((x,y)=>y.proc-x.proc)[0]; return {mid:l.mid, proc:l.proc, nome:medicos[l.mid].nome}; }
+function temIndicio(a){ return maxVinculo(a) >= LIMIAR_INDICIO; }
+function nMedicos(a){ return a.medicoLinks.length + a.outrosMedicos.qtd; }
+function procComMedico(a){ return a.procComMedico; }
+function somaArestas(a){ return a.medicoLinks.reduce((s,l)=>s+l.proc,0) + a.outrosMedicos.processos; }
+function multiMedico(a){ return somaArestas(a) - a.procComMedico; }
+function comDecisao(a){ const M=a.mandala; return ['liminar','sentenca','trt','tst'].reduce((s,k)=>s+M[k].def+M[k].indef,0); }
+function marchaVols(a){ const M=a.mandala;
+  const vTst=M.tst.def+M.tst.indef;
+  const vTrt=M.trt.def+M.trt.indef+vTst;
+  const vSen=M.sentenca.def+M.sentenca.indef+vTrt;
+  const vLim=M.liminar.def+M.liminar.indef+vSen;
+  return {liminar:vLim,sentenca:vSen,trt:vTrt,tst:vTst};
+}
+function procTotalMedico(mid){ return advogados.reduce((s,a)=>{const l=a.medicoLinks.find(x=>x.mid===mid);return s+(l?l.proc:0);},0); }
+function advsDoMedico(mid){
+  return advogados.filter(a=>a.medicoLinks.some(l=>l.mid===mid))
+    .map(a=>{const l=a.medicoLinks.find(x=>x.mid===mid);return {id:a.id,proc:l.proc,indicio:l.proc>=LIMIAR_INDICIO};})
+    .sort((x,y)=>y.proc-x.proc);
+}
+function faseBadge(f){ return '<span class="badge b-gray">'+f+'</span>'; }
+
+/* ===== KPIs derivados dos dados ===== */
+function renderKpis(){
+  const nAdv=advogados.length;
+  const nMed=Object.keys(medicos).length + advogados.reduce((s,a)=>s+a.outrosMedicos.qtd,0);
+  const nProcRede=advogados.reduce((s,a)=>s+procComMedico(a),0);
+  const nIndicio=advogados.filter(temIndicio).length;
+  document.getElementById('kpis').innerHTML=
+     kpi(nAdv,'Advogados mapeados','ico-red','&#9878;&#65039;')
+    +kpi(nMed,'Médicos atestantes mapeados','ico-purple','&#129658;')
+    +kpi(nProcRede,'Processos com médico atestante','ico-blue','&#128279;','openRedeMedica()')
+    +kpi(nIndicio,'Advogados com indício de atuação conjunta','ico-amber','&#9888;&#65039;');
+}
+function kpi(v,l,ic,em,onclick){
+  return '<div class="kpi'+(onclick?' clickable" onclick="'+onclick+'"':'"')+'>'
+    +'<div><div class="v">'+v+'</div><div class="l">'+l+'</div></div>'
+    +'<div class="ico '+ic+'">'+em+'</div></div>';
+}
+
+/* ===== Modal: lista dos processos com médico atestante ===== */
+function medsBadge(meds){
+  if(!meds.length) return '<span class="badge b-gray">sem médico</span>';
+  const cls = meds.length>1 ? 'b-amber' : 'b-gray';
+  return '<span class="badge '+cls+'">'+meds.length+' médico'+(meds.length>1?'s':'')+'</span>';
+}
+function openRedeMedica(){
+  const com=advogados.reduce((s,a)=>s+procComMedico(a),0);
+  const multi=advogados.reduce((s,a)=>s+multiMedico(a),0);
+  const um=com-multi;
+
+  const linhas=[];
+  advogados.forEach(a=>a.procList.forEach(p=>{ if(p.meds.length) linhas.push({p:p,a:a}); }));
+  linhas.sort((x,y)=>y.p.meds.length-x.p.meds.length);
+
+  const rows=linhas.map(r=>
+    '<tr><td><span class="cnj-link" onclick="abrirProcesso(\''+r.p.cnj+'\')">'+r.p.cnj+'</span></td>'
+    +'<td>'+r.p.polo+'</td><td>'+r.a.nome+'</td><td>'+r.p.comarca+'</td>'
+    +'<td>'+medsBadge(r.p.meds)+'<div class="cellsub">'+r.p.meds.join(' · ')+'</div></td>'
+    +'<td style="text-align:right">'+faseBadge(r.p.fase)+'</td></tr>'
+  ).join('');
+
+  document.getElementById('modalContent').innerHTML=''
+    +'<div class="modal-head"><div><div class="title">Processos com médico atestante</div>'
+    +'<div class="meta"><span class="badge b-blue">'+com+' processos</span>'
+    +'<span class="badge b-gray">'+um+' com 1 médico</span>'
+    +'<span class="badge b-amber">'+multi+' com 2 médicos</span></div></div>'
+    +'<button class="close-x" onclick="closeModal()">&#10005;</button></div>'
+    +'<div class="modal-body">'
+    +'<table><thead><tr><th>CNJ</th><th>Polo Ativo</th><th>Advogado</th><th>Comarca</th>'
+    +'<th>Médicos atestantes</th><th style="text-align:right">Fase atual</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table>'
+    +'<div class="listnote">Exibindo '+linhas.length+' de '+com+' processos. Clique no CNJ para abrir o detalhamento do processo.</div>'
+    +'</div>';
+  document.getElementById('overlay').classList.add('open');
+}
+
+/* ===== Tabela mestre ===== */
+function renderTable(){
+  document.getElementById('advTable').innerHTML=advogados.map(a=>{
+    const dom=medicoDominante(a), ind=temIndicio(a), pct=pctv(dom.proc,a.processos);
+    const cls = ind ? 'b-red' : 'b-green';
+    const lbl = ind ? 'Indício' : 'Típico';
+    const tip = ind ? dom.proc+' processos com o mesmo médico atestante' : 'Nenhum médico atinge '+LIMIAR_INDICIO+' processos';
+    return '<tr class="clickable" onclick="openAdv(\''+a.id+'\')">'
+      +'<td><div class="adv-name">'+a.nome+'</div><div class="adv-oab">'+a.oab+'</div></td>'
+      +'<td><span class="badge b-gray">'+a.uf+'</span></td>'
+      +'<td class="num">'+a.processos+'</td><td class="num">'+nMedicos(a)+'</td>'
+      +'<td class="num"><span class="badge '+cls+'" title="'+tip+'">'+dom.proc+' proc. · '+lbl+'</span>'
+      +'<div class="cellsub">'+pct+'% · '+dom.nome+'</div></td>'
+      +'<td style="text-align:right"><button class="btn-det" onclick="event.stopPropagation();openAdv(\''+a.id+'\')">&#128065; Ver Detalhes</button></td></tr>';
+  }).join('');
+}
+
+/* ===== Marcha (histórico) — volumes derivados da mandala ===== */
+function marchaGates(a){
+  const V=marchaVols(a), M=a.marcha;
+  return [
+    {key:'liminar', n:'Liminar', ph:'tutela de urgência', vol:V.liminar, banco:M.liminar.indef, recl:M.liminar.def, out:'sentenca'},
+    {key:'sentenca',n:'Sentença',ph:'1ª instância',      vol:V.sentenca, banco:M.sentenca.indef, recl:M.sentenca.def, out:'trt'},
+    {key:'trt',     n:'2ª Instância', ph:'TRT · acórdão', vol:V.trt, banco:M.trt.indef, recl:M.trt.def, out:'tst'},
+    {key:'tst',     n:'TST', ph:'instância superior',    vol:V.tst, banco:M.tst.indef, recl:M.tst.def, out:null}
+  ];
+}
+function marTag(g,side){
+  const val = side==='nv'?g.banco:g.recl;
+  if(val===0) return '<span></span>';
+  const lab = side==='nv'?'Indeferido':'Deferido';
+  return '<span class="mb-tag '+side+'">'+lab+'<span class="n">'+val+'</span><span class="p">'+pctv(val,g.vol)+'%</span></span>';
+}
+function marSeg(g,side){
+  const val = side==='nv'?g.banco:g.recl;
+  if(val===0 || g.vol===0) return '';
+  const w=(val/g.vol*100).toFixed(2);
+  const lab = side==='nv'?'Indeferido':'Deferido';
+  return '<div class="mb-seg '+side+'" style="width:'+w+'%" '
+    +'onclick="marchaDrill(\''+g.key+'\',\''+side+'\','+val+')" '
+    +'title="'+lab+': '+val+' ('+pctv(val,g.vol)+'%)"></div>';
+}
+function renderMarcha(){
+  const G=window.AM.GATES; let html='';
+  G.forEach((g,i)=>{
+    const pctInd=pctv(g.banco,g.vol), pill=pctInd>=50?'good':'warn';
+    html+='<div class="mar-phase'+(g.out===null?' final':'')+'">'
+      +'<div class="mar-head">'
+      +'<div class="mar-name">'+g.n+' <small>'+g.ph+' · '+g.vol+'</small></div>'
+      +'<span class="mar-pill '+pill+'">'+pctInd+'% indeferido</span></div>'
+      +'<div class="mar-barwrap">'
+      +'<div class="mb-tags">'+marTag(g,'nv')+marTag(g,'rd')+'</div>'
+      +'<div class="mar-bar">'+marSeg(g,'nv')+marSeg(g,'rd')+'</div>'
+      +'</div></div>';
+    if(i<G.length-1) html+='<div class="mar-taper">'+G[i+1].vol+' seguem para '+G[i+1].n+'</div>';
+  });
+  html+='<div class="mar-legend"><span><i style="background:var(--mnavy)"></i>favorável ao Banco</span><span><i style="background:var(--mred)"></i>favorável ao Reclamante</span></div>';
+  return html;
+}
+
+/* ===== Mandala (visão viva) ===== */
+function mandalaFases(a){
+  const M=a.mandala;
+  return [
+    {id:'liminar', nome:'Liminar', reint:M.liminar.def, indef:M.liminar.indef, corR:'#CC092F', corI:'#1F2A7A'},
+    {id:'sentenca',nome:'Sentença',reint:M.sentenca.def,indef:M.sentenca.indef,corR:'#E84667', corI:'#3A49A8'},
+    {id:'trt',     nome:'2ª Instância', reint:M.trt.def, indef:M.trt.indef,    corR:'#F08BA0', corI:'#6674C7'},
+    {id:'tst',     nome:'TST', reint:M.tst.def, indef:M.tst.indef,             corR:'#F8C1CC', corI:'#98A2DE'}
+  ];
+}
+function drawDonut(svg, fases, total){
+  const CX=200,CY=152,R=74,SW=28,R_CONT=94,GAP=1.1,R_LBL=R_CONT+12;
+  svg.innerHTML='';
+  function polar(r,deg){const rad=(deg-90)*Math.PI/180;return[CX+r*Math.cos(rad),CY+r*Math.sin(rad)];}
+  function arcPath(r,a1,a2){const p1=polar(r,a1),p2=polar(r,a2);return 'M '+p1[0]+' '+p1[1]+' A '+r+' '+r+' 0 '+((a2-a1)>180?1:0)+' 1 '+p2[0]+' '+p2[1];}
+  function el(tag,attrs){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e;}
+  let ang=0; const segs=[];
+  fases.forEach(f=>{ if(f.reint>0){ const a1=ang; ang+=f.reint/total*360; segs.push({fase:f,val:f.reint,cor:f.corR,grupo:'Deferido',side:'def',a1:a1,a2:ang}); } });
+  const reintEnd=ang;
+  fases.slice().reverse().forEach(f=>{ if(f.indef>0){ const a1=ang; ang+=f.indef/total*360; segs.push({fase:f,val:f.indef,cor:f.corI,grupo:'Indeferido',side:'indef',a1:a1,a2:ang}); } });
+  if(reintEnd>5) svg.appendChild(el('path',{d:arcPath(R_CONT,2,reintEnd-2),stroke:'#CC092F','stroke-width':3,fill:'none','stroke-linecap':'round'}));
+  if(reintEnd<353) svg.appendChild(el('path',{d:arcPath(R_CONT,reintEnd+2,358),stroke:'#1F2A7A','stroke-width':3,fill:'none','stroke-linecap':'round','stroke-dasharray':'5 4'}));
+  segs.forEach(s=>{
+    const p=el('path',{class:'seg',d:arcPath(R,s.a1+GAP/2,s.a2-GAP/2),stroke:s.cor,'stroke-width':SW,fill:'none'});
+    p.onclick=function(){mandalaDrill(s.fase.id,s.side,s.val);};
+    const t=document.createElementNS('http://www.w3.org/2000/svg','title');
+    t.textContent=s.fase.nome+' — '+s.grupo+': '+s.val; p.appendChild(t);
+    svg.appendChild(p);
+  });
+  segs.forEach(s=>{
+    const mid=(s.a1+s.a2)/2, pos=polar(R_LBL,mid);
+    let lx=pos[0];
+    if(mid>150&&mid<210) lx += (s.side==='def'? 14 : -14);
+    const anchor = Math.abs(lx-CX)<20 ? 'middle' : (lx>CX ? 'start':'end');
+    const tx=el('text',{class:'seg-label',x:lx,y:pos[1]+2.5,'text-anchor':anchor});
+    tx.innerHTML=s.fase.nome+' <tspan class="cnt">· '+s.val+'</tspan>';
+    tx.onclick=function(){mandalaDrill(s.fase.id,s.side,s.val);};
+    svg.appendChild(tx);
+  });
+}
+function mandalaHtml(a){
+  const F=mandalaFases(a), tot=comDecisao(a);
+  const defT=F.reduce((s,f)=>s+f.reint,0), indT=F.reduce((s,f)=>s+f.indef,0);
+  return '<div class="lb-pills">'
+    +'<div class="gpill gp-indef"><span class="sample"></span>INDEFERIDO<span class="g-val">'+indT+' · '+pctv(indT,tot)+'%</span></div>'
+    +'<div class="gpill gp-def"><span class="sample"></span>DEFERIDO<span class="g-val">'+defT+' · '+pctv(defT,tot)+'%</span></div></div>'
+    +'<div class="dwrap"><svg viewBox="0 0 400 300" id="donutSvg"></svg>'
+    +'<div class="dcenter"><div class="num">'+tot+'</div><div class="lbl">processos<br>com decisão</div></div></div>';
+}
+
+/* ===== Drills ===== */
+function marchaDrill(key,side,qtd){
+  const a=window.AM.adv, g=window.AM.GATES.find(x=>x.key===key);
+  const sideLab=side==='nv'?'Banco':'Reclamante', term=side==='nv'?'indeferido':'deferido';
+  drillTable(g.n+' · '+sideLab+' · '+term,
+    g.n+' &rsaquo; <b style="color:var(--'+(side==='nv'?'mnavy':'mred')+')">'+sideLab+': '+term+'</b> &rsaquo; <span style="color:var(--textMuted)">'+qtd+' processos</span>',
+    a, a.procList, qtd);
+}
+function mandalaDrill(faseId,side,qtd){
+  const a=window.AM.adv;
+  const nomes={liminar:'Liminar',sentenca:'Sentença',trt:'2ª Instância',tst:'TST'};
+  const term=side==='def'?'deferido':'indeferido';
+  const rows=a.procList.filter(p=>p.fase===nomes[faseId]);
+  drillTable(nomes[faseId]+' · '+term+' (último status)',
+    'Visão viva &rsaquo; <b>'+nomes[faseId]+'</b> &rsaquo; <b style="color:var(--'+(side==='def'?'mred':'mnavy')+')">'+term+'</b> &rsaquo; <span style="color:var(--textMuted)">'+qtd+' processos</span>',
+    a, rows.length?rows:a.procList, qtd);
+}
+function drillTable(title, trail, a, rows, qtd){
+  const sample=rows.slice(0,6);
+  document.getElementById('ov2title').innerHTML=title;
+  document.getElementById('ov2body').innerHTML='<div class="am-trail">'+trail+'</div>'
+    +'<table class="am-tbl"><thead><tr><th>CNJ</th><th>Polo Ativo</th><th>Estado</th><th>Comarca</th><th>Fase atual</th></tr></thead><tbody>'
+    +sample.map(p=>'<tr><td><span class="cnj-link" onclick="abrirProcesso(\''+p.cnj+'\')">'+p.cnj+'</span></td><td>'+p.polo+'</td><td>'+a.uf+'</td><td>'+p.comarca+'</td><td>'+faseBadge(p.fase)+'</td></tr>').join('')
+    +'</tbody></table><div class="listnote">Mostrando '+sample.length+' de '+qtd+' · dados simulados</div>';
+  document.getElementById('ov2').classList.add('open');
+}
+function closeOv2(){document.getElementById('ov2').classList.remove('open');}
+
+/* ===== Modal advogado ===== */
+function openAdv(id){
+  const a=advById(id); window.AM={adv:a, GATES:marchaGates(a)};
+  const dom=medicoDominante(a), ind=temIndicio(a), dec=comDecisao(a);
+
+  let medRows=a.medicoLinks.slice().sort((x,y)=>y.proc-x.proc).map(l=>{
+    const m=medicos[l.mid], flag=l.proc>=LIMIAR_INDICIO;
+    return '<div class="med-row" onclick="openMed(\''+l.mid+'\',\''+id+'\')">'
+      +'<div class="info"><div class="mname">'+m.nome+'</div><div class="msub">'+m.especialidade+' · CRM '+m.crms.map(c=>c.n+'/'+c.uf).join(', ')+'</div></div>'
+      +'<div class="metrics"><div class="metric"><div class="mv">'+l.proc+'</div><div class="ml">Processos c/ este adv.</div></div>'
+      +'<div class="metric"><span class="badge '+(flag?'b-red':'b-green')+'">'+(flag?'Indício':'Típico')+'</span></div><span class="chev">&#8250;</span></div></div>';
+  }).join('');
+  if(a.outrosMedicos.qtd>0){
+    medRows+='<div class="med-row static"><div class="info"><div class="mname">Outros '+a.outrosMedicos.qtd+' médicos</div>'
+      +'<div class="msub">nenhum atinge '+LIMIAR_INDICIO+' processos</div></div>'
+      +'<div class="metrics"><div class="metric"><div class="mv">'+a.outrosMedicos.processos+'</div><div class="ml">Processos</div></div></div></div>';
+  }
+  const medNote='<div class="listnote">'+procComMedico(a)+' dos '+a.processos+' processos deste advogado têm médico atestante</div>';
+
+  const procRows=a.procList.map(p=>
+    '<tr><td><span class="cnj-link" onclick="abrirProcesso(\''+p.cnj+'\')">'+p.cnj+'</span></td><td>'+p.polo+'</td><td>'+p.comarca+'</td>'
+    +'<td>'+(p.meds.length?p.meds.join(' · '):'<span style="color:var(--textMuted)">—</span>')+'</td>'
+    +'<td style="text-align:right">'+faseBadge(p.fase)+'</td></tr>'
+  ).join('');
+
+  document.getElementById('modalContent').innerHTML=''
+    +'<div class="modal-head"><div><div class="title">'+a.nome+'</div>'
+    +'<div class="meta"><span>'+a.oab+'</span>'
+    +'<span class="cascade"><span class="chip">'+ufNome[a.uf]+'</span><span class="arr">&#8250;</span><span class="chip">'+a.comarca+'</span></span>'
+    +'<span class="badge b-blue">'+a.processos+' processos</span>'
+    +'<span class="badge b-gray">'+dec+' com decisão</span>'
+    +'<span class="badge '+(ind?'b-red':'b-green')+'">'+(ind?'Indício de atuação conjunta':'Sem indício')+'</span></div></div>'
+    +'<button class="close-x" onclick="closeModal()">&#10005;</button></div>'
+    +'<div class="modal-body">'
+    +'<div class="mblock"><div class="sec-title">Rede médica focada</div>'+medRows+medNote+'</div>'
+    +'<div class="mblock"><div class="dual">'
+    +'<div class="dual-col"><div class="sec-title">Marcha processual</div>'+renderMarcha()+'</div>'
+    +'<div class="dual-col"><div class="sec-title">Decisões por fase &middot; último status</div>'+mandalaHtml(a)+'</div>'
+    +'</div></div>'
+    +'<div class="mblock"><div class="sec-title">Processos deste advogado</div>'
+    +'<table><thead><tr><th>CNJ</th><th>Polo Ativo</th><th>Comarca</th><th>Médico atestante</th><th style="text-align:right">Fase atual</th></tr></thead><tbody>'+procRows+'</tbody></table>'
+    +'<div class="listnote">Exibindo '+a.procList.length+' de '+a.processos+' processos. Clique no CNJ para abrir o detalhamento do processo.</div></div>'
+    +'</div>';
+  document.getElementById('overlay').classList.add('open');
+  drawDonut(document.getElementById('donutSvg'), mandalaFases(a), dec);
+}
+
+/* ===== Lente do médico ===== */
+function openMed(mid, fromAdv){
+  const m=medicos[mid], a=advById(fromAdv), pt=procTotalMedico(mid);
+  const advRows=advsDoMedico(mid).map(x=>{
+    const av=advById(x.id);
+    return '<div class="med-row" onclick="openAdv(\''+x.id+'\')" '+(x.id===fromAdv?'style="border-color:var(--red);background:#FFF5F6"':'')+'>'
+      +'<div class="info"><div class="mname">'+av.nome+'</div><div class="msub">'+av.oab+'</div></div>'
+      +'<div class="metrics"><div class="metric"><div class="mv">'+x.proc+'</div><div class="ml">Processos c/ este médico</div></div>'
+      +'<div class="metric"><span class="badge '+(x.indicio?'b-red':'b-green')+'">'+(x.indicio?'Indício':'Típico')+'</span></div><span class="chev">&#8250;</span></div></div>';
+  }).join('');
+  const cidRows=m.cids.map(c=>'<tr><td><span class="cid-tag">'+c.cid+'</span></td><td>'+c.desc+'</td><td class="num">'+c.proc+'</td><td style="text-align:center">'+(c.compat?'<span class="compat-ok">&#10003; Compatível</span>':'<span class="compat-warn">&#9888; Fora da especialidade</span>')+'</td></tr>').join('');
+  const crmChips=m.crms.map(c=>'<div class="crm-chip"><div class="crm-num">CRM '+c.n+'</div><div class="crm-uf">'+ufNome[c.uf]+'</div>'+(c.dup?'<div class="crm-note">Registro secundário</div>':'')+'</div>').join('');
+  const mProcRows=m.procList.map(p=>'<tr><td><span class="cnj-link" onclick="abrirProcesso(\''+p.cnj+'\')">'+p.cnj+'</span></td><td>'+p.polo+'</td><td>'+p.comarca+'</td><td>'+p.adv+'</td><td style="text-align:right">'+faseBadge(p.fase)+'</td></tr>').join('');
+
+  document.getElementById('modalContent').innerHTML=''
+    +'<div class="modal-head"><div><div class="title">'+m.nome+'</div>'
+    +'<div class="meta"><span class="badge b-purple">'+m.especialidade+'</span><span>'+m.crms.map(c=>'CRM '+c.n+'/'+c.uf).join(' · ')+'</span>'
+    +'<span class="badge b-blue">'+pt+' processos</span></div></div>'
+    +'<button class="close-x" onclick="closeModal()">&#10005;</button></div>'
+    +'<div class="modal-body">'
+    +'<button class="back-link" onclick="openAdv(\''+fromAdv+'\')">&#8592; Voltar para '+a.nome+'</button>'
+    +'<div class="mblock"><div class="sec-title">Advogados conectados</div>'+advRows+'</div>'
+    +'<div class="mblock"><div class="sec-title">CIDs emitidos</div><table><thead><tr><th>CID</th><th>Descrição</th><th class="num">Processos</th><th style="text-align:center">Especialidade &#215; CID</th></tr></thead><tbody>'+cidRows+'</tbody></table></div>'
+    +'<div class="mblock"><div class="sec-title">Registros profissionais (CRM)</div><div class="crm-grid">'+crmChips+'</div></div>'
+    +'<div class="mblock"><div class="sec-title">Processos deste médico</div><table><thead><tr><th>CNJ</th><th>Polo Ativo</th><th>Comarca</th><th>Advogado</th><th style="text-align:right">Fase atual</th></tr></thead><tbody>'+mProcRows+'</tbody></table>'
+    +'<div class="listnote">Exibindo '+m.procList.length+' de '+pt+' processos. Clique no CNJ para abrir o detalhamento do processo.</div></div>'
+    +'</div>';
+}
+
+function abrirProcesso(cnj){ showToast('&#8594; Abriria o detalhamento do processo · CNJ '+cnj); }
+function showToast(msg){ const t=document.getElementById('toast'); t.innerHTML=msg; t.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(function(){t.classList.remove('show');},2600); }
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target.id==='overlay')closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeOv2();closeModal();}});
+
+renderKpis();
+renderTable();
+</script>
+</body>
+</html>
