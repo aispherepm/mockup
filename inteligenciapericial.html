@@ -211,6 +211,36 @@ table.dw tr:hover td{background:#FCFCFD}
 .mhead{display:flex;align-items:center;gap:16px;padding:24px 26px;border-left:5px solid var(--red);background:linear-gradient(90deg,#FFF9FA,#fff)}
 .av{width:48px;height:48px;border-radius:11px;background:linear-gradient(135deg,var(--red),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px}
 .mhead .x{margin-left:auto;border:1px solid var(--border);background:#fff;border-radius:8px;width:34px;height:34px;font-size:15px;cursor:pointer;color:var(--textSec)}
+
+/* ---- indicadores do perito (modal) ---- */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.pdonut{display:flex;align-items:center;gap:22px}
+.pdwrap{position:relative;width:116px;height:116px;flex-shrink:0}
+.pdonut .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.pdonut .ctr b{font-size:20px;font-weight:800;line-height:1;letter-spacing:-.3px}
+.pdonut .ctr small{font-size:7.5px;color:var(--textMuted);text-transform:uppercase;letter-spacing:.4px;line-height:1.2;margin-top:2px;text-align:center}
+.pdrows{display:flex;flex-direction:column;gap:10px}
+.pr{display:flex;align-items:center;gap:10px}
+.pr .pb{width:3px;height:16px;border-radius:2px;flex-shrink:0}
+.pr .pn{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;min-width:16px}
+.pr .pl{font-size:12px;color:var(--textSec)}
+.doebar{margin-bottom:13px}
+.doebar:last-child{margin-bottom:0}
+.doebar .hd{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;margin-bottom:6px}
+.doebar .hd .nm{font-weight:600;display:flex;align-items:center;gap:8px}
+.doebar .hd .ct{color:var(--textSec);font-size:11.5px;font-variant-numeric:tabular-nums}
+.doebar .tk{height:9px;background:#F1F2F5;border-radius:5px;overflow:hidden}
+.doebar .fl{height:100%;border-radius:5px}
+.foraesp{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;color:#8a5a00;background:var(--amberLight);border:1px solid #F3D98A;border-radius:5px;padding:2px 6px}
+.cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;margin-top:4px}
+.cmp .col{text-align:center}
+.cmp .col .v{font-size:28px;font-weight:800;line-height:1}
+.cmp .col .l{font-size:11px;color:var(--textSec);margin-top:5px}
+.cmp .arrow{font-size:16px;color:var(--textMuted);text-align:center}
+.cmp .arrow .d{font-size:11px;font-weight:700;color:var(--red);margin-top:3px}
+.cmp .col.hi .v{color:var(--red)}
+.cmp .col .tk{height:6px;background:#F1F2F5;border-radius:4px;overflow:hidden;margin-top:9px}
+.cmp .col .tk i{display:block;height:100%;border-radius:4px}
 .mbody{padding:22px 26px 30px;background:var(--bg)}
 </style>
 </head>
@@ -399,7 +429,7 @@ table.dw tr:hover td{background:#FCFCFD}
       <table class="dt">
         <thead><tr><th style="width:24%">Perito</th><th>Especialidade</th><th>Comarca</th><th style="text-align:center">Laudos</th><th style="text-align:center">Desfavorável ao banco</th><th style="text-align:right">Ações</th></tr></thead>
         <tbody>
-          <tr><td><div class="pnome">Lyvia Caroline Barbosa e Silva</div><div class="pcrm">CRM/MG 81496</div></td><td><span class="badge b-esp">Ortopedia</span></td><td>Muriaé</td><td style="text-align:center">7</td><td style="text-align:center"><b style="color:var(--red)">100%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
+          <tr><td><div class="pnome">Lyvia Caroline Barbosa e Silva</div><div class="pcrm">CRM/MG 81496</div></td><td><span class="badge b-esp">Ortopedia</span></td><td>Muriaé</td><td style="text-align:center">8</td><td style="text-align:center"><b style="color:var(--red)">88%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
           <tr><td><div class="pnome">Danilo de Noronha Nunes</div><div class="pcrm">CRM/RO 5569</div></td><td><span class="badge b-esp">Clínica Médica</span></td><td>Machadinho D'Oeste</td><td style="text-align:center">4</td><td style="text-align:center"><b>0%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
           <tr><td><div class="pnome">Joao Antonio Rechtenwald</div><div class="pcrm">CRM/SP 27282</div></td><td><span class="badge b-esp">Psiquiatria</span></td><td>São Caetano do Sul</td><td style="text-align:center">6</td><td style="text-align:center"><b>33%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
           <tr><td><div class="pnome">Gustavo Berbel Faidiga</div><div class="pcrm">CRM/SP 112622</div></td><td><span class="badge b-esp">Ortopedia</span></td><td>Diadema</td><td style="text-align:center">3</td><td style="text-align:center"><b>0%</b></td><td style="text-align:right"><button class="btn" onclick="op()">👁 Detalhes</button></td></tr>
@@ -451,35 +481,62 @@ table.dw tr:hover td{background:#FCFCFD}
     </div>
     <div class="mbody">
       <div class="grid2">
-        <div class="kpi"><div><div class="lbl">Laudos</div><div class="val">7</div><div class="sub">Em 7 processos</div></div><div class="ic n">📄</div></div>
-        <div class="kpi"><div><div class="lbl">Desfavorável ao banco</div><div class="val">100%</div><div class="sub">7 de 7 laudos</div></div><div class="ic r">🛡</div></div>
+        <div class="kpi"><div><div class="lbl">Laudos</div><div class="val">8</div><div class="sub">Em 8 processos</div></div><div class="ic n">📄</div></div>
+        <div class="kpi"><div><div class="lbl">Desfavorável ao banco</div><div class="val">88%</div><div class="sub">7 de 8 laudos</div></div><div class="ic r">🛡</div></div>
       </div>
 
       <div class="card" style="margin-top:14px">
         <div class="cardttl">Indicadores do Laudo — deste perito</div>
-        <div class="cardsub">7 laudos</div>
-        <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:26px;align-items:start">
-          <div>
-            <div class="lg"><span class="dot" style="background:#CC092F"></span> Nexo causal <span class="n">5 · 71,4%</span></div>
-            <div class="lg"><span class="dot" style="background:#7B2D8E"></span> Concausal <span class="n">2 · 28,6%</span></div>
-            <div class="lg"><span class="dot" style="background:#1a1a2e"></span> Nexo não reconhecido <span class="n">0</span></div>
-            <div class="lg muted"><span class="dot" style="background:#C9CCD1"></span> Sem conclusão / ilegível <span class="n">0</span></div>
+        <div class="pgrid" style="align-items:center">
+          <div class="pdonut">
+            <div class="pdwrap">
+              <svg viewBox="0 0 130 130" width="116" height="116">
+                <circle cx="65" cy="65" r="49" fill="none" stroke="#F1F2F5" stroke-width="13"/>
+                <circle cx="65" cy="65" r="49" fill="none" stroke="#CC092F" stroke-width="13" stroke-linecap="round" stroke-dasharray="192.4 307.9" stroke-dashoffset="0" transform="rotate(-90 65 65)"/>
+                <circle cx="65" cy="65" r="49" fill="none" stroke="#7B2D8E" stroke-width="13" stroke-linecap="round" stroke-dasharray="77.0 307.9" stroke-dashoffset="-192.4" transform="rotate(-90 65 65)"/>
+                <circle cx="65" cy="65" r="49" fill="none" stroke="#1a1a2e" stroke-width="13" stroke-linecap="round" stroke-dasharray="38.5 307.9" stroke-dashoffset="-269.4" transform="rotate(-90 65 65)"/>
+              </svg>
+              <div class="ctr"><b>88%</b><small>nexo<br>recon.</small></div>
+            </div>
+            <div class="pdrows">
+              <div class="pr"><span class="pb" style="background:#CC092F"></span><span class="pn">5</span><span class="pl">Causal</span></div>
+              <div class="pr"><span class="pb" style="background:#7B2D8E"></span><span class="pn">2</span><span class="pl">Concausal</span></div>
+              <div class="pr"><span class="pb" style="background:#1a1a2e"></span><span class="pn">1</span><span class="pl">Não recon.</span></div>
+            </div>
           </div>
           <div>
-            <div class="bar"><div class="barhd"><b>LER/DORT</b><span>6 · 85,7%</span></div><div class="track"><div class="fill" style="width:85.7%"></div></div></div>
-            <div class="bar" style="margin-bottom:0"><div class="barhd"><b>Doença da Coluna</b><span>1 · 14,3%</span></div><div class="track"><div class="fill" style="width:14.3%"></div></div></div>
-            <div class="note">Grupo de doença restrito à especialidade do perito. Exige variável de doença por perito no back — hoje só consolidada.</div>
+            <div style="font-size:11px;font-weight:600;color:var(--textSec);margin-bottom:12px">Grupos de doença laudados</div>
+            <div class="doebar">
+              <div class="hd"><span class="nm">LER/DORT</span><span class="ct">5 · 62,5%</span></div>
+              <div class="tk"><div class="fl" style="width:62.5%;background:linear-gradient(90deg,var(--red),var(--redMid))"></div></div>
+            </div>
+            <div class="doebar">
+              <div class="hd"><span class="nm">Doença da Coluna</span><span class="ct">2 · 25,0%</span></div>
+              <div class="tk"><div class="fl" style="width:25%;background:linear-gradient(90deg,var(--red),var(--redMid))"></div></div>
+            </div>
+            <div class="doebar">
+              <div class="hd"><span class="nm">Transtorno Psíquico <span class="foraesp">fora da especialidade</span></span><span class="ct">1 · 12,5%</span></div>
+              <div class="tk"><div class="fl" style="width:12.5%;background:var(--amber)"></div></div>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="card" style="margin-top:14px">
         <div class="cardttl">Comparativo Regional</div>
-        <div class="cardsub">Taxa desfavorável ao banco · perito vs. média da comarca</div>
-        <div style="display:flex;align-items:center;gap:30px">
-          <div style="flex:1"><div style="font-size:12px;margin-bottom:6px">Perito: <b>100%</b></div><div class="track"><div class="fill" style="width:100%"></div></div></div>
-          <div style="flex:1"><div style="font-size:12px;margin-bottom:6px">Média Muriaé: <b>44%</b></div><div class="track"><div class="fill m" style="width:44%"></div></div></div>
-          <span class="badge b-alt">2,3× a média</span>
+        <div class="cardsub">Taxa desfavorável ao banco · perita vs. média da comarca de Muriaé</div>
+        <div class="cmp">
+          <div class="col hi">
+            <div class="v">88%</div>
+            <div class="tk"><i style="width:88%;background:linear-gradient(90deg,var(--red),var(--redMid))"></i></div>
+            <div class="l">Lyvia C. Barbosa</div>
+          </div>
+          <div class="arrow">vs<div class="d">2,0×</div></div>
+          <div class="col">
+            <div class="v" style="color:var(--textSec)">44%</div>
+            <div class="tk"><i style="width:44%;background:var(--textMuted)"></i></div>
+            <div class="l">Média de Muriaé</div>
+          </div>
         </div>
       </div>
 
@@ -492,6 +549,7 @@ table.dw tr:hover td{background:#FCFCFD}
             <tr><td><a class="cnj" href="#" onclick="return proc('0000163-59.2026.5.14.0161')">0000163-59.2026.5.14.0161 <span class="ext">↗</span></a><div class="pcrm">20/05/2026</div></td><td>G56.0</td><td>LER/DORT</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>Vara do Trabalho de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
             <tr><td><a class="cnj" href="#" onclick="return proc('0010422-18.2025.5.03.0079')">0010422-18.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">11/03/2026</div></td><td>M75.1</td><td>LER/DORT</td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">Concausal</span></td><td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td><td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td></tr>
             <tr><td><a class="cnj" href="#" onclick="return proc('0010988-04.2025.5.03.0079')">0010988-04.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">02/02/2026</div></td><td>M51.1</td><td>Doença da Coluna</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>1ª VT de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
+            <tr><td><a class="cnj" href="#" onclick="return proc('0011245-77.2025.5.03.0079')">0011245-77.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">18/01/2026</div></td><td>F32.1</td><td>Transtorno Psíquico <span class="foraesp">fora da especialidade</span></td><td><span class="badge" style="background:#EDEEF1;color:var(--textSec)">Não recon.</span></td><td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td><td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td></tr>
           </tbody>
         </table>
       </div>
