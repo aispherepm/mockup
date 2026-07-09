@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Causa Raiz — Trilha por Fase</title>
+<style>
+  :root{
+    --red:#CC092F; --redMid:#E84667; --redLight:#FDE8EC;
+    --purple:#7B2D8E; --purpleLight:#F3E8F7; --magenta:#C2185B;
+    --green:#2E7D32; --greenLight:#E8F5E9;
+    --amber:#F57F17; --amberLight:#FFF8E1; --blue:#1565C0; --blueLight:#E3F2FD;
+    --navy:#1a1a2e; --bg:#F5F6FA; --white:#fff; --border:#E8EAED;
+    --text:#1a1a2e; --textSec:#5f6368; --textMuted:#9AA0A6;
+    --shadow:0 1px 3px rgba(0,0,0,0.08); --deepBlue:#41719C; --deepGrey:#8C8C8C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI','Roboto',-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  .app{display:flex;min-height:100vh}
+  .side{width:200px;background:#fff;border-right:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;padding:20px 0}
+  .logo{padding:0 22px 18px;display:flex;flex-direction:column;gap:2px}
+  .logo .mark{font-weight:800;font-size:25px;letter-spacing:-1px}
+  .logo .mark b{color:var(--deepBlue)} .logo .mark i{color:var(--deepGrey);font-style:normal}
+  .logo .slo{font-size:7.5px;letter-spacing:3px;color:var(--deepGrey);font-weight:600}
+  .nav-lbl{font-size:9.5px;letter-spacing:1px;color:var(--textMuted);font-weight:700;padding:14px 22px 8px}
+  .nav-i{display:flex;align-items:center;gap:11px;padding:10px 22px;font-size:13px;color:var(--textSec);cursor:pointer;font-weight:600}
+  .nav-i.act{background:var(--red);color:#fff}
+  .nav-i .dot{margin-left:auto;width:7px;height:7px;border-radius:50%;background:#fff;opacity:.9}
+  .side-foot{margin-top:auto;padding:14px 22px 0;border-top:1px solid var(--border);font-size:11px;color:var(--textSec);text-align:center;line-height:1.6}
+  .side-foot .on{color:var(--green);font-size:10px}
+
+  .main{flex:1;padding:26px 34px;min-width:0;max-width:1360px}
+  .tabs{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;margin-bottom:22px}
+  .tab{border:1px solid var(--border);background:#fff;border-radius:10px;padding:12px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--textSec);cursor:pointer}
+  .tab .ti{font-size:14px;display:block;margin-bottom:4px}
+  .tab.act{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(204,9,47,.28)}
+  .tab.dis{opacity:.5}
+
+  .sec{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}
+  .sec .bar{width:4px;height:18px;background:var(--red);border-radius:2px;align-self:center}
+  .sec h2{font-size:16px;font-weight:800}.sec .cap{font-size:12px;color:var(--textMuted)}
+  .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px 24px;box-shadow:var(--shadow);margin-bottom:26px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+  .kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow);position:relative;min-height:120px}
+  .kpi .ic{position:absolute;top:16px;right:18px;width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
+  .kpi .l{font-size:12.5px;color:var(--textSec);font-weight:600}
+  .kpi .v{font-size:28px;font-weight:800;margin-top:12px;line-height:1;color:var(--text)}
+  .kpi .v small{font-size:13px;font-weight:600;color:var(--textSec)}
+  .kpi .s{font-size:11.5px;margin-top:9px}.kpi .s.red{color:var(--red);font-weight:600}
+  .msbar{display:flex;height:22px;border-radius:6px;overflow:hidden;margin-top:12px}
+  .msbar>span{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+  .mslegend{display:flex;gap:14px;font-size:10.5px;color:var(--textSec);margin-top:7px;font-weight:600}
+  .mslegend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+
+  .histgrid{display:grid;grid-template-columns:232px minmax(0,1fr);gap:18px;align-items:start}
+  .col-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textSec);margin-bottom:0}
+  .spine-head{height:84px;display:flex;align-items:flex-end;padding-bottom:9px}
+  .dflag{margin-top:5px;display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:var(--amber);background:var(--amberLight);border:1px solid #F5D98A;border-radius:10px;padding:2px 7px}
+  .obox.divg{opacity:.72;border-left-style:dashed}
+  .illus{font-size:8.5px;color:var(--textMuted);font-weight:700;margin-top:4px;font-style:italic}
+  .ocard{background:#fff;border:1px solid var(--border);border-left:5px solid var(--red);border-radius:9px;padding:12px 14px;margin-bottom:9px;cursor:pointer;transition:.14s;position:relative}
+  .ocard:hover{box-shadow:var(--shadow);transform:translateX(2px)}
+  .ocard .chk{position:absolute;top:11px;right:12px;width:18px;height:18px;border-radius:50%;background:var(--sc);color:#fff;display:none;align-items:center;justify-content:center;font-size:10px;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .ocard.sel{box-shadow:0 0 0 2px var(--sc),0 7px 18px rgba(26,26,46,.14);transform:translateX(4px);border-left-width:6px;background:color-mix(in srgb, var(--sc) 13%, #fff)}
+  .ocard.sel .chk{display:flex}
+  .ocard.sel .onm{color:var(--sc)}
+  .ocard.dim{opacity:.4;filter:saturate(.55)}
+  .ocard.all{border-left-color:var(--navy)}
+  .ocard .otop{display:flex;align-items:baseline;gap:8px}
+  .ocard .opct{font-size:21px;font-weight:800;line-height:1}
+  .ocard .ocnt{font-size:11px;font-weight:700;color:var(--textMuted)}
+  .ocard .onm{font-size:12px;font-weight:800;margin-top:4px;line-height:1.25}
+  .ocard .odesc{font-size:10px;color:var(--textSec);line-height:1.4;margin-top:5px}
+
+  .flowhint{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--textMuted);margin-bottom:8px}
+  .scroller{overflow-x:auto;padding-bottom:6px}
+  .pcols{display:flex;gap:10px;min-width:min-content}
+  .pcol{width:196px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 10px;border-top:4px solid var(--navy)}
+  .pcol .ph{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+  .pcol .phn{font-size:9.5px;color:var(--textMuted);font-weight:700;margin-top:3px}
+  .pcol .lens{font-size:9.5px;color:var(--textMuted);font-style:italic;line-height:1.3;margin:6px 0 9px;height:28px;overflow:hidden}
+  .obox{background:#fff;border:1px solid var(--border);border-left:4px solid var(--textMuted);border-radius:7px;padding:8px 9px;margin-bottom:7px;cursor:pointer;transition:.1s}
+  .obox:hover{box-shadow:var(--shadow)}
+  .obox.sel{box-shadow:0 0 0 2px var(--navy)}
+  .obox.dim{opacity:.4}
+  .breadcrumb{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:11px;font-size:11px}
+  .bchip{background:#fff;border:1px solid var(--border);border-radius:16px;padding:4px 11px;font-weight:700;cursor:pointer}
+  .bchip.cause{background:var(--navy);color:#fff;border-color:var(--navy);cursor:default}
+  .bchip.step:hover{border-color:var(--red)}
+  .barrow{color:var(--textMuted)}
+  .breset{border:none;background:var(--redLight);color:var(--red);border-radius:16px;padding:5px 11px;font-weight:700;font-size:10.5px;cursor:pointer;margin-left:4px}
+  .bhint{color:var(--textMuted);font-style:italic}
+  .obox.fav{border-left-color:var(--green)} .obox.desf{border-left-color:var(--red)}
+  .obox.neut{border-left-color:var(--textMuted)} .obox.def{border-left-color:var(--magenta)}
+  .obox .obh{display:flex;align-items:center;gap:6px}
+  .obox .opc{font-size:15px;font-weight:800}
+  .obox.fav .opc{color:var(--green)} .obox.desf .opc{color:var(--red)} .obox.neut .opc{color:var(--textSec)} .obox.def .opc{color:var(--magenta)}
+  .obox .on{font-size:9px;color:var(--textMuted);font-weight:700}
+  .obox .badge{margin-left:auto;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:10px}
+  .badge.fav{background:var(--greenLight);color:var(--green)} .badge.desf{background:var(--redLight);color:var(--red)}
+  .badge.neut{background:var(--bg);color:var(--textSec);border:1px solid var(--border)} .badge.def{background:var(--purpleLight);color:var(--magenta)}
+  .obox .obn{font-size:10.5px;font-weight:700;margin-top:5px;line-height:1.25}
+  .obox .obd{font-size:9.5px;color:var(--textSec);line-height:1.4;margin-top:4px}
+  .nexoNote{font-size:9.5px;font-weight:700;color:var(--red);background:var(--redLight);border-radius:6px;padding:5px 8px;margin-top:2px}
+  .selo{display:inline-block;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;color:#2F6BC0;background:#E8F0FB;border:1px solid #CFE0F5;border-radius:10px;padding:2px 7px;margin-top:5px}
+  .b91Note{font-size:9.5px;font-weight:700;color:#2F6BC0;background:#E8F0FB;border:1px solid #CFE0F5;border-radius:6px;padding:5px 8px;margin-top:2px;line-height:1.4}
+  .b91Note b{color:#1B4E86}
+
+  .read{background:#fff;border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-top:16px;font-size:12.5px;line-height:1.55}
+  .read .rl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textMuted);display:block;margin-bottom:4px}
+  .jnote{font-size:10.5px;color:var(--textMuted);font-style:italic;margin-top:10px;line-height:1.5}
+  .anchor{background:#FFF8E1;border:1px solid #FBE7B0;border-radius:8px;padding:10px 14px;font-size:11px;color:#8a6d1a;margin-bottom:16px;line-height:1.55}
+  .anchor b{color:#6b5410}
+  .howto{background:#F8F9FC;border:1px solid var(--border);border-radius:12px;padding:0 20px;margin-bottom:20px}
+  .howto>summary{cursor:pointer;list-style:none;padding:14px 0;font-size:13.5px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:8px}
+  .howto>summary::-webkit-details-marker{display:none}
+  .howto>summary .chev{margin-left:auto;color:var(--textMuted);transition:.2s;font-size:12px}
+  .howto[open]>summary .chev{transform:rotate(180deg)}
+  .howto .body{padding:2px 0 18px;font-size:12.5px;line-height:1.65;color:var(--textSec);max-width:1000px}
+  .howto .body p{margin-bottom:11px}
+  .howto .body p:last-child{margin-bottom:0}
+  .howto .body b{color:var(--text)}
+  .howto .body .fav{color:var(--green);font-weight:700} .howto .body .desf{color:var(--red);font-weight:700}
+  .anchor2{background:#F8F9FC;border:1px solid var(--border);border-radius:10px;padding:11px 15px;font-size:12px;color:var(--textSec);margin-bottom:18px;line-height:1.6}
+  .anchor2 b{color:var(--text)} .anchor2 b.fav{color:var(--green)} .anchor2 b.desf{color:var(--red)}
+  .mockchip{display:inline-block;font-size:9.5px;font-weight:700;color:var(--textMuted);background:#fff;border:1px solid var(--border);border-radius:12px;padding:2px 9px;margin-left:6px}
+  .detbtn{margin-top:10px;border:none;background:transparent;padding:0;font-size:10.5px;font-weight:700;color:var(--deepBlue);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+  .detbtn:hover{text-decoration:underline}
+  .drawer-backdrop{position:fixed;inset:0;background:rgba(26,26,46,.35);opacity:0;pointer-events:none;transition:.2s;z-index:40}
+  .drawer-backdrop.open{opacity:1;pointer-events:auto}
+  .drawer{position:fixed;top:0;right:0;bottom:0;width:430px;max-width:92vw;background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);z-index:41;display:flex;flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{padding:20px 22px 16px;border-top:4px solid var(--navy);display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--border)}
+  .dh-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--textMuted)}
+  .dh-nm{font-size:16px;font-weight:800;margin-top:4px;line-height:1.2}
+  .dh-sub{font-size:11.5px;color:var(--textSec);margin-top:5px}
+  .dh-close{margin-left:auto;border:none;background:var(--bg);width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:14px;color:var(--textSec);flex-shrink:0}
+  .drawer-body{padding:16px 22px;overflow-y:auto;flex:1}
+  .subrow{border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:11px}
+  .subtop{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px;gap:10px}
+  .subn{font-size:12.5px;font-weight:700;line-height:1.25}
+  .subcnt{font-size:19px;font-weight:800;white-space:nowrap}
+  .subcnt small{font-size:10.5px;font-weight:600;color:var(--textMuted)}
+  .subbar{display:flex;height:20px;border-radius:5px;overflow:hidden;margin-bottom:8px}
+  .subbar>span{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff}
+  .subbar .g{background:var(--green)} .subbar .r{background:var(--red)}
+  .sublabels{display:flex;align-items:center;font-size:10.5px;font-weight:700}
+  .sublabels .lf{color:var(--green)} .sublabels .lr{color:var(--red);margin-left:12px}
+  .subtrilha{margin-left:auto;font-size:11px;font-weight:700;color:var(--deepBlue);cursor:pointer}
+  .subtrilha:hover{text-decoration:underline}
+  .drawer-foot{font-size:10.5px;color:var(--textMuted);font-style:italic;line-height:1.5;padding:2px}
+  .subvol{height:6px;background:var(--bg);border-radius:3px;overflow:hidden;margin-bottom:8px}
+  .subvol>i{display:block;height:100%;background:var(--deepBlue);opacity:.5}
+  .subpct{font-size:10.5px;font-weight:700;color:var(--textMuted)}
+  .gp-note{font-size:11.5px;color:#8a6d1a;background:#FFF8E1;border:1px solid #FBE7B0;border-radius:8px;padding:9px 13px;margin-bottom:14px;line-height:1.5}
+  .gp-note b{color:#6b5410}
+  .gp-toggle{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:14px}
+  .gp-toggle button{border:none;background:transparent;padding:8px 16px;border-radius:7px;font-size:12px;font-weight:700;color:var(--textSec);cursor:pointer}
+  .gp-toggle button.on{background:var(--navy);color:#fff}
+  .gp-tot{font-size:12px;color:var(--textSec);margin:0 0 16px}
+  .gp-tot b{color:var(--text)} .gp-tot .win{color:var(--green);font-weight:800} .gp-tot .lose{color:var(--red);font-weight:800}
+  .gpcols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .gpcol .gh{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;margin-bottom:3px}
+  .gpcol .gh .gi{width:22px;height:22px;border-radius:6px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+  .gpcol.win .gh{color:var(--green)} .gpcol.win .gi{background:var(--green)}
+  .gpcol.lose .gh{color:var(--red)} .gpcol.lose .gi{background:var(--red)}
+  .gpcol .gh .gtag{margin-left:auto;font-size:10px;font-weight:700;color:var(--textMuted);text-transform:uppercase}
+  .gpcol .gcap{font-size:10.5px;color:var(--textMuted);margin-bottom:14px}
+  .gfat{padding:11px 0;border-top:1px solid var(--border)}
+  .gfat:first-of-type{border-top:none}
+  .gfat-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+  .gfat-nm{font-size:12.5px;font-weight:700;flex:1;line-height:1.25}
+  .gfat-force{font-size:8.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:2px 7px;border-radius:10px;white-space:nowrap}
+  .win .gfat-force.alta{background:var(--greenLight);color:var(--green)} .lose .gfat-force.alta{background:var(--redLight);color:var(--red)}
+  .gfat-force.media{background:var(--amberLight);color:var(--amber)}
+  .gfat-force.baixa{background:var(--bg);color:var(--textMuted);border:1px solid var(--border)}
+  .gbars{margin-bottom:6px}
+  .gb{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+  .gb-l{font-size:9px;font-weight:800;color:var(--textMuted);width:26px;text-transform:uppercase}
+  .gb-tk{flex:1;height:13px;background:var(--bg);border-radius:4px;overflow:hidden}
+  .gb-tk>i{display:block;height:100%;border-radius:4px}
+  .win .gb-tk>i.s{background:var(--green)} .win .gb-tk>i.w{background:#A5D6A7}
+  .lose .gb-tk>i.s{background:var(--red)} .lose .gb-tk>i.w{background:#EF9A9A}
+  .gb-v{font-size:10.5px;font-weight:800;width:34px;text-align:right}
+  .win .gb .gb-v{color:var(--green)} .lose .gb .gb-v{color:var(--red)}
+  .gb:last-child .gb-v{color:var(--textMuted);font-weight:700}
+  .gfat-detail{font-size:10px;color:var(--textMuted);line-height:1.4;font-weight:600}
+  .evol-top{display:flex;align-items:center;gap:18px;margin-bottom:16px;flex-wrap:wrap}
+  .tlegend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-left:auto}
+  .tl{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--textSec);font-weight:600}
+  .tl i{width:12px;height:12px;border-radius:3px;display:inline-block}
+  .tl.hero{font-weight:800;color:var(--text)}
+  .filterbar{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 16px;margin-bottom:14px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .fb-lbl{font-size:11px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.4px}
+  .filterbar select{border:1px solid var(--border);border-radius:8px;padding:7px 11px;font-size:12px;color:var(--text);background:#fff;font-weight:600;cursor:pointer}
+  .fb-scope{margin-left:auto;font-size:10.5px;color:var(--textMuted);font-style:italic}
+  .subchip{display:flex;align-items:center;gap:8px;background:#EEF3FB;border:1px solid #CFE0F5;border-radius:8px;padding:9px 13px;font-size:12px;color:#1B4E86;margin-bottom:14px}
+  .subchip b{color:#123a63}
+  .subchip button{margin-left:auto;border:1px solid #CFE0F5;background:#fff;color:#1B4E86;border-radius:6px;width:22px;height:22px;cursor:pointer;font-weight:800;line-height:1}
+
+  .marco{display:inline-flex;background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:16px}
+  .marco button{border:none;background:transparent;padding:7px 14px;border-radius:7px;font-size:11.5px;font-weight:700;color:var(--textSec);cursor:pointer}
+  .marco button.on{background:var(--navy);color:#fff}
+  .wl{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .wlcol{border:1.5px solid;border-radius:12px;padding:16px 18px}
+  .wlcol.win{border-color:#BFE3C4;background:#FCFEFC} .wlcol.lose{border-color:#F3C7CF;background:#FFFCFC}
+  .wlcol .ch{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+  .wlcol .ci{width:24px;height:24px;border-radius:7px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+  .wlcol.win .ci{background:var(--green)} .wlcol.lose .ci{background:var(--red)}
+  .wlcol .ct{font-size:13.5px;font-weight:800}.wlcol.win .ct{color:var(--green)}.wlcol.lose .ct{color:var(--red)}
+  .wlcol .cnt{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-left:auto}
+  .wlcol.win .cnt{background:var(--greenLight);color:var(--green)} .wlcol.lose .cnt{background:var(--redLight);color:var(--red)}
+  .factor{margin-bottom:13px}.factor:last-child{margin-bottom:0}
+  .factor .ft{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+  .factor .fn{font-size:12.5px;font-weight:700}.factor .fp{font-size:11px;font-weight:800}
+  .wlcol.win .fp{color:var(--green)}.wlcol.lose .fp{color:var(--red)}
+  .factor .fd{font-size:10.5px;color:var(--textMuted);line-height:1.4;margin-bottom:5px}
+  .factor .bar{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}.factor .bar>i{display:block;height:100%}
+
+  .tlegend{display:flex;gap:16px;font-size:11px;margin-bottom:6px;align-items:center;flex-wrap:wrap}
+  .tlegend .tl{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--textSec)}
+  .tlegend .tl i{width:16px;height:3px;border-radius:2px;display:inline-block}
+  .tlegend .tl.voli i{width:11px;height:11px;border-radius:2px;background:#E2E4EA}
+  .foot{font-size:10px;color:var(--textMuted);font-style:italic;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo"><div class="mark"><b>d</b><i>EE</i><b>p</b></div><div class="slo">TURN-ON DATA</div></div>
+    <div class="nav-lbl">VISÃO GERAL</div>
+    <div class="nav-i act">⬛ Reintegrados <span class="dot"></span></div>
+    <div class="nav-i">💬 Chat</div><div class="nav-i">⚙️ Configurações</div><div class="nav-i">📈 Uso do painel</div>
+    <div class="side-foot"><span class="on">● Sistema Online</span><br>Processos Trabalhistas<br>Desiree Nogueira Gonçalves Manoel</div>
+  </aside>
+
+  <main class="main">
+    <div class="tabs">
+      <div class="tab"><span class="ti">▽</span>Assessment</div>
+      <div class="tab act"><span class="ti">🔍</span>Insights Estratégicos</div>
+      <div class="tab"><span class="ti">🗂️</span>Processos</div>
+      <div class="tab"><span class="ti">🩺</span>Inteligência Pericial</div>
+      <div class="tab"><span class="ti">👤</span>Perfil Advocatício</div>
+      <div class="tab dis"><span class="ti">🛡️</span>Performance Passiva</div>
+    </div>
+
+    <div class="filterbar">
+      <span class="fb-lbl">🔎 Filtros globais</span>
+      <select id="fEstado" onchange="setEstado(this.value)">
+        <option value="Todos">Todos os estados</option>
+        <option value="SP">São Paulo (SP)</option>
+        <option value="RJ">Rio de Janeiro (RJ)</option>
+        <option value="MG">Minas Gerais (MG)</option>
+        <option value="RS">Rio Grande do Sul (RS)</option>
+        <option value="Outros">Outros estados</option>
+      </select>
+      <select><option>Trânsito em julgado: todos</option><option>Sim</option><option>Não</option></select>
+      <select><option>Período: 2024–2026</option></select>
+      <span class="fb-scope">aplicam-se a toda a visão →</span>
+    </div>
+    <div class="kpis" id="kpis"></div>
+
+    <div class="sec"><span class="bar"></span><h2>Trilha da causa raiz por fase</h2><span class="cap">clique na alegação — só os resultados cabíveis naquela causa aparecem</span></div>
+    <div class="card">
+      <div class="anchor2">📌 <b>Como ler:</b> cada coluna é uma fase (da contestação ao TST) e cada caixa, um resultado — <b class="fav">favorável</b> ou <b class="desf">desfavorável</b> ao banco a partir da liminar. Selecione uma alegação e clique nos resultados para seguir a trilha: as fases à frente mostram só o que aconteceu com aquele grupo. O resumo abaixo conta a história do caminho. <span class="mockchip">dados ilustrativos</span></div>
+      <div id="subchip"></div>
+      <div class="breadcrumb" id="crumb"></div>
+      <div class="flowhint" id="flowhint"></div>
+      <div class="histgrid">
+        <div>
+          <div class="spine-head"><div class="col-lbl">Petição inicial · alegação</div></div>
+          <div id="spine"></div>
+        </div>
+        <div>
+          <div class="scroller"><div class="pcols" id="pcols"></div></div>
+          <div class="read" id="read"></div>
+          <div class="jnote" id="jnote"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec"><span class="bar"></span><h2>Por que ganha e por que perde</h2><span class="cap">o que a fundamentação considera, por marco</span></div>
+    <div class="card">
+      <div class="gp-note">📌 <b>Como ler:</b> os fundamentos que <b>mais mudam o resultado</b>. Cada fundamento traz duas barras: a taxa de vitória do banco <b>com</b> ele (tom cheio) e <b>sem</b> ele (tom claro) — quanto maior a diferença, mais decisivo. <b>"Após a liminar"</b> usa o resultado que prevalece. Segue a causa selecionada na trilha acima.</div>
+      <div class="gp-toggle" id="gpToggle"></div>
+      <div class="gp-tot" id="gpTot"></div>
+      <div class="gpcols" id="gpCols"></div>
+    </div>
+
+    <div class="sec"><span class="bar"></span><h2>Evolução da doença alegada</h2><span class="cap">volume distribuído × doença alegada, mês a mês</span></div>
+    <div class="card">
+      <div class="evol-top">
+        <div class="gp-toggle" id="evolToggle"></div>
+        <div class="tlegend" id="evolLegend"></div>
+      </div>
+      <svg id="evolChart" viewBox="0 0 1000 340" style="width:100%;height:auto" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="foot" id="evolFoot"></div>
+    </div>
+  </main>
+</div>
+
+<div class="drawer-backdrop" id="backdrop" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div><div class="dh-lbl">Desdobramentos da alegação</div><div class="dh-nm" id="dhNm"></div><div class="dh-sub" id="dhSub"></div></div>
+    <button class="dh-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<script>
+const C={red:'#CC092F',magenta:'#C2185B',purple:'#7B2D8E',navy:'#1a1a2e',blue:'#1565C0',green:'#2E7D32',amber:'#F57F17',grey:'#9AA0A6'};
+const PHASES=[
+  {id:'cont',label:'Contestação',color:C.magenta,lens:'A contra-narrativa da defesa do banco'},
+  {id:'lim',label:'Liminar',color:C.amber,lens:'O que o juízo pondera na tutela de urgência'},
+  {id:'laudo',label:'Laudo',color:C.purple,lens:'O que o perito conclui sobre doença × trabalho'},
+  {id:'sent',label:'Sentença',color:C.navy,lens:'O que o juízo reconhece no mérito'},
+  {id:'acor',label:'Acórdão (TRT)',color:C.blue,lens:'Como a instância recursal mantém ou reforma'},
+  {id:'tst',label:'TST',color:C.grey,lens:'Última instância: mantém ou reforma'}
+];
+/* catálogo de resultados por fase (keyed) — [nome, lado, descrição] */
+const OUT={
+  cont:{
+    qdp:['Quadro Degenerativo / Preexistente','def','Defesa sustenta doença degenerativa ou anterior ao vínculo, sem nexo com o trabalho.'],
+    cat:['Ausência de CAT / B91','def','Inexistência de Comunicação de Acidente ou de benefício acidentário (B91).'],
+    comum:['Doença Comum (não ocupacional)','def','Defesa caracteriza o quadro como doença comum, sem relação com o trabalho.'],
+    metas:['Metas Dentro da Política / Praxe','def','Defesa nega o assédio: metas seguem a política interna e a praxe do setor.'],
+    provAssedio:['Ausência de Prova do Assédio','def','Defesa sustenta que não há prova robusta do assédio alegado.']
+  },
+  lim:{
+    semLim:['Sem pedido de liminar','neut','O processo seguiu direto ao mérito, sem tutela de urgência — não houve decisão liminar.'],
+    indef:['Ausência de Prova Inequívoca → Indeferida','fav','Juízo nega a tutela por falta de prova robusta do nexo na cognição sumária.'],
+    veross:['Verossimilhança do Adoecimento → Deferida','desf','Juízo reconhece a probabilidade do direito e concede a reintegração imediata.'],
+    estab:['Estabilidade Acidentária Presumida → Deferida','desf','Concessão com base em B91 / CAT que presume a estabilidade.','Nexo presumido · B91']
+  },
+  laudo:{
+    semPericia:['Sem perícia','neut','O processo foi julgado sem prova pericial — questão documental, acordo ou desnecessidade da perícia.'],
+    naoRec:['Nexo Não Reconhecido','fav','Perito afasta o nexo: quadro degenerativo, preexistente ou psíquico não ocupacional.'],
+    inconc:['Inconclusivo','neut','Laudo sem conclusão definitiva sobre a origem do quadro.'],
+    concausa:['Nexo Concausal','desf','Trabalho como fator contributivo — juridicamente já caracteriza o nexo.'],
+    causal:['Nexo Causal Reconhecido','desf','Perito reconhece relação direta entre a doença e a atividade laboral.']
+  },
+  sent:{
+    improc:['Ausência de Nexo → Improcedente','fav','Juízo afasta o nexo alegado; julga improcedente o pedido.'],
+    reint:['Nexo Reconhecido → Reintegração','desf','Juízo reconhece o nexo e a estabilidade; defere a reintegração.'],
+    indeniz:['Conversão em Indenização (Súm. 396)','desf','Reconhecimento com conversão da reintegração em indenização.'],
+    semMerito:['Sem Sentença de Mérito','neut','Acordo, extinção sem mérito ou aguardando julgamento.']
+  },
+  acor:{
+    semRecurso:['Sem recurso · transitou em julgado','neut','O processo não foi ao TRT — a sentença transitou em julgado.'],
+    mantemImproc:['TRT Mantém a Improcedência','fav','Instância recursal confirma a improcedência de primeiro grau.'],
+    reformaAfasta:['Reforma: Afasta Nexo antes reconhecido','fav','TRT afasta nexo que havia sido reconhecido na sentença.'],
+    mantemProc:['TRT Mantém a Procedência','desf','Instância recursal confirma a reintegração deferida na origem.'],
+    reformaRec:['Reforma: Reconhece Nexo antes negado','desf','TRT reconhece nexo que havia sido afastado na sentença.']
+  },
+  tst:{
+    semTST:['Sem recurso ao TST · transitou em julgado','neut','O processo encerrou no TRT — não houve recurso à última instância.'],
+    naoProv:['Não Provido — mantém a decisão','fav','Súmula 126 impede reexame de fatos e provas; mantida a decisão.'],
+    prov:['Provido — reforma','desf','Reforma pontual reconhecendo nulidade da dispensa.']
+  }
+};
+/* por causa: só os resultados cabíveis (keyed, somam ~100% na fase). nexoRec = % de nexo reconhecido no laudo p/ nota. */
+const CAUSES={
+  all:{nm:'Todas as causas',color:C.navy,all:true,
+    read:'Repertório completo das teses e desfechos. Considerando a concausa como nexo, o laudo reconhece vínculo em ~53% — o principal ponto de risco técnico.',
+    note:'Ao selecionar uma causa, os resultados não cabíveis nela desaparecem. Dentro de cada fase os resultados somam ~100%; entre fases não somam.',
+    n:{cont:450,lim:160,laudo:165,sent:147,acor:137,tst:58}, nexoRec:53,
+    dist:{cont:{qdp:30,cat:22,comum:18,metas:18,provAssedio:12},lim:{semLim:40,indef:25,veross:23,estab:12},laudo:{semPericia:21,naoRec:30,inconc:7,concausa:19,causal:23},sent:{improc:50,reint:33,indeniz:10,semMerito:7},acor:{semRecurso:58,mantemImproc:17,reformaAfasta:5,mantemProc:14,reformaRec:6},tst:{semTST:66,naoProv:19,prov:15}}},
+
+  esf:{nm:'Esforço Repetitivo / Ergonomia',color:C.red,pct:'52,5%',qtd:271,desc:'LER/DORT por movimentos repetitivos, digitação, mobiliário inadequado.',
+    read:'<b>LER/DORT é a trilha mais perigosa:</b> o laudo reconhece nexo em <b>72%</b> (causal + concausa) e a sentença acompanha a perícia — o banco perde no mérito em <b>67%</b>. A defesa aqui é técnica (degenerativo, ausência de CAT), nunca "metas".',
+    note:'Doença osteomuscular: a perícia é praticamente decisiva, por isso sentença e acórdão seguem o laudo.',
+    n:{cont:260,lim:95,laudo:93,sent:78,acor:74,tst:30}, nexoRec:72,
+    dist:{cont:{qdp:45,cat:30,comum:25},lim:{semLim:45,indef:30,veross:16,estab:9},laudo:{semPericia:12,causal:40,concausa:23,naoRec:21,inconc:4},sent:{reint:55,improc:30,indeniz:12,semMerito:3},acor:{semRecurso:59,mantemProc:21,reformaAfasta:5,mantemImproc:9,reformaRec:6},tst:{semTST:67,naoProv:19,prov:14}}},
+
+  ass:{nm:'Assédio Moral / Pressão por Metas',color:C.magenta,pct:'43,1%',qtd:222,desc:'Adoecimento psíquico por cobrança abusiva de metas, humilhações e pressão.',
+    read:'O banco <b>vence liminar e laudo, mas perde no mérito</b> (65%): a prova testemunhal de ambiente hostil reverte o quadro na sentença, mesmo com o laudo psíquico afastando o nexo em 47%. Defesa específica: "metas dentro da política" e "ausência de prova do assédio".',
+    note:'Doença psíquica: aqui a sentença pode divergir do laudo — a prova testemunhal pesa mais que a perícia.',
+    n:{cont:210,lim:88,laudo:71,sent:70,acor:67,tst:26}, nexoRec:43,
+    dist:{cont:{metas:40,provAssedio:35,comum:25},lim:{semLim:50,indef:33,veross:17},laudo:{semPericia:15,naoRec:40,inconc:8,causal:20,concausa:17},sent:{reint:50,improc:31,indeniz:15,semMerito:4},acor:{semRecurso:61,mantemProc:16,reformaRec:7,mantemImproc:12,reformaAfasta:4},tst:{semTST:65,naoProv:20,prov:15}}},
+
+  def:{nm:'Deficiência / Condição Preexistente',color:C.navy,pct:'1,5%',qtd:8,desc:'Doença ou deficiência preexistente ou sem nexo com as atividades.',
+    read:'<b>Trilha favorável do início ao fim:</b> a preexistência afasta o nexo e sustenta a improcedência em todas as instâncias.',
+    note:'Sem CAT nem tese de assédio: a defesa é a preexistência, e o laudo tende a afastar o nexo.',
+    n:{cont:8,lim:13,laudo:11,sent:9,acor:8,tst:3}, nexoRec:10,
+    dist:{cont:{qdp:70,comum:30},lim:{semLim:55,indef:37,veross:8},laudo:{semPericia:30,naoRec:55,inconc:8,concausa:7},sent:{improc:80,reint:15,semMerito:5},acor:{semRecurso:63,mantemImproc:26,reformaRec:7,reformaAfasta:4},tst:{semTST:67,naoProv:26,prov:7}}},
+
+  evt:{nm:'Adoecimento por Evento Crítico',color:C.amber,pct:'1,1%',qtd:6,desc:'Adoecimento por evento crítico de segurança: assalto, sequestro, agressão.',
+    read:'O <b>evento traumático documentado</b> esquenta a trilha a partir do laudo (nexo em ~65%) e leva à perda no mérito (~58%). Defesa: doença comum / ausência de CAT.',
+    note:'Trauma documentado sustenta o nexo — sem tese de degenerativo nem de metas.',
+    n:{cont:10,lim:8,laudo:8,sent:7,acor:7,tst:2}, nexoRec:65,
+    dist:{cont:{cat:55,comum:45},lim:{semLim:35,indef:26,veross:29,estab:10},laudo:{semPericia:20,causal:36,concausa:16,naoRec:20,inconc:8},sent:{reint:50,improc:40,indeniz:8,semMerito:2},acor:{semRecurso:71,mantemProc:13,reformaRec:4,mantemImproc:9,reformaAfasta:3},tst:{semTST:50,naoProv:20,prov:30}}}
+};
+const ORDER=['all','esf','ass','def','evt'];
+let sel='all';
+let path=[]; // trilha condicional: [{phase,key}]
+let globalState='Todos'; let subFilter=null;
+const ESTADOS={Todos:{scale:1,lean:0},SP:{scale:.34,lean:0},RJ:{scale:.22,lean:.15},MG:{scale:.12,lean:-.05},RS:{scale:.09,lean:.05},Outros:{scale:.23,lean:0}};
+/* inclinação de cada resultado sobre as fases seguintes (favorável<0 · desfavorável>0) */
+const LEAN={qdp:-0.5,cat:-0.3,comum:-0.4,metas:0.1,provAssedio:-0.2, indef:-0.3,veross:0.3,estab:0.5, naoRec:-0.8,inconc:0.05,concausa:0.7,causal:0.9, improc:-0.9,reint:0.9,indeniz:0.5,semMerito:0, mantemImproc:-0.7,reformaAfasta:-0.6,mantemProc:0.7,reformaRec:0.7, naoProv:-0.5,prov:0.6};
+const phaseIdx=id=>PHASES.findIndex(p=>p.id===id);
+const sideSign=s=>s==='fav'?-1:(s==='desf'?1:0);
+function condDist(base,phaseId,lean){
+  if(!lean) return {...base};
+  const K=0.7,out={};let tot=0;
+  for(const key of Object.keys(base)){let v=base[key]*(1+K*lean*sideSign(OUT[phaseId][key][1]));if(v<0)v=0;out[key]=v;tot+=v;}
+  for(const key of Object.keys(out)) out[key]=Math.round(out[key]/tot*100);
+  return out;
+}
+function selectBox(phaseId,key){
+  const idx=phaseIdx(phaseId), existing=path.find(s=>s.phase===phaseId);
+  path=path.filter(s=>phaseIdx(s.phase)<idx);
+  if(!(existing&&existing.key===key)) path.push({phase:phaseId,key});
+  renderCols();
+}
+function truncateTo(i){ path=path.slice(0,i); renderCols(); }
+function clearPath(){ path=[]; renderCols(); }
+
+/* desdobramentos da alegação (contagem + % desfavorável ao banco) */
+const SUBS={
+  esf:[{nm:'Mobiliário / ergonomia inadequada',n:129,desf:58},{nm:'Equipamentos / ferramentas inadequados',n:71,desf:52},{nm:'Posto incompatível com restrição',n:42,desf:61},{nm:'Ausência de ginástica laboral',n:29,desf:47}],
+  ass:[{nm:'Metas abusivas / inatingíveis',n:86,desf:71},{nm:'Exposição de ranking e resultados',n:58,desf:66},{nm:'Humilhações públicas',n:39,desf:74},{nm:'Ameaças (demissão / transferência)',n:39,desf:68}],
+  def:[{nm:'Doença preexistente ao vínculo',n:5,desf:20},{nm:'Sem nexo com a atividade laboral',n:3,desf:15}],
+  evt:[{nm:'Assalto / roubo na agência',n:3,desf:62},{nm:'Sequestro relâmpago',n:2,desf:58},{nm:'Agressão física / ameaça grave',n:1,desf:55}]
+};
+function openDrawer(k){
+  const c=CAUSES[k], subs=SUBS[k]; if(!subs) return;
+  const gs=ESTADOS[globalState].scale;
+  document.querySelector('.drawer-head').style.borderTopColor=c.color;
+  document.getElementById('dhNm').textContent=c.nm;
+  document.getElementById('dhSub').textContent=`${Math.round(c.qtd*gs)} processos · ${subs.length} desdobramentos${globalState!=='Todos'?' · '+globalState:''}`;
+  const maxn=Math.max(...subs.map(s=>s.n));
+  const rows=subs.map((s,oi)=>({...s,oi})).sort((a,b)=>b.n-a.n).map(s=>{const cnt=Math.round(s.n*gs),share=Math.round(s.n/c.qtd*100),w=Math.round(s.n/maxn*100);return `<div class="subrow">
+    <div class="subtop"><span class="subn">${s.nm}</span><span class="subcnt">${cnt}<small> proc.</small></span></div>
+    <div class="subvol"><i style="width:${w}%"></i></div>
+    <div class="sublabels"><span class="subpct">${share}% da causa</span><a class="subtrilha" onclick="verNaTrilha('${k}',${s.oi})">ver na trilha ▸</a></div>
+  </div>`;}).join('');
+  document.getElementById('drawerBody').innerHTML=`<div class="drawer-foot" style="margin-bottom:8px">Volume de cada desdobramento da alegação. Para ver <b>o que aconteceu</b> com um grupo, use "ver na trilha" — a jornada mostra o desfecho por fase.</div>${rows}<div class="drawer-foot" style="margin-top:6px">Contagens ilustrativas · vêm da base.</div>`;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+}
+function closeDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('backdrop').classList.remove('open'); }
+function verNaTrilha(k,idx){ sel=k; path=[]; subFilter={cause:k,idx:idx}; closeDrawer(); renderSpine(); renderCols(); }
+function setEstado(v){ globalState=v; renderKPIs(); renderSpine(); renderCols(); renderGanhaPerde(); renderEvolucao(); }
+function clearSub(){ subFilter=null; renderCols(); }
+
+function renderSpine(){
+  const dimOthers = sel!=='all'; const gs=ESTADOS[globalState].scale;
+  document.getElementById('spine').innerHTML=ORDER.map(k=>{
+    const c=CAUSES[k]; const isSel=sel===k; const dim=(dimOthers&&!isSel)?' dim':'';
+    if(c.all) return `<div class="ocard all ${isSel?'sel':''}${dim}" style="--sc:${C.navy}" onclick="pick('${k}')"><span class="chk">✓</span><div class="opct">${Math.round(516*gs)}</div><div class="onm">Todas as causas</div><div class="odesc">Repertório completo dos 516 processos.</div></div>`;
+    return `<div class="ocard ${isSel?'sel':''}${dim}" style="border-left-color:${c.color};--sc:${c.color}" onclick="pick('${k}')"><span class="chk">✓</span><div class="otop"><span class="opct" style="color:${c.color}">${c.pct}</span><span class="ocnt">${Math.round(c.qtd*gs)} proc.</span></div><div class="onm">${c.nm}</div><div class="odesc">${c.desc}</div>${(SUBS[k]&&SUBS[k].length)?`<button class="detbtn" onclick="event.stopPropagation();openDrawer('${k}')">▸ ${SUBS[k].length} desdobramentos</button>`:''}</div>`;
+  }).join('');
+}
+function pick(k){ sel=k; path=[]; subFilter=null; renderSpine(); renderCols(); renderGanhaPerde(); }
+const sideBadge={fav:'favorável',desf:'desfavorável',neut:'atenção',def:'defesa'};
+/* Visibilidade guiada pelo dado: a caixa aparece se houve caso (contagem > 0). Sem regra de cabimento. */
+/* frases para a leitura narrativa */
+const PHRASE={
+  cont:{qdp:'argumenta quadro degenerativo ou preexistente',cat:'alega ausência de CAT / benefício acidentário',comum:'sustenta tratar-se de doença comum, não ocupacional',metas:'defende que as metas seguem a política interna',provAssedio:'nega, por falta de prova, o assédio alegado'},
+  lim:{semLim:'não houve pedido de tutela de urgência',indef:'indefere a liminar por ausência de prova inequívoca',veross:'defere a reintegração liminar pela verossimilhança do adoecimento',estab:'defere a liminar pela estabilidade acidentária presumida (B91)'},
+  laudo:{semPericia:'não houve perícia',naoRec:'não reconhece o nexo com o trabalho',inconc:'não chega a conclusão definitiva',concausa:'reconhece o nexo concausal',causal:'reconhece o nexo causal direto'},
+  sent:{improc:'julga improcedente por ausência de nexo',reint:'reconhece o nexo e defere a reintegração',indeniz:'reconhece o nexo e converte em indenização',semMerito:'não chega a decisão de mérito'},
+  acor:{semRecurso:'não houve recurso ao TRT (transitou em julgado)',mantemImproc:'mantém a improcedência',reformaAfasta:'reforma para afastar o nexo',mantemProc:'mantém a procedência',reformaRec:'reforma para reconhecer o nexo'},
+  tst:{semTST:'não houve recurso ao TST',naoProv:'nega provimento, mantendo a decisão',prov:'dá provimento, reformando a decisão'}
+};
+function renderCols(){
+  // texto da sentença muda conforme o laudo que veio antes
+  function sentContext(key,lk){
+    const nexoPos=(lk==='causal'||lk==='concausa');
+    if(key==='reint'){
+      if(lk==='semPericia') return {nm:'Reintegração — sem perícia',desc:'Defere a reintegração sem prova pericial, com base em documentos, prova testemunhal ou presunção.'};
+      if(lk==='inconc') return {nm:'Reintegração — laudo inconclusivo',desc:'Defere a reintegração mesmo sem conclusão pericial, apoiado em outras provas, no ônus da prova ou na presunção B91.'};
+      if(lk==='naoRec') return {nm:'Reintegração — contra o laudo',desc:'Defere a reintegração divergindo do laudo negativo, com base em prova testemunhal.'};
+      return null;
+    }
+    if(key==='indeniz' && !nexoPos && lk) return {nm:'Conversão em Indenização',desc:'Reconhecimento parcial convertido em indenização, sem apoio direto na perícia.'};
+    if(key==='improc' && nexoPos) return {nm:'Improcedente — contra o laudo',desc:'Julga improcedente apesar de o laudo reconhecer o nexo — juízo diverge da perícia.'};
+    return null;
+  }
+  const c=CAUSES[sel];
+  let cr=`<span class="bchip cause">${c.nm}</span>`;
+  path.forEach((s,i)=>{cr+=`<span class="barrow">›</span><span class="bchip step" onclick="truncateTo(${i+1})">${OUT[s.phase][s.key][0]}</span>`;});
+  cr+= path.length ? `<button class="breset" onclick="clearPath()">limpar trilha ✕</button>` : `<span class="bhint">clique numa caixinha para seguir a combinação →</span>`;
+  document.getElementById('crumb').innerHTML=cr;
+  document.getElementById('flowhint').innerHTML=`Contestação → Liminar → Laudo → Sentença → Acórdão → TST &nbsp;·&nbsp; role para o lado →`;
+
+  const gs=ESTADOS[globalState].scale, gl=ESTADOS[globalState].lean;
+  let subScale=1, subLean=0, subName=null, subN=null;
+  if(subFilter && subFilter.cause===sel && SUBS[sel] && SUBS[sel][subFilter.idx]){ const sm=SUBS[sel][subFilter.idx]; subName=sm.nm; subScale=sm.n/CAUSES[sel].qtd; subLean=(sm.desf-50)/100*0.7; subN=Math.round(sm.n*gs); }
+  document.getElementById('subchip').innerHTML = subName ? `<div class="subchip">🔍 Recorte por desdobramento: <b>${CAUSES[sel].nm} › ${subName}</b> — ${subN} processos <button onclick="clearSub()" title="remover recorte">✕</button></div>` : '';
+  const COMP={}; let frac=1, lean=gl+subLean;
+  const firstSelIdx = path.length? Math.min(...path.map(s=>phaseIdx(s.phase))):Infinity;
+  document.getElementById('pcols').innerHTML=PHASES.map((p,pi)=>{
+    const baseDist=c.dist[p.id], baseN=c.n[p.id];
+    const nn=Math.round(baseN*gs*subScale*frac);
+    const dist=condDist(baseDist,p.id,lean);
+    const selKey=(path.find(s=>s.phase===p.id)||{}).key;
+    const isPoss=pi>firstSelIdx;
+    const laudoKey=(path.find(s=>s.phase==='laudo')||{}).key;
+    let items=Object.keys(dist).map(key=>{
+      const o=OUT[p.id][key]; let nm=o[0], desc=o[2];
+      if(p.id==='sent' && laudoKey){ const ov=sentContext(key,laudoKey); if(ov){nm=ov.nm; desc=ov.desc;} }
+      return {key,nm,side:o[1],desc,selo:o[3],pct:dist[key]};
+    });
+    const tot=items.reduce((a,b)=>a+b.pct,0)||1;
+    items.forEach(it=>{ it.pct=Math.round(it.pct/tot*100); it.cnt=Math.round(nn*it.pct/100); });
+    if(isPoss) items=items.filter(it=>it.cnt>0);   // só aparece o que teve caso na base
+    items.sort((a,b)=>b.pct-a.pct);
+    const unit = p.id==='cont'?'contestações':(p.id==='sent'?'decisões':'processos');
+    const boxes=items.map(it=>{
+      const isSel=it.key===selKey, dimmed=selKey&&!isSel;
+      const cls=it.side+(isSel?' sel':'')+(dimmed?' dim':'');
+      return `<div class="obox ${cls}" onclick="selectBox('${p.id}','${it.key}')">
+        <div class="obh"><span class="opc">${it.pct}%</span><span class="on">${it.cnt}</span><span class="badge ${it.side}">${sideBadge[it.side]}</span></div>
+        <div class="obn">${it.nm}</div>${it.selo?`<div class="selo">🛡 ${it.selo}</div>`:''}<div class="obd">${it.desc}</div></div>`;
+    }).join('');
+    const comP=100-(dist.semPericia||0); const nexoLocal=comP?Math.round(((dist.causal||0)+(dist.concausa||0))/comP*100):0; const nexoNote = p.id==='laudo' ? `<div class="nexoNote">Nexo reconhecido entre os periciados: ${nexoLocal}%</div>` : '';
+    const illus = isPoss ? `<div class="illus">contagem ilustrativa · vem da base</div>` : '';
+    const selItem=items.find(x=>x.key===selKey);
+    COMP[p.id]={selPct:selItem?selItem.pct:null,selCnt:selItem?selItem.cnt:null};
+    const col=`<div class="pcol" style="border-top-color:${p.color}">
+      <div class="ph">${p.label}</div><div class="phn">${nn} ${unit}</div>
+      <div class="lens">${p.lens}</div>${boxes}${nexoNote}${illus}</div>`;
+    if(selItem){ lean=Math.max(-1,Math.min(1,lean+(LEAN[selKey]||0))); frac=frac*(selItem.pct/100); }
+    return col;
+  }).join('');
+
+  // leitura narrativa
+  const estN={SP:'São Paulo (SP)',RJ:'Rio de Janeiro (RJ)',MG:'Minas Gerais (MG)',RS:'Rio Grande do Sul (RS)',Outros:'demais estados'};
+  const estTxt = globalState!=='Todos' ? ` · ${estN[globalState]}` : '';
+  const nomeC = c.all?'todas as causas':c.nm;
+  const scopedCount = c.all?Math.round(516*gs):Math.round(c.qtd*gs);
+  const opening = subName
+      ? `Das alegações de <b>${nomeC}</b>, no desdobramento <b>${subName}</b> (${subN} processos${estTxt})`
+      : `Das alegações de <b>${nomeC}</b> (${scopedCount} processos${estTxt})`;
+  let read;
+  const hasScope = (globalState!=='Todos') || !!subName;
+  if(path.length){
+    read = buildNarrative(path, COMP, opening);
+  } else if(!hasScope || c.all){
+    read = c.read;
+  } else {
+    read = buildGroupSummary(opening, ph=>condDist(c.dist[ph], gl+subLean));
+  }
+  document.getElementById('read').innerHTML=`<span class="rl">🔎 Leitura da trilha · ${c.nm}</span>${read}`;
+  document.getElementById('jnote').textContent=c.note;
+}
+
+/* Por que ganha/perde — por impacto (com x sem). fator: [nome, com%, sem%, freq%, n] */
+const FATORES={
+  all:{lim:{tot:172,win:100,lose:72,ganhar:[['Ausência de prova inequívoca do nexo',88,35,42,72],['Alta médica vigente na dispensa',79,44,31,53],['Documentação ocupacional consistente',73,42,26,45],['Ausência de CAT / benefício acidentário',66,47,38,66]],perder:[['Benefício acidentário ativo (B91)',84,22,29,50],['Dispensa em momento sensível',77,31,24,41],['Verossimilhança do adoecimento (atestado robusto)',71,33,27,46],['Falta de contraprova documental do banco',63,38,20,34]]},
+    apos:{tot:147,win:75,lose:72,ganhar:[['Laudo afasta o nexo',82,24,33,49],['Perícia atribui a fatores extralaborais',74,41,18,26],['Exames × histórico × dispensa coerentes',71,38,28,41],['Ausência de prova testemunhal do adoecimento',68,40,22,32]],perder:[['Laudo reconhece nexo ou concausa',79,26,41,60],['Prova testemunhal de ambiente hostil',76,30,24,35],['Falha no acompanhamento pós-adoecimento',72,34,19,28],['Nexo presumido (B91) não afastado',69,37,21,31]]}},
+  esf:{lim:{tot:92,win:52,lose:40,ganhar:[['Ausência de prova da limitação funcional',85,38,44,40],['Documentação ergonômica / laudo do trabalho',74,43,29,27],['Alta médica vigente',70,45,25,23]],perder:[['Benefício acidentário ativo (B91)',82,26,22,20],['Quadro ortopédico incapacitante evidente',80,29,33,30],['Ausência de contraprova documental',64,39,19,17]]},
+    apos:{tot:78,win:35,lose:43,ganhar:[['Laudo aponta quadro degenerativo/preexistente',84,25,31,24],['Ausência de incapacidade atual',72,40,24,19]],perder:[['Laudo reconhece nexo (LER/DORT)',86,23,52,41],['Concausa: trabalho agrava o quadro',74,33,26,20],['NTEP / presunção não afastada',68,38,20,16]]}},
+  ass:{lim:{tot:76,win:48,lose:28,ganhar:[['Ausência de prova inequívoca do assédio',86,34,51,39],['Metas dentro da política interna',72,45,33,25]],perder:[['Verossimilhança do quadro psíquico',75,32,29,22],['Afastamento previdenciário ativo',70,35,20,15]]},
+    apos:{tot:70,win:22,lose:48,ganhar:[['Laudo psíquico atribui a fatores extralaborais',78,36,34,24],['Ausência de prova testemunhal',75,38,26,18]],perder:[['Prova testemunhal de ambiente hostil',83,27,47,33],['Reconhecimento do nexo psíquico no laudo',72,35,28,20],['Cobrança abusiva documentada',68,39,21,15]]}},
+  def:{lim:{tot:10,win:8,lose:2,ganhar:[['Preexistência documentada',82,40,60,6],['Ausência de nexo com a atividade',70,44,35,4]],perder:[['Agravamento pelo trabalho alegado',66,42,20,2]]},
+    apos:{tot:9,win:7,lose:2,ganhar:[['Laudo confirma preexistência',85,30,66,6],['Ausência de incapacidade',70,42,30,3]],perder:[['Concausa reconhecida no laudo',64,40,22,2]]}},
+  evt:{lim:{tot:7,win:3,lose:4,ganhar:[['Alta médica vigente',68,44,30,2]],perder:[['Evento crítico documentado (B.O./CAT)',80,30,45,3],['Afastamento recente',70,38,25,2]]},
+    apos:{tot:7,win:3,lose:4,ganhar:[['Ausência de sequela incapacitante',72,40,30,2]],perder:[['Nexo com o evento traumático reconhecido',82,28,55,4],['Prova do trauma (testemunhal/documental)',70,36,25,2]]}}
+};
+let gpMarco='lim';
+function gpForca(d){ return d>=45?['alta','força alta']:d>=25?['media','força média']:['baixa','força baixa']; }
+function gpFator(f){ const [nm,com,sem,freq,n]=f,[fc,fl]=gpForca(com-sem),gs=ESTADOS[globalState].scale;
+  return `<div class="gfat"><div class="gfat-top"><span class="gfat-nm">${nm}</span><span class="gfat-force ${fc}">${fl}</span></div>
+    <div class="gbars">
+      <div class="gb"><span class="gb-l">com</span><div class="gb-tk"><i class="s" style="width:${com}%"></i></div><span class="gb-v">${com}%</span></div>
+      <div class="gb"><span class="gb-l">sem</span><div class="gb-tk"><i class="w" style="width:${sem}%"></i></div><span class="gb-v">${sem}%</span></div>
+    </div>
+    <div class="gfat-detail">presente em ${freq}% das decisões · ${Math.round(n*gs)} casos</div></div>`; }
+function setGpMarco(m){ gpMarco=m; renderGanhaPerde(); }
+function renderGanhaPerde(){
+  const d=FATORES[sel]||FATORES.all, m=d[gpMarco], gs=ESTADOS[globalState].scale;
+  const winLbl=gpMarco==='lim'?'indeferimento':'improcedência', loseLbl=gpMarco==='lim'?'deferimento':'reintegração';
+  const gan=[...m.ganhar].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2])), per=[...m.perder].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2]));
+  document.getElementById('gpToggle').innerHTML=`<button class="${gpMarco==='lim'?'on':''}" onclick="setGpMarco('lim')">Liminar</button><button class="${gpMarco==='apos'?'on':''}" onclick="setGpMarco('apos')">Após a liminar</button>`;
+  document.getElementById('gpTot').innerHTML=`<b>${Math.round(m.tot*gs)}</b> decisões neste marco · <span class="win">${Math.round(m.win*gs)} favoráveis</span> · <span class="lose">${Math.round(m.lose*gs)} desfavoráveis</span>${gpMarco==='apos'?' · resultado que prevalece':''}`;
+  document.getElementById('gpCols').innerHTML=`<div class="gpcol win"><div class="gh"><span class="gi">✓</span>Causas de ganhar<span class="gtag">${winLbl}</span></div><div class="gcap">% em que o banco venceu — com e sem o fundamento</div>${gan.map(gpFator).join('')}</div><div class="gpcol lose"><div class="gh"><span class="gi">✕</span>Causas de perder<span class="gtag">${loseLbl}</span></div><div class="gcap">% em que o banco perdeu — com e sem o fundamento</div>${per.map(gpFator).join('')}</div>`;
+}
+
+const EVOL={
+  meses:['ago/25','out/25','dez/25','fev/26','abr/26','jun/26'],
+  volume:[210,232,248,270,286,300],
+  grupos:[
+    {nm:'LER/DORT',cor:'#CC092F',hero:1,share:[44,40,36,32,29,26]},
+    {nm:'Psíquica',cor:'#7B2D8E',hero:1,share:[22,26,30,34,39,43]},
+    {nm:'Acidente',cor:'#F57F17',hero:0,share:[12,12,11,11,10,10]},
+    {nm:'Outras ocupacionais',cor:'#1565C0',hero:0,share:[13,12,13,13,13,12]},
+    {nm:'Não classificada',cor:'#9AA0A6',hero:0,share:[9,10,10,10,9,9]}
+  ]
+};
+let evolMode='abs';
+function setEvol(m){ evolMode=m; renderEvolucao(); }
+function renderEvolucao(){
+  const E=EVOL, n=E.meses.length, gs=ESTADOS[globalState].scale, mode=evolMode;
+  const W=1000,H=340,padL=48,padR=22,padT=30,padB=44,plotW=W-padL-padR,plotH=H-padT-padB;
+  const x=i=>padL+(n<2?0:i/(n-1)*plotW);
+  const val=(g,i)=> mode==='pct'?E.grupos[g].share[i]:Math.round(E.volume[i]*gs*E.grupos[g].share[i]/100);
+  const totals=E.meses.map((_,i)=> mode==='pct'?100:Math.round(E.volume[i]*gs));
+  const maxY=mode==='pct'?100:Math.ceil(Math.max(...totals)/50)*50||50;
+  const y=v=>padT+plotH-(v/maxY*plotH);
+  const cum=[]; for(let i=0;i<n;i++){cum[i]=[0]; for(let g=0;g<E.grupos.length;g++){cum[i][g+1]=cum[i][g]+val(g,i);}}
+  let s='';
+  const ticks=mode==='pct'?[0,25,50,75,100]:[0,maxY/2,maxY];
+  ticks.forEach(tv=>{const yy=y(tv);s+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#EEF0F3"/><text x="${padL-8}" y="${yy+3}" text-anchor="end" font-size="9" fill="#9AA0A6">${mode==='pct'?tv+'%':Math.round(tv)}</text>`;});
+  E.grupos.forEach((grp,g)=>{
+    const top=[],bot=[];
+    for(let i=0;i<n;i++){ top.push(`${x(i).toFixed(1)},${y(cum[i][g+1]).toFixed(1)}`); bot.push(`${x(i).toFixed(1)},${y(cum[i][g]).toFixed(1)}`); }
+    const path='M'+top.join(' L ')+' L '+bot.reverse().join(' L ')+' Z';
+    s+=`<path d="${path}" fill="${grp.cor}" opacity="${grp.hero?0.92:0.48}"/>`;
+  });
+  [0,1].forEach(g=>{const pts=E.meses.map((_,i)=>`${x(i).toFixed(1)},${y(cum[i][g+1]).toFixed(1)}`).join(' ');s+=`<polyline points="${pts}" fill="none" stroke="#fff" stroke-width="1.5" opacity=".75"/>`;});
+  if(mode==='abs'){ totals.forEach((tv,i)=>{s+=`<text x="${x(i)}" y="${y(tv)-8}" text-anchor="middle" font-size="10.5" fill="#5f6368" font-weight="800">${tv}</text>`;}); }
+  const cx=x(2.72);
+  s+=`<line x1="${cx.toFixed(1)}" y1="${padT}" x2="${cx.toFixed(1)}" y2="${padT+plotH}" stroke="${C.navy}" stroke-width="1.4" stroke-dasharray="4 3" opacity=".5"/>`;
+  s+=`<g transform="translate(${cx.toFixed(1)},${padT})"><rect x="-90" y="-19" width="180" height="17" rx="8.5" fill="${C.navy}"/><text x="0" y="-6.5" text-anchor="middle" font-size="9.5" fill="#fff" font-weight="700">Psíquica ultrapassa a LER/DORT</text></g>`;
+  E.meses.forEach((m,i)=>{s+=`<text x="${x(i).toFixed(1)}" y="${H-16}" text-anchor="middle" font-size="11" fill="#5f6368">${m}</text>`;});
+  document.getElementById('evolChart').innerHTML=s;
+  document.getElementById('evolLegend').innerHTML=E.grupos.map(g=>`<span class="tl ${g.hero?'hero':''}"><i style="background:${g.cor};opacity:${g.hero?1:.55}"></i>${g.nm}</span>`).join('');
+  document.getElementById('evolToggle').innerHTML=`<button class="${mode==='abs'?'on':''}" onclick="setEvol('abs')">Volume (nº de processos)</button><button class="${mode==='pct'?'on':''}" onclick="setEvol('pct')">Composição (% do mês)</button>`;
+  document.getElementById('evolFoot').innerHTML=`A doença <b style="color:#7B2D8E">psíquica</b> ultrapassa a <b style="color:#CC092F">LER/DORT</b> ao longo de 2026 e puxa o crescimento do volume — a prioridade de prevenção migra do ergonômico para o psicossocial. Dados simulados para mockup.`;
+}
+
+function buildGroupSummary(opening, gd){
+  const lim=gd('lim'), laudo=gd('laudo'), sent=gd('sent');
+  const comP=100-(laudo.semPericia||0);
+  const nexoRec=comP?Math.round(((laudo.causal||0)+(laudo.concausa||0))/comP*100):0;
+  const defer=(sent.reint||0)+(sent.indeniz||0), improc=sent.improc||0, semLim=lim.semLim||0;
+  const limTxt = semLim>=40 ? ` Boa parte segue direto ao mérito (${semLim}% sem liminar).` : '';
+  let sentTxt, fecho;
+  if(defer>improc){ sentTxt=`a sentença acompanha, deferindo a reintegração em <b>${defer}%</b>`; fecho=`o banco <b>perde no mérito</b>`; }
+  else { sentTxt=`a sentença tende à improcedência (<b>${improc}%</b>)`; fecho=`o banco <b>vence no mérito</b>`; }
+  return `${opening}.${limTxt} Nesse grupo, o laudo reconhece o nexo em <b>${nexoRec}%</b> dos periciados e ${sentTxt} — ${fecho}. <span style="color:var(--textMuted)">Percentuais ilustrativos — os números reais vêm da base.</span>`;
+}
+function buildNarrative(path, COMP, opening){
+  const key = ph => (path.find(s=>s.phase===ph)||{}).key;
+  const pct = ph => (COMP[ph]&&COMP[ph].selPct!=null) ? COMP[ph].selPct : null;
+  const contK = key('cont');
+  let head = opening + (contK ? `, em que a defesa ${PHRASE.cont[contK]}` : '') + '.';
+  const parts=[];
+  if(key('lim')){ const k=key('lim');
+    parts.push(k==='semLim'?`grande parte foi direto ao mérito, sem pedido de liminar (${pct('lim')}%)`
+      : k==='indef'?`o juízo indeferiu a tutela de urgência em ${pct('lim')}%`
+      : `o juízo já deferiu a reintegração na liminar em ${pct('lim')}%`); }
+  if(key('laudo')){ const k=key('laudo');
+    parts.push(k==='semPericia'?`os autos correram sem perícia (${pct('laudo')}%)`
+      : k==='naoRec'?`o laudo não reconheceu o nexo (${pct('laudo')}%)`
+      : k==='inconc'?`o laudo foi inconclusivo (${pct('laudo')}%)`
+      : `o laudo reconheceu o nexo (${pct('laudo')}%)`); }
+  if(key('sent')){ const k=key('sent'), lk=key('laudo'), nexoPos=(lk==='causal'||lk==='concausa');
+    let s = k==='reint'?`a sentença deferiu a reintegração`
+      : k==='improc'?`a sentença julgou improcedente`
+      : k==='indeniz'?`a sentença converteu em indenização`
+      : `não houve decisão de mérito`;
+    s+=` em ${pct('sent')}%`;
+    if(lk){
+      if((k==='reint'||k==='indeniz') && (lk==='naoRec'||lk==='inconc')) s+=' — divergindo do laudo, com base em prova testemunhal ou no ônus da prova';
+      else if(k==='improc' && nexoPos) s+=' — divergindo do laudo, que havia reconhecido o nexo';
+      else if((k==='reint'||k==='indeniz') && nexoPos) s+=', acompanhando o laudo';
+      else if(k==='improc' && lk==='naoRec') s+=', acompanhando o laudo';
+    }
+    parts.push(s); }
+  if(key('acor')){ const k=key('acor');
+    parts.push(k==='semRecurso'?`a maioria transitou em julgado sem recurso (${pct('acor')}%)`
+      : (k==='mantemImproc'||k==='mantemProc')?`o TRT manteve a decisão (${pct('acor')}%)`
+      : `o TRT reformou a decisão (${pct('acor')}%)`); }
+  if(key('tst')){ const k=key('tst');
+    parts.push(k==='semTST'?`o processo encerrou no TRT, sem chegar ao TST (${pct('tst')}%)`
+      : k==='naoProv'?`o TST manteve a decisão (${pct('tst')}%)`
+      : `o TST reformou (${pct('tst')}%)`); }
+  const body = parts.length ? ' Nesse grupo, ' + parts.join('; ') + '.' : '';
+  const sk=key('sent'), lk=key('laudo'); let insight='';
+  if(sk==='reint'||sk==='indeniz'){
+    insight = (lk==='naoRec'||lk==='inconc')
+      ? ' No fim, é um caminho <b>desfavorável ao banco</b> — e o que salta aos olhos é que a perda ocorre mesmo sem o laudo reconhecer o nexo.'
+      : ' No fim, é um caminho <b>desfavorável ao banco</b>: perícia e sentença convergem para a reintegração.';
+  } else if(sk==='improc'){
+    insight = ' No fim, é um caminho <b>favorável ao banco</b>: o pedido é afastado no mérito.';
+  }
+  return head + body + insight + ` <span style="color:var(--textMuted)">Percentuais ilustrativos — os números reais vêm da base.</span>`;
+}
+function renderKPIs(){
+  const gs=ESTADOS[globalState].scale, gl=ESTADOS[globalState].lean;
+  const total=Math.round(516*gs), defRate=Math.min(.6,.285*(1+gl)), def=Math.round(total*defRate);
+  const seg=Math.round(24*gs), ms=Math.round(126*gs), pp=Math.round(ms*.349), pa=ms-pp;
+  const defPct=(defRate*100).toFixed(1).replace('.',',');
+  document.getElementById('kpis').innerHTML=`
+    <div class="kpi"><div class="ic" style="background:#33336B">📄</div><div class="l">Total de Processos</div><div class="v">${total}</div>${globalState!=='Todos'?`<div class="s">recorte: ${globalState}</div>`:''}</div>
+    <div class="kpi"><div class="ic" style="background:#C2185B">⚖️</div><div class="l">Decisões Deferidas</div><div class="v">${def}</div><div class="s red">${defPct}% foram deferidas</div></div>
+    <div class="kpi"><div class="ic" style="background:#CC092F">🛡️</div><div class="l">Segredo de Justiça</div><div class="v">${seg}</div><div class="s red">4,7% sob sigilo</div></div>
+    <div class="kpi"><div class="ic" style="background:#2F6BC0">🏛️</div><div class="l">Mandado de Segurança</div><div class="v">${ms} <small>processos</small></div>
+      <div class="msbar"><span style="width:34.9%;background:#33336B">${pp}</span><span style="width:65.1%;background:#7B2D8E">${pa}</span></div>
+      <div class="mslegend"><span><i style="background:#33336B"></i>Polo Passivo · 34,9%</span><span><i style="background:#7B2D8E"></i>Polo Ativo · 65,1%</span></div></div>`;
+}
+renderKPIs(); renderSpine(); renderCols(); renderEvolucao(); renderGanhaPerde();
+</script>
+</body>
+</html>
