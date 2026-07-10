@@ -366,7 +366,9 @@ const OUT={
     semLim:['Sem pedido de liminar','neut','O processo seguiu direto ao mérito, sem tutela de urgência — não houve decisão liminar.'],
     indef:['Ausência de Prova Inequívoca → Indeferida','fav','Juízo nega a tutela por falta de prova robusta do nexo na cognição sumária.'],
     veross:['Verossimilhança do Adoecimento → Deferida','desf','Juízo reconhece a probabilidade do direito e concede a reintegração imediata.'],
-    estab:['Estabilidade Acidentária Presumida → Deferida','desf','Concessão com base em B91 / CAT que presume a estabilidade.','Nexo presumido · B91']
+    estab:['Estabilidade Acidentária Presumida → Deferida','desf','Concessão com base em B91 / CAT que presume a estabilidade.','Nexo presumido · B91'],
+    defCassada:['Deferida — cassada em MS','fav','A reintegração foi concedida em liminar, mas o banco impetrou Mandado de Segurança e a cassou — o que prevalece é o resultado favorável ao banco.','MS · banco impetrante'],
+    indefRevertida:['Indeferida — revertida em MS','desf','A liminar negou a reintegração, mas o reclamante impetrou Mandado de Segurança e a obteve — o que prevalece é o resultado desfavorável ao banco.','MS · reclamante impetrante']
   },
   laudo:{
     semPericia:['Sem perícia','neut','O processo foi julgado sem prova pericial — questão documental, acordo ou desnecessidade da perícia.'],
@@ -400,43 +402,43 @@ const CAUSES={
     read:'Repertório completo das teses e desfechos. Considerando a concausa como nexo, o laudo reconhece vínculo em ~53% — o principal ponto de risco técnico.',
     note:'Ao selecionar uma causa, os resultados não cabíveis nela desaparecem. Dentro de cada fase os resultados somam ~100%; entre fases não somam.',
     n:{cont:450,lim:160,laudo:165,sent:147,acor:137,tst:58}, nexoRec:53,
-    dist:{cont:{qdp:30,cat:22,comum:18,metas:18,provAssedio:12},lim:{semLim:40,indef:25,veross:23,estab:12},laudo:{semPericia:21,naoRec:30,inconc:7,concausa:19,causal:23},sent:{improc:50,reint:33,indeniz:10,semMerito:7},acor:{semRecurso:58,mantemImproc:17,reformaAfasta:5,mantemProc:14,reformaRec:6},tst:{semTST:66,naoProv:19,prov:15}}},
+    dist:{cont:{qdp:30,cat:22,comum:18,metas:18,provAssedio:12},lim:{semLim:40,indef:22,indefRevertida:3,veross:16,estab:10,defCassada:9},laudo:{semPericia:21,naoRec:30,inconc:7,concausa:19,causal:23},sent:{improc:50,reint:33,indeniz:10,semMerito:7},acor:{semRecurso:58,mantemImproc:17,reformaAfasta:5,mantemProc:14,reformaRec:6},tst:{semTST:66,naoProv:19,prov:15}}},
 
   esf:{nm:'Esforço Repetitivo / Ergonomia',color:C.red,pct:'52,5%',qtd:271,desc:'LER/DORT por movimentos repetitivos, digitação, mobiliário inadequado.',
     read:'<b>LER/DORT é a trilha mais perigosa:</b> o laudo reconhece nexo em <b>72%</b> (causal + concausa) e a sentença acompanha a perícia — o banco perde no mérito em <b>67%</b>. A defesa aqui é técnica (degenerativo, ausência de CAT), nunca "metas".',
     note:'Doença osteomuscular: a perícia é praticamente decisiva, por isso sentença e acórdão seguem o laudo.',
     n:{cont:260,lim:95,laudo:93,sent:78,acor:74,tst:30}, nexoRec:72,
-    dist:{cont:{qdp:45,cat:30,comum:25},lim:{semLim:45,indef:30,veross:16,estab:9},laudo:{semPericia:12,causal:40,concausa:23,naoRec:21,inconc:4},sent:{reint:55,improc:30,indeniz:12,semMerito:3},acor:{semRecurso:59,mantemProc:21,reformaAfasta:5,mantemImproc:9,reformaRec:6},tst:{semTST:67,naoProv:19,prov:14}}},
+    dist:{cont:{qdp:45,cat:30,comum:25},lim:{semLim:45,indef:27,indefRevertida:3,veross:12,estab:6,defCassada:7},laudo:{semPericia:12,causal:40,concausa:23,naoRec:21,inconc:4},sent:{reint:55,improc:30,indeniz:12,semMerito:3},acor:{semRecurso:59,mantemProc:21,reformaAfasta:5,mantemImproc:9,reformaRec:6},tst:{semTST:67,naoProv:19,prov:14}}},
 
   ass:{nm:'Assédio Moral / Pressão por Metas',color:C.magenta,pct:'43,1%',qtd:222,desc:'Adoecimento psíquico por cobrança abusiva de metas, humilhações e pressão.',
     read:'O banco <b>vence liminar e laudo, mas perde no mérito</b> (65%): a prova testemunhal de ambiente hostil reverte o quadro na sentença, mesmo com o laudo psíquico afastando o nexo em 47%. Defesa específica: "metas dentro da política" e "ausência de prova do assédio".',
     note:'Doença psíquica: aqui a sentença pode divergir do laudo — a prova testemunhal pesa mais que a perícia.',
     n:{cont:210,lim:88,laudo:71,sent:70,acor:67,tst:26}, nexoRec:43,
-    dist:{cont:{metas:40,provAssedio:35,comum:25},lim:{semLim:50,indef:33,veross:17},laudo:{semPericia:15,naoRec:40,inconc:8,causal:20,concausa:17},sent:{reint:50,improc:31,indeniz:15,semMerito:4},acor:{semRecurso:61,mantemProc:16,reformaRec:7,mantemImproc:12,reformaAfasta:4},tst:{semTST:65,naoProv:20,prov:15}}},
+    dist:{cont:{metas:40,provAssedio:35,comum:25},lim:{semLim:50,indef:30,indefRevertida:3,veross:12,defCassada:5},laudo:{semPericia:15,naoRec:40,inconc:8,causal:20,concausa:17},sent:{reint:50,improc:31,indeniz:15,semMerito:4},acor:{semRecurso:61,mantemProc:16,reformaRec:7,mantemImproc:12,reformaAfasta:4},tst:{semTST:65,naoProv:20,prov:15}}},
 
   def:{nm:'Deficiência / Condição Preexistente',color:C.navy,pct:'1,5%',qtd:8,desc:'Doença ou deficiência preexistente ou sem nexo com as atividades.',
     read:'<b>Trilha favorável do início ao fim:</b> a preexistência afasta o nexo e sustenta a improcedência em todas as instâncias.',
     note:'Sem CAT nem tese de assédio: a defesa é a preexistência, e o laudo tende a afastar o nexo.',
     n:{cont:8,lim:13,laudo:11,sent:9,acor:8,tst:3}, nexoRec:10,
-    dist:{cont:{qdp:70,comum:30},lim:{semLim:55,indef:37,veross:8},laudo:{semPericia:30,naoRec:55,inconc:8,concausa:7},sent:{improc:80,reint:15,semMerito:5},acor:{semRecurso:63,mantemImproc:26,reformaRec:7,reformaAfasta:4},tst:{semTST:67,naoProv:26,prov:7}}},
+    dist:{cont:{qdp:70,comum:30},lim:{semLim:55,indef:35,indefRevertida:2,veross:5,defCassada:3},laudo:{semPericia:30,naoRec:55,inconc:8,concausa:7},sent:{improc:80,reint:15,semMerito:5},acor:{semRecurso:63,mantemImproc:26,reformaRec:7,reformaAfasta:4},tst:{semTST:67,naoProv:26,prov:7}}},
 
   evt:{nm:'Adoecimento por Evento Crítico',color:C.amber,pct:'1,1%',qtd:6,desc:'Adoecimento por evento crítico de segurança: assalto, sequestro, agressão.',
     read:'O <b>evento traumático documentado</b> esquenta a trilha a partir do laudo (nexo em ~65%) e leva à perda no mérito (~58%). Defesa: doença comum / ausência de CAT.',
     note:'Trauma documentado sustenta o nexo — sem tese de degenerativo nem de metas.',
     n:{cont:10,lim:8,laudo:8,sent:7,acor:7,tst:2}, nexoRec:65,
-    dist:{cont:{cat:55,comum:45},lim:{semLim:35,indef:26,veross:29,estab:10},laudo:{semPericia:20,causal:36,concausa:16,naoRec:20,inconc:8},sent:{reint:50,improc:40,indeniz:8,semMerito:2},acor:{semRecurso:71,mantemProc:13,reformaRec:4,mantemImproc:9,reformaAfasta:3},tst:{semTST:50,naoProv:20,prov:30}}},
+    dist:{cont:{cat:55,comum:45},lim:{semLim:35,indef:24,indefRevertida:2,veross:22,estab:8,defCassada:9},laudo:{semPericia:20,causal:36,concausa:16,naoRec:20,inconc:8},sent:{reint:50,improc:40,indeniz:8,semMerito:2},acor:{semRecurso:71,mantemProc:13,reformaRec:4,mantemImproc:9,reformaAfasta:3},tst:{semTST:50,naoProv:20,prov:30}}},
 
   disc:{nm:'Dispensa Discriminatória',color:C.blue,pct:'3,2%',qtd:35,desc:'Dispensa alegadamente discriminatória — doença grave, atividade sindical ou denúncia (Súm. 443/TST).',
     read:'Trilha de <b>prova</b>, não de perícia: 70% correm sem perícia. O banco tende a vencer no mérito (55% improcedente) quando demonstra motivo objetivo da dispensa; perde quando a discriminação é presumida (Súm. 443) e não é afastada.',
     note:'Súmula 443: presume-se discriminatória a dispensa de portador de doença grave — o ônus de provar o motivo lícito é do banco.',
     n:{cont:35,lim:12,laudo:10,sent:18,acor:16,tst:6}, nexoRec:15,
-    dist:{cont:{discLicito:45,discSemProva:38,comum:17},lim:{semLim:55,indef:30,veross:15},laudo:{semPericia:70,naoRec:20,inconc:10},sent:{improc:55,reint:30,indeniz:10,semMerito:5},acor:{semRecurso:60,mantemImproc:18,mantemProc:12,reformaRec:6,reformaAfasta:4},tst:{semTST:64,naoProv:21,prov:15}}},
+    dist:{cont:{discLicito:45,discSemProva:38,comum:17},lim:{semLim:55,indef:27,indefRevertida:3,veross:10,defCassada:5},laudo:{semPericia:70,naoRec:20,inconc:10},sent:{improc:55,reint:30,indeniz:10,semMerito:5},acor:{semRecurso:60,mantemImproc:18,mantemProc:12,reformaRec:6,reformaAfasta:4},tst:{semTST:64,naoProv:21,prov:15}}},
 
   estab:{nm:'Estabilidade Provisória',color:C.purple,pct:'2,1%',qtd:22,desc:'Garantia provisória de emprego — gestante, cipeiro, acidentário ou dirigente sindical.',
     read:'O que decide é a <b>vigência da garantia</b> na data da dispensa — quase sem perícia (80%). Resultado equilibrado: procedência quando a estabilidade estava vigente e não foi observada.',
     note:'Aqui não se discute nexo, e sim se a condição estabilitária existia e era conhecida na dispensa.',
     n:{cont:22,lim:14,laudo:6,sent:12,acor:10,tst:4}, nexoRec:10,
-    dist:{cont:{estabDesconh:52,estabDecurso:48},lim:{semLim:40,indef:28,veross:32},laudo:{semPericia:80,naoRec:15,inconc:5},sent:{reint:48,improc:40,indeniz:7,semMerito:5},acor:{semRecurso:58,mantemProc:20,mantemImproc:14,reformaRec:4,reformaAfasta:4},tst:{semTST:66,naoProv:20,prov:14}}}
+    dist:{cont:{estabDesconh:52,estabDecurso:48},lim:{semLim:40,indef:25,indefRevertida:3,veross:24,defCassada:8},laudo:{semPericia:80,naoRec:15,inconc:5},sent:{reint:48,improc:40,indeniz:7,semMerito:5},acor:{semRecurso:58,mantemProc:20,mantemImproc:14,reformaRec:4,reformaAfasta:4},tst:{semTST:66,naoProv:20,prov:14}}}
 };
 const ORDER=['all','esf','ass','def','evt','disc','estab'];
 const ALEG_RATIO=1.94; // ilustrativo: ~1,94 alegações por processo na petição inicial
@@ -455,7 +457,7 @@ let path=[]; // trilha condicional: [{phase,key}]
 let globalState='Todos'; let subFilter=null;
 const ESTADOS={Todos:{scale:1,lean:0},SP:{scale:.34,lean:0},RJ:{scale:.22,lean:.15},MG:{scale:.12,lean:-.05},RS:{scale:.09,lean:.05},Outros:{scale:.23,lean:0}};
 /* inclinação de cada resultado sobre as fases seguintes (favorável<0 · desfavorável>0) */
-const LEAN={qdp:-0.5,cat:-0.3,comum:-0.4,metas:0.1,provAssedio:-0.2, indef:-0.3,veross:0.3,estab:0.5, naoRec:-0.8,inconc:0.05,concausa:0.7,causal:0.9, improc:-0.9,reint:0.9,indeniz:0.5,semMerito:0, mantemImproc:-0.7,reformaAfasta:-0.6,mantemProc:0.7,reformaRec:0.7, naoProv:-0.5,prov:0.6};
+const LEAN={qdp:-0.5,cat:-0.3,comum:-0.4,metas:0.1,provAssedio:-0.2, indef:-0.3,veross:0.3,estab:0.5,defCassada:-0.3,indefRevertida:0.4, naoRec:-0.8,inconc:0.05,concausa:0.7,causal:0.9, improc:-0.9,reint:0.9,indeniz:0.5,semMerito:0, mantemImproc:-0.7,reformaAfasta:-0.6,mantemProc:0.7,reformaRec:0.7, naoProv:-0.5,prov:0.6};
 /* cabimento lógico do eixo de mérito: o resultado de uma fase define quais desdobramentos são possíveis na seguinte.
    liminar e laudo NÃO entram aqui de propósito — liminar não vincula o mérito, e a sentença pode divergir do laudo
    (prova testemunhal, ônus da prova). Essas relações permanecem como correlação/tendência, não como trava. */
@@ -537,7 +539,7 @@ const sideBadge={fav:'favorável',desf:'desfavorável',neut:'atenção',def:'def
 /* frases para a leitura narrativa */
 const PHRASE={
   cont:{qdp:'argumenta quadro degenerativo ou preexistente',cat:'alega ausência de CAT / benefício acidentário',comum:'sustenta tratar-se de doença comum, não ocupacional',metas:'defende que as metas seguem a política interna',provAssedio:'nega, por falta de prova, o assédio alegado',discLicito:'demonstra motivo lícito e objetivo da dispensa',discSemProva:'nega, por falta de prova, o caráter discriminatório',estabDesconh:'alega desconhecer a condição estabilitária à época',estabDecurso:'sustenta o decurso do período de garantia'},
-  lim:{semLim:'não houve pedido de tutela de urgência',indef:'indefere a liminar por ausência de prova inequívoca',veross:'defere a reintegração liminar pela verossimilhança do adoecimento',estab:'defere a liminar pela estabilidade acidentária presumida (B91)'},
+  lim:{semLim:'não houve pedido de tutela de urgência',indef:'indefere a liminar por ausência de prova inequívoca',veross:'defere a reintegração liminar pela verossimilhança do adoecimento',estab:'defere a liminar pela estabilidade acidentária presumida (B91)',defCassada:'defere a reintegração, mas o banco a cassa em Mandado de Segurança',indefRevertida:'indefere a reintegração, mas o reclamante a obtém em Mandado de Segurança'},
   laudo:{semPericia:'não houve perícia',naoRec:'não reconhece o nexo com o trabalho',inconc:'não chega a conclusão definitiva',concausa:'reconhece o nexo concausal',causal:'reconhece o nexo causal direto'},
   sent:{improc:'julga improcedente por ausência de nexo',reint:'reconhece o nexo e defere a reintegração',indeniz:'reconhece o nexo e converte em indenização',semMerito:'não chega a decisão de mérito'},
   acor:{semRecurso:'não houve recurso ao TRT (transitou em julgado)',mantemImproc:'mantém a improcedência',reformaAfasta:'reforma para afastar o nexo',mantemProc:'mantém a procedência',reformaRec:'reforma para reconhecer o nexo'},
