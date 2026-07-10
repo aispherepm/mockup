@@ -75,8 +75,15 @@
   .ocard .otop{display:flex;align-items:baseline;gap:8px}
   .ocard .opct{font-size:21px;font-weight:800;line-height:1}
   .ocard .ocnt{font-size:11px;font-weight:700;color:var(--textMuted)}
-  .ocard .onm{font-size:12px;font-weight:800;margin-top:4px;line-height:1.25}
+  .ocard .onm{font-size:12px;font-weight:800;margin-top:0;line-height:1.25;padding-right:20px}
   .ocard .odesc{font-size:10px;color:var(--textSec);line-height:1.4;margin-top:5px}
+  .ocard .allnote{font-size:9px;color:var(--textMuted);font-style:italic;line-height:1.35;margin-top:8px;padding-top:7px;border-top:1px dashed var(--border)}
+  .ocard .ometrics{margin-top:10px;padding-top:9px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+  .ocard .omrow{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .ocard .omlbl{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--textMuted)}
+  .ocard .omval{display:flex;align-items:baseline;gap:6px}
+  .ocard .omval b{font-size:15px;font-weight:800;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1}
+  .ocard .omshare{font-size:11px;font-weight:700;color:var(--textSec);font-variant-numeric:tabular-nums}
 
   .flowhint{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--textMuted);margin-bottom:8px}
   .scroller{overflow-x:auto;padding-bottom:6px}
@@ -404,44 +411,46 @@ const CAUSES={
     n:{cont:450,lim:160,laudo:165,sent:147,acor:137,tst:58}, nexoRec:53,
     dist:{cont:{qdp:30,cat:22,comum:18,metas:18,provAssedio:12},lim:{semLim:40,indef:22,indefRevertida:3,veross:16,estab:10,defCassada:9},laudo:{semPericia:21,naoRec:30,inconc:7,concausa:19,causal:23},sent:{improc:50,reint:33,indeniz:10,semMerito:7},acor:{semRecurso:58,mantemImproc:17,reformaAfasta:5,mantemProc:14,reformaRec:6},tst:{semTST:66,naoProv:19,prov:15}}},
 
-  esf:{nm:'Esforço Repetitivo / Ergonomia',color:C.red,pct:'52,5%',qtd:271,desc:'LER/DORT por movimentos repetitivos, digitação, mobiliário inadequado.',
+  esf:{nm:'Esforço Repetitivo / Ergonomia',color:C.red,pct:'52,5%',aleg:526,qtd:340,desc:'LER/DORT por movimentos repetitivos, digitação, mobiliário inadequado.',
     read:'<b>LER/DORT é a trilha mais perigosa:</b> o laudo reconhece nexo em <b>72%</b> (causal + concausa) e a sentença acompanha a perícia — o banco perde no mérito em <b>67%</b>. A defesa aqui é técnica (degenerativo, ausência de CAT), nunca "metas".',
     note:'Doença osteomuscular: a perícia é praticamente decisiva, por isso sentença e acórdão seguem o laudo.',
-    n:{cont:260,lim:95,laudo:93,sent:78,acor:74,tst:30}, nexoRec:72,
+    n:{cont:326,lim:119,laudo:117,sent:98,acor:93,tst:38}, nexoRec:72,
     dist:{cont:{qdp:45,cat:30,comum:25},lim:{semLim:45,indef:27,indefRevertida:3,veross:12,estab:6,defCassada:7},laudo:{semPericia:12,causal:40,concausa:23,naoRec:21,inconc:4},sent:{reint:55,improc:30,indeniz:12,semMerito:3},acor:{semRecurso:59,mantemProc:21,reformaAfasta:5,mantemImproc:9,reformaRec:6},tst:{semTST:67,naoProv:19,prov:14}}},
 
-  ass:{nm:'Assédio Moral / Pressão por Metas',color:C.magenta,pct:'43,1%',qtd:222,desc:'Adoecimento psíquico por cobrança abusiva de metas, humilhações e pressão.',
+  ass:{nm:'Assédio Moral / Pressão por Metas',color:C.magenta,pct:'43,1%',aleg:431,qtd:280,desc:'Adoecimento psíquico por cobrança abusiva de metas, humilhações e pressão.',
     read:'O banco <b>vence liminar e laudo, mas perde no mérito</b> (65%): a prova testemunhal de ambiente hostil reverte o quadro na sentença, mesmo com o laudo psíquico afastando o nexo em 47%. Defesa específica: "metas dentro da política" e "ausência de prova do assédio".',
     note:'Doença psíquica: aqui a sentença pode divergir do laudo — a prova testemunhal pesa mais que a perícia.',
-    n:{cont:210,lim:88,laudo:71,sent:70,acor:67,tst:26}, nexoRec:43,
+    n:{cont:265,lim:111,laudo:90,sent:88,acor:85,tst:33}, nexoRec:43,
     dist:{cont:{metas:40,provAssedio:35,comum:25},lim:{semLim:50,indef:30,indefRevertida:3,veross:12,defCassada:5},laudo:{semPericia:15,naoRec:40,inconc:8,causal:20,concausa:17},sent:{reint:50,improc:31,indeniz:15,semMerito:4},acor:{semRecurso:61,mantemProc:16,reformaRec:7,mantemImproc:12,reformaAfasta:4},tst:{semTST:65,naoProv:20,prov:15}}},
 
-  def:{nm:'Deficiência / Condição Preexistente',color:C.navy,pct:'1,5%',qtd:8,desc:'Doença ou deficiência preexistente ou sem nexo com as atividades.',
+  def:{nm:'Deficiência / Condição Preexistente',color:C.navy,pct:'1,5%',aleg:15,qtd:14,desc:'Doença ou deficiência preexistente ou sem nexo com as atividades.',
     read:'<b>Trilha favorável do início ao fim:</b> a preexistência afasta o nexo e sustenta a improcedência em todas as instâncias.',
     note:'Sem CAT nem tese de assédio: a defesa é a preexistência, e o laudo tende a afastar o nexo.',
-    n:{cont:8,lim:13,laudo:11,sent:9,acor:8,tst:3}, nexoRec:10,
+    n:{cont:14,lim:23,laudo:19,sent:16,acor:14,tst:5}, nexoRec:10,
     dist:{cont:{qdp:70,comum:30},lim:{semLim:55,indef:35,indefRevertida:2,veross:5,defCassada:3},laudo:{semPericia:30,naoRec:55,inconc:8,concausa:7},sent:{improc:80,reint:15,semMerito:5},acor:{semRecurso:63,mantemImproc:26,reformaRec:7,reformaAfasta:4},tst:{semTST:67,naoProv:26,prov:7}}},
 
-  evt:{nm:'Adoecimento por Evento Crítico',color:C.amber,pct:'1,1%',qtd:6,desc:'Adoecimento por evento crítico de segurança: assalto, sequestro, agressão.',
+  evt:{nm:'Adoecimento por Evento Crítico',color:C.amber,pct:'1,1%',aleg:11,qtd:10,desc:'Adoecimento por evento crítico de segurança: assalto, sequestro, agressão.',
     read:'O <b>evento traumático documentado</b> esquenta a trilha a partir do laudo (nexo em ~65%) e leva à perda no mérito (~58%). Defesa: doença comum / ausência de CAT.',
     note:'Trauma documentado sustenta o nexo — sem tese de degenerativo nem de metas.',
-    n:{cont:10,lim:8,laudo:8,sent:7,acor:7,tst:2}, nexoRec:65,
+    n:{cont:17,lim:13,laudo:13,sent:12,acor:12,tst:3}, nexoRec:65,
     dist:{cont:{cat:55,comum:45},lim:{semLim:35,indef:24,indefRevertida:2,veross:22,estab:8,defCassada:9},laudo:{semPericia:20,causal:36,concausa:16,naoRec:20,inconc:8},sent:{reint:50,improc:40,indeniz:8,semMerito:2},acor:{semRecurso:71,mantemProc:13,reformaRec:4,mantemImproc:9,reformaAfasta:3},tst:{semTST:50,naoProv:20,prov:30}}},
 
-  disc:{nm:'Dispensa Discriminatória',color:C.blue,pct:'3,2%',qtd:35,desc:'Dispensa alegadamente discriminatória — doença grave, atividade sindical ou denúncia (Súm. 443/TST).',
+  disc:{nm:'Dispensa Discriminatória',color:C.blue,pct:'1,1%',aleg:11,qtd:11,desc:'Dispensa alegadamente discriminatória — doença grave, atividade sindical ou denúncia (Súm. 443/TST).',
     read:'Trilha de <b>prova</b>, não de perícia: 70% correm sem perícia. O banco tende a vencer no mérito (55% improcedente) quando demonstra motivo objetivo da dispensa; perde quando a discriminação é presumida (Súm. 443) e não é afastada.',
     note:'Súmula 443: presume-se discriminatória a dispensa de portador de doença grave — o ônus de provar o motivo lícito é do banco.',
-    n:{cont:35,lim:12,laudo:10,sent:18,acor:16,tst:6}, nexoRec:15,
+    n:{cont:11,lim:4,laudo:3,sent:6,acor:5,tst:2}, nexoRec:15,
     dist:{cont:{discLicito:45,discSemProva:38,comum:17},lim:{semLim:55,indef:27,indefRevertida:3,veross:10,defCassada:5},laudo:{semPericia:70,naoRec:20,inconc:10},sent:{improc:55,reint:30,indeniz:10,semMerito:5},acor:{semRecurso:60,mantemImproc:18,mantemProc:12,reformaRec:6,reformaAfasta:4},tst:{semTST:64,naoProv:21,prov:15}}},
 
-  estab:{nm:'Estabilidade Provisória',color:C.purple,pct:'2,1%',qtd:22,desc:'Garantia provisória de emprego — gestante, cipeiro, acidentário ou dirigente sindical.',
+  estab:{nm:'Estabilidade Provisória',color:C.purple,pct:'0,7%',aleg:7,qtd:7,desc:'Garantia provisória de emprego — gestante, cipeiro, acidentário ou dirigente sindical.',
     read:'O que decide é a <b>vigência da garantia</b> na data da dispensa — quase sem perícia (80%). Resultado equilibrado: procedência quando a estabilidade estava vigente e não foi observada.',
     note:'Aqui não se discute nexo, e sim se a condição estabilitária existia e era conhecida na dispensa.',
-    n:{cont:22,lim:14,laudo:6,sent:12,acor:10,tst:4}, nexoRec:10,
+    n:{cont:7,lim:4,laudo:2,sent:4,acor:3,tst:1}, nexoRec:10,
     dist:{cont:{estabDesconh:52,estabDecurso:48},lim:{semLim:40,indef:25,indefRevertida:3,veross:24,defCassada:8},laudo:{semPericia:80,naoRec:15,inconc:5},sent:{reint:48,improc:40,indeniz:7,semMerito:5},acor:{semRecurso:58,mantemProc:20,mantemImproc:14,reformaRec:4,reformaAfasta:4},tst:{semTST:66,naoProv:20,prov:14}}}
 };
 const ORDER=['all','esf','ass','def','evt','disc','estab'];
 const ALEG_RATIO=1.94; // ilustrativo: ~1,94 alegações por processo na petição inicial
+const TOTAL_PROC=516;   // processos passivos (denominador de processos)
+const TOTAL_ALEG=Math.round(TOTAL_PROC*ALEG_RATIO); // ~1.001 alegações (516 × ~1,94) — denominador das caixas de causa
 /* frequência dos argumentos na contestação — uma contestação levanta mais de um argumento, então a soma passa de 100% (ilustrativo) */
 const CONTFREQ={
   all:{qdp:58,cat:44,comum:36,metas:34,provAssedio:24},
@@ -497,12 +506,12 @@ function clearPath(){ path=[]; renderCols(); }
 
 /* desdobramentos da alegação (contagem + % desfavorável ao banco) */
 const SUBS={
-  esf:[{nm:'Mobiliário / ergonomia inadequada',n:129,desf:58},{nm:'Equipamentos / ferramentas inadequados',n:71,desf:52},{nm:'Posto incompatível com restrição',n:42,desf:61},{nm:'Ausência de ginástica laboral',n:29,desf:47}],
-  ass:[{nm:'Metas abusivas / inatingíveis',n:86,desf:71},{nm:'Exposição de ranking e resultados',n:58,desf:66},{nm:'Humilhações públicas',n:39,desf:74},{nm:'Ameaças (demissão / transferência)',n:39,desf:68}],
-  def:[{nm:'Doença preexistente ao vínculo',n:5,desf:20},{nm:'Sem nexo com a atividade laboral',n:3,desf:15}],
-  evt:[{nm:'Assalto / roubo na agência',n:3,desf:62},{nm:'Sequestro relâmpago',n:2,desf:58},{nm:'Agressão física / ameaça grave',n:1,desf:55}],
-  disc:[{nm:'Doença grave / estigmatizante (Súm. 443)',n:15,desf:68},{nm:'Exercício de atividade sindical',n:8,desf:55},{nm:'Retaliação por denúncia / reclamação',n:7,desf:60},{nm:'Deficiência / empregado reabilitado',n:5,desf:48}],
-  estab:[{nm:'Gestante',n:9,desf:62},{nm:'Acidentária (art. 118 / B91)',n:6,desf:58},{nm:'Membro da CIPA (cipeiro)',n:4,desf:50},{nm:'Dirigente sindical',n:3,desf:45}]
+  esf:[{nm:'Mobiliário / ergonomia inadequada',n:162,desf:58},{nm:'Equipamentos / ferramentas inadequados',n:89,desf:52},{nm:'Posto incompatível com restrição',n:53,desf:61},{nm:'Ausência de ginástica laboral',n:36,desf:47}],
+  ass:[{nm:'Metas abusivas / inatingíveis',n:109,desf:71},{nm:'Exposição de ranking e resultados',n:73,desf:66},{nm:'Humilhações públicas',n:49,desf:74},{nm:'Ameaças (demissão / transferência)',n:49,desf:68}],
+  def:[{nm:'Doença preexistente ao vínculo',n:9,desf:20},{nm:'Sem nexo com a atividade laboral',n:5,desf:15}],
+  evt:[{nm:'Assalto / roubo na agência',n:5,desf:62},{nm:'Sequestro relâmpago',n:3,desf:58},{nm:'Agressão física / ameaça grave',n:2,desf:55}],
+  disc:[{nm:'Doença grave / estigmatizante (Súm. 443)',n:4,desf:68},{nm:'Exercício de atividade sindical',n:3,desf:55},{nm:'Retaliação por denúncia / reclamação',n:2,desf:60},{nm:'Deficiência / empregado reabilitado',n:2,desf:48}],
+  estab:[{nm:'Gestante',n:3,desf:62},{nm:'Acidentária (art. 118 / B91)',n:2,desf:58},{nm:'Membro da CIPA (cipeiro)',n:1,desf:50},{nm:'Dirigente sindical',n:1,desf:45}]
 };
 function openDrawer(k){
   const c=CAUSES[k], subs=SUBS[k]; if(!subs) return;
@@ -529,8 +538,14 @@ function renderSpine(){
   const dimOthers = sel!=='all'; const gs=ESTADOS[globalState].scale;
   document.getElementById('spine').innerHTML=ORDER.map(k=>{
     const c=CAUSES[k]; const isSel=sel===k; const dim=(dimOthers&&!isSel)?' dim':'';
-    if(c.all) return `<div class="ocard all ${isSel?'sel':''}${dim}" style="--sc:${C.navy}" onclick="pick('${k}')"><span class="chk">✓</span><div class="opct">~${Math.round(516*ALEG_RATIO*gs).toLocaleString('pt-BR')}</div><div class="onm">Todas as causas</div><div class="odesc">Repertório completo — ${Math.round(516*gs)} processos.</div><div class="kpiBadge" style="margin-top:8px"><b>${ALEG_RATIO.toFixed(2).replace('.',',')}</b> alegações/processo</div></div>`;
-    return `<div class="ocard ${isSel?'sel':''}${dim}" style="border-left-color:${c.color};--sc:${c.color}" onclick="pick('${k}')"><span class="chk">✓</span><div class="otop"><span class="opct" style="color:${c.color}">${c.pct}</span><span class="ocnt">${Math.round(c.qtd*ALEG_RATIO*gs)} aleg.</span></div><div class="onm">${c.nm}</div><div class="odesc">${c.desc}</div>${(SUBS[k]&&SUBS[k].length)?`<button class="detbtn" onclick="event.stopPropagation();openDrawer('${k}')">▸ ${SUBS[k].length} desdobramentos</button>`:''}</div>`;
+    if(c.all){
+      const ta=Math.round(TOTAL_ALEG*gs).toLocaleString('pt-BR'), tp=Math.round(TOTAL_PROC*gs).toLocaleString('pt-BR');
+      return `<div class="ocard all ${isSel?'sel':''}${dim}" style="--sc:${C.navy}" onclick="pick('${k}')"><span class="chk">✓</span><div class="onm">Todas as causas</div><div class="otop" style="margin-top:6px"><span class="opct">~${ta}</span><span class="ocnt">alegações · ${tp} processos</span></div><div class="kpiBadge" style="margin-top:7px"><b>~${ALEG_RATIO.toFixed(2).replace('.',',')}</b> alegações/processo</div><div class="allnote">Um processo pode ter mais de uma alegação — por isso as caixas não somam ${tp}.</div></div>`;
+    }
+    const alegN=Math.round((c.aleg||0)*gs).toLocaleString('pt-BR');
+    const procN=Math.round((c.qtd||0)*gs).toLocaleString('pt-BR');
+    const procPct=Math.round((c.qtd||0)/TOTAL_PROC*100)+'%';
+    return `<div class="ocard ${isSel?'sel':''}${dim}" style="border-left-color:${c.color};--sc:${c.color}" onclick="pick('${k}')"><span class="chk">✓</span><div class="onm">${c.nm}</div><div class="odesc">${c.desc}</div><div class="ometrics"><div class="omrow"><span class="omlbl">Alegações</span><span class="omval"><b>${alegN}</b><span class="omshare">${c.pct}</span></span></div><div class="omrow"><span class="omlbl">Processos</span><span class="omval"><b>${procN}</b><span class="omshare">${procPct}</span></span></div></div>${(SUBS[k]&&SUBS[k].length)?`<button class="detbtn" onclick="event.stopPropagation();openDrawer('${k}')">▸ ${SUBS[k].length} desdobramentos</button>`:''}</div>`;
   }).join('');
 }
 function pick(k){ sel=k; path=[]; subFilter=null; renderSpine(); renderCols(); renderGanhaPerde(); }
