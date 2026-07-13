@@ -201,6 +201,7 @@
   .gp-tot{font-size:12px;color:var(--textSec);margin:0 0 16px}
   .gp-tot b{color:var(--text)} .gp-tot .win{color:var(--green);font-weight:800} .gp-tot .lose{color:var(--red);font-weight:800}
   .gpcols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .gp-low{display:inline-block;margin-left:10px;background:var(--amberLight);color:#8a5a00;border:1px solid #F3D48A;border-radius:6px;padding:2px 7px;font-size:9.5px;font-weight:700;font-style:normal}
   .gpcol .gh{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;margin-bottom:3px}
   .gpcol .gh .gi{width:22px;height:22px;border-radius:6px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
   .gpcol.win .gh{color:var(--green)} .gpcol.win .gi{background:var(--green)}
@@ -506,13 +507,13 @@ const CAUSES={
   def:{nm:'Deficiência / Condição Preexistente',color:C.navy,pct:'1,5%',aleg:15,qtd:14,desc:'Doença ou deficiência preexistente ou sem nexo com as atividades.',
     read:'<b>Trilha favorável do início ao fim:</b> a preexistência afasta o nexo e sustenta a improcedência em todas as instâncias.',
     note:'Sem CAT nem tese de assédio: a defesa é a preexistência, e o laudo tende a afastar o nexo.',
-    n:{cont:14,lim:23,laudo:19,sent:16,acor:14,tst:5}, nexoRec:10,
+    n:{cont:12,lim:8,laudo:11,sent:12,acor:5,tst:2}, nexoRec:10,
     dist:{cont:{qdp:70,comum:30},lim:{semLim:55,indef:35,indefRevertida:2,veross:5,defCassada:3},laudo:{semPericia:30,naoRec:55,inconc:8,concausa:7},sent:{improc:80,reint:15,semMerito:5},acor:{semRecurso:63,mantemImproc:26,reformaRec:7,reformaAfasta:4},tst:{semTST:67,naoProv:26,prov:7}}},
 
   evt:{nm:'Adoecimento por Evento Crítico',color:C.amber,pct:'1,1%',aleg:11,qtd:10,desc:'Adoecimento por evento crítico de segurança: assalto, sequestro, agressão.',
     read:'O <b>evento traumático documentado</b> esquenta a trilha a partir do laudo (nexo em ~65%) e leva à perda no mérito (~58%). Defesa: doença comum / ausência de CAT.',
     note:'Trauma documentado sustenta o nexo — sem tese de degenerativo nem de metas.',
-    n:{cont:17,lim:13,laudo:13,sent:12,acor:12,tst:3}, nexoRec:65,
+    n:{cont:9,lim:6,laudo:8,sent:9,acor:4,tst:1}, nexoRec:65,
     dist:{cont:{cat:55,comum:45},lim:{semLim:35,indef:24,indefRevertida:2,veross:22,estab:8,defCassada:9},laudo:{semPericia:20,causal:36,concausa:16,naoRec:20,inconc:8},sent:{reint:50,improc:40,indeniz:8,semMerito:2},acor:{semRecurso:71,mantemProc:13,reformaRec:4,mantemImproc:9,reformaAfasta:3},tst:{semTST:50,naoProv:20,prov:30}}},
 
   disc:{nm:'Dispensa Discriminatória',color:C.blue,pct:'1,1%',aleg:11,qtd:11,desc:'Dispensa alegadamente discriminatória — doença grave, atividade sindical ou denúncia (Súm. 443/TST).',
@@ -784,18 +785,30 @@ function renderCols(){
   document.getElementById('jnote').textContent=c.note;
 }
 
-/* Por que ganha/perde — por impacto (com x sem). fator: [nome, com%, sem%, freq%, n] */
+/* Por que ganha/perde — por impacto (com × sem). fator: [nome, com%, sem%, freq%, n]
+   força = com − sem (pontos). Denominador (tot) = decisões do marco, ALINHADO à trilha:
+   lim = CAUSES[k].n.lim  ·  apos = CAUSES[k].n.sent (resultado que prevalece).
+   n de cada fator = freq% × tot. Discriminatória e Estabilidade têm fundamentos PRÓPRIOS:
+   nelas não se discute nexo — decide o ônus da prova e a condição na data da dispensa. */
 const FATORES={
-  all:{lim:{tot:172,win:100,lose:72,ganhar:[['Ausência de prova inequívoca do nexo',88,35,42,72],['Alta médica vigente na dispensa',79,44,31,53],['Documentação ocupacional consistente',73,42,26,45],['Ausência de CAT / benefício acidentário',66,47,38,66]],perder:[['Benefício acidentário ativo (B91)',84,22,29,50],['Dispensa em momento sensível',77,31,24,41],['Verossimilhança do adoecimento (atestado robusto)',71,33,27,46],['Falta de contraprova documental do banco',63,38,20,34]]},
+  all:{lim:{tot:160,win:93,lose:67,ganhar:[['Ausência de prova inequívoca do nexo',88,35,42,67],['Alta médica vigente na dispensa',79,44,31,50],['Documentação ocupacional consistente',73,42,26,42],['Ausência de CAT / benefício acidentário',66,47,38,61]],perder:[['Benefício acidentário ativo (B91)',84,22,29,46],['Dispensa em momento sensível',77,31,24,38],['Verossimilhança do adoecimento (atestado robusto)',71,33,27,43],['Falta de contraprova documental do banco',63,38,20,32]]},
     apos:{tot:147,win:75,lose:72,ganhar:[['Laudo afasta o nexo',82,24,33,49],['Perícia atribui a fatores extralaborais',74,41,18,26],['Exames × histórico × dispensa coerentes',71,38,28,41],['Ausência de prova testemunhal do adoecimento',68,40,22,32]],perder:[['Laudo reconhece nexo ou concausa',79,26,41,60],['Prova testemunhal de ambiente hostil',76,30,24,35],['Falha no acompanhamento pós-adoecimento',72,34,19,28],['Nexo presumido (B91) não afastado',69,37,21,31]]}},
-  esf:{lim:{tot:92,win:52,lose:40,ganhar:[['Ausência de prova da limitação funcional',85,38,44,40],['Documentação ergonômica / laudo do trabalho',74,43,29,27],['Alta médica vigente',70,45,25,23]],perder:[['Benefício acidentário ativo (B91)',82,26,22,20],['Quadro ortopédico incapacitante evidente',80,29,33,30],['Ausência de contraprova documental',64,39,19,17]]},
-    apos:{tot:78,win:35,lose:43,ganhar:[['Laudo aponta quadro degenerativo/preexistente',84,25,31,24],['Ausência de incapacidade atual',72,40,24,19]],perder:[['Laudo reconhece nexo (LER/DORT)',86,23,52,41],['Concausa: trabalho agrava o quadro',74,33,26,20],['NTEP / presunção não afastada',68,38,20,16]]}},
-  ass:{lim:{tot:76,win:48,lose:28,ganhar:[['Ausência de prova inequívoca do assédio',86,34,51,39],['Metas dentro da política interna',72,45,33,25]],perder:[['Verossimilhança do quadro psíquico',75,32,29,22],['Afastamento previdenciário ativo',70,35,20,15]]},
-    apos:{tot:70,win:22,lose:48,ganhar:[['Laudo psíquico atribui a fatores extralaborais',78,36,34,24],['Ausência de prova testemunhal',75,38,26,18]],perder:[['Prova testemunhal de ambiente hostil',83,27,47,33],['Reconhecimento do nexo psíquico no laudo',72,35,28,20],['Cobrança abusiva documentada',68,39,21,15]]}},
-  def:{lim:{tot:10,win:8,lose:2,ganhar:[['Preexistência documentada',82,40,60,6],['Ausência de nexo com a atividade',70,44,35,4]],perder:[['Agravamento pelo trabalho alegado',66,42,20,2]]},
-    apos:{tot:9,win:7,lose:2,ganhar:[['Laudo confirma preexistência',85,30,66,6],['Ausência de incapacidade',70,42,30,3]],perder:[['Concausa reconhecida no laudo',64,40,22,2]]}},
-  evt:{lim:{tot:7,win:3,lose:4,ganhar:[['Alta médica vigente',68,44,30,2]],perder:[['Evento crítico documentado (B.O./CAT)',80,30,45,3],['Afastamento recente',70,38,25,2]]},
-    apos:{tot:7,win:3,lose:4,ganhar:[['Ausência de sequela incapacitante',72,40,30,2]],perder:[['Nexo com o evento traumático reconhecido',82,28,55,4],['Prova do trauma (testemunhal/documental)',70,36,25,2]]}}
+  esf:{lim:{tot:119,win:67,lose:52,ganhar:[['Ausência de prova da limitação funcional',85,38,44,52],['Documentação ergonômica / laudo do trabalho',74,43,29,35],['Alta médica vigente',70,45,25,30]],perder:[['Benefício acidentário ativo (B91)',82,26,22,26],['Quadro ortopédico incapacitante evidente',80,29,33,39],['Ausência de contraprova documental',64,39,19,23]]},
+    apos:{tot:98,win:44,lose:54,ganhar:[['Laudo aponta quadro degenerativo/preexistente',84,25,31,30],['Ausência de incapacidade atual',72,40,24,24]],perder:[['Laudo reconhece nexo (LER/DORT)',86,23,52,51],['Concausa: trabalho agrava o quadro',74,33,26,25],['NTEP / presunção não afastada',68,38,20,20]]}},
+  ass:{lim:{tot:111,win:70,lose:41,ganhar:[['Ausência de prova inequívoca do assédio',86,34,51,57],['Metas dentro da política interna',72,45,33,37]],perder:[['Verossimilhança do quadro psíquico',75,32,29,32],['Afastamento previdenciário ativo',70,35,20,22]]},
+    apos:{tot:88,win:28,lose:60,ganhar:[['Laudo psíquico atribui a fatores extralaborais',78,36,34,30],['Ausência de prova testemunhal',75,38,26,23]],perder:[['Prova testemunhal de ambiente hostil',83,27,47,41],['Reconhecimento do nexo psíquico no laudo',72,35,28,25],['Cobrança abusiva documentada',68,39,21,18]]}},
+  def:{lim:{tot:8,win:6,lose:2,ganhar:[['Preexistência documentada',82,40,60,5],['Ausência de nexo com a atividade',70,44,35,3]],perder:[['Agravamento pelo trabalho alegado',66,42,20,2]]},
+    apos:{tot:12,win:9,lose:3,ganhar:[['Laudo confirma preexistência',85,30,66,8],['Ausência de incapacidade',70,42,30,4]],perder:[['Concausa reconhecida no laudo',64,40,22,3]]}},
+  evt:{lim:{tot:6,win:3,lose:3,ganhar:[['Alta médica vigente',68,44,30,2]],perder:[['Evento crítico documentado (B.O./CAT)',80,30,45,3],['Afastamento recente',70,38,25,2]]},
+    apos:{tot:9,win:4,lose:5,ganhar:[['Ausência de sequela incapacitante',72,40,30,3]],perder:[['Nexo com o evento traumático reconhecido',82,28,55,5],['Prova do trauma (testemunhal/documental)',70,36,25,2]]}},
+  /* Discriminatória: não se discute nexo. O eixo é o ÔNUS DA PROVA — a Súm. 443 do TST
+     presume a discriminação na doença grave, e cabe ao banco provar motivo lícito e objetivo. */
+  disc:{lim:{tot:4,win:2,lose:2,ganhar:[['Motivo objetivo e lícito documentado',86,30,45,2],['Critério de desligamento aplicado a um grupo',74,42,30,1]],perder:[['Doença grave estigmatizante (presunção Súm. 443)',88,28,50,2],['Dispensa logo após afastamento ou diagnóstico',80,35,40,2]]},
+    apos:{tot:6,win:2,lose:4,ganhar:[['Motivo objetivo comprovado na instrução',84,29,40,2],['Desempenho documentado antes do diagnóstico',72,40,28,2]],perder:[['Ausência de registro da motivação da dispensa',85,30,52,3],['Ciência do banco sobre a doença na dispensa',78,36,38,2],['Empregado reabilitado / cota legal',70,41,25,2]]}},
+  /* Estabilidade: também não há nexo a provar. Decide um FATO VERIFICÁVEL — a condição
+     estabilitária vigente na data da dispensa. Por isso a margem de defesa é a menor da base. */
+  estab:{lim:{tot:4,win:1,lose:3,ganhar:[['Período de garantia já encerrado na dispensa',85,32,40,2],['Condição estabilitária não comprovada',72,41,28,1]],perder:[['CAT + benefício acidentário vigente (art. 118)',90,26,55,2],['Gestação confirmada na data da dispensa (Súm. 244)',88,30,42,2]]},
+    apos:{tot:4,win:1,lose:3,ganhar:[['Justa causa reconhecida (afasta a garantia)',80,35,30,1],['Garantia exaurida no curso do processo',70,42,26,1]],perder:[['Condição estabilitária comprovada na dispensa',92,24,60,2],['Desconhecimento do banco não afasta a garantia',84,33,45,2],['Ausência de checagem prévia antes do desligamento',75,38,35,1]]}}
 };
 let gpMarco='lim';
 function gpForca(d){ return d>=45?['alta','força alta']:d>=25?['media','força média']:['baixa','força baixa']; }
@@ -812,7 +825,9 @@ function renderGanhaPerde(){
   const winLbl=gpMarco==='lim'?'indeferimento':'improcedência', loseLbl=gpMarco==='lim'?'deferimento':'reintegração';
   const gan=[...m.ganhar].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2])), per=[...m.perder].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2]));
   document.getElementById('gpToggle').innerHTML=`<button class="${gpMarco==='lim'?'on':''}" onclick="setGpMarco('lim')">Liminar</button><button class="${gpMarco==='apos'?'on':''}" onclick="setGpMarco('apos')">Após a liminar</button>`;
-  document.getElementById('gpTot').innerHTML=`<b>${Math.round(m.tot*gs)}</b> decisões neste marco · <span class="win">${Math.round(m.win*gs)} favoráveis</span> · <span class="lose">${Math.round(m.lose*gs)} desfavoráveis</span>${gpMarco==='apos'?' · resultado que prevalece':''}`;
+  const totN=Math.round(m.tot*gs);
+  const lowN = totN<20 ? `<span class="gp-low">⚠ amostra pequena — percentuais indicativos, não conclusivos</span>` : '';
+  document.getElementById('gpTot').innerHTML=`<b>${totN}</b> decisões neste marco · <span class="win">${Math.round(m.win*gs)} favoráveis</span> · <span class="lose">${Math.round(m.lose*gs)} desfavoráveis</span>${gpMarco==='apos'?' · resultado que prevalece':''}${lowN}`;
   document.getElementById('gpCols').innerHTML=`<div class="gpcol win"><div class="gh"><span class="gi">✓</span>Causas de ganhar<span class="gtag">${winLbl}</span></div><div class="gcap">% em que o banco venceu — com e sem o fundamento</div>${gan.map(gpFator).join('')}</div><div class="gpcol lose"><div class="gh"><span class="gi">✕</span>Causas de perder<span class="gtag">${loseLbl}</span></div><div class="gcap">% em que o banco perdeu — com e sem o fundamento</div>${per.map(gpFator).join('')}</div>`;
 }
 
