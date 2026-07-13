@@ -12,6 +12,8 @@
     --amber:#F57F17; --amberLight:#FFF8E1; --blue:#1565C0; --blueLight:#E3F2FD;
     --navy:#1a1a2e; --bg:#F5F6FA; --white:#fff; --border:#E8EAED;
     --text:#1a1a2e; --textSec:#5f6368; --textMuted:#9AA0A6;
+    --trilhaH:560px;   /* altura única da trilha: alegações e fases rolam juntas, sem faixa branca */
+    --headH:84px;      /* altura única do cabeçalho: 1º card da alegação alinha com a 1ª caixa da fase */
     --shadow:0 1px 3px rgba(0,0,0,0.08); --deepBlue:#41719C; --deepGrey:#8C8C8C;
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -55,8 +57,10 @@
 
   .histgrid{display:grid;grid-template-columns:232px minmax(0,1fr);gap:18px;align-items:start}
   .col-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textSec);margin-bottom:0}
-  .spine-head{height:84px;display:flex;align-items:flex-end;padding-bottom:9px}
-  #spine{max-height:560px;overflow-y:auto;overflow-x:hidden;padding:6px 14px 16px 4px}
+  .spine-col{border-top:4px solid transparent}   /* espelha o border-top:4px das .pcol → topos alinhados */
+  .spine-head{height:var(--headH);box-sizing:border-box;display:block;padding:11px 0 0;border-bottom:1px solid var(--border);overflow:hidden}
+  .spine-head .ph{color:var(--text)}
+  #spine{height:calc(var(--trilhaH) - var(--headH) - 4px);overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable;padding:9px 6px 6px 4px}
   #spine::-webkit-scrollbar{width:8px}
   #spine::-webkit-scrollbar-thumb{background:#D6D9E0;border-radius:6px}
   #spine::-webkit-scrollbar-thumb:hover{background:#B9BDC7}
@@ -86,12 +90,17 @@
   .ocard .omshare{font-size:11px;font-weight:700;color:var(--textSec);font-variant-numeric:tabular-nums}
 
   .flowhint{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--textMuted);margin-bottom:8px}
-  .scroller{overflow-x:auto;padding-bottom:6px}
-  .pcols{display:flex;gap:10px;min-width:min-content}
-  .pcol{width:196px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px 10px;border-top:4px solid var(--navy)}
-  .pcol .ph{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
-  .pcol .phn{font-size:9.5px;color:var(--textMuted);font-weight:700;margin-top:3px}
-  .pcol .lens{font-size:9.5px;color:var(--textMuted);font-style:italic;line-height:1.3;margin:6px 0 9px;height:28px;overflow:hidden}
+  .scroller{overflow-x:auto;overflow-y:auto;height:var(--trilhaH);box-sizing:border-box;scrollbar-gutter:stable;padding-bottom:6px}
+  .scroller::-webkit-scrollbar{width:8px;height:8px}
+  .scroller::-webkit-scrollbar-thumb{background:#D6D9E0;border-radius:6px}
+  .scroller::-webkit-scrollbar-thumb:hover{background:#B9BDC7}
+  .scroller::-webkit-scrollbar-track{background:transparent}
+  .pcols{display:flex;gap:10px;min-width:min-content;align-items:flex-start}
+  .pcol{width:196px;flex-shrink:0;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:0 10px 11px;border-top:4px solid var(--navy)}
+  .pchead{position:sticky;top:0;z-index:2;background:var(--bg);height:var(--headH);box-sizing:border-box;overflow:hidden;padding:11px 10px 0;margin:0 -10px 9px;border-bottom:1px solid var(--border)}
+  .ph{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+  .phn{font-size:9.5px;color:var(--textMuted);font-weight:700;margin-top:3px}
+  .lens{font-size:9.5px;color:var(--textMuted);font-style:italic;line-height:1.3;margin:6px 0 0;height:28px;overflow:hidden}
   .obox{background:#fff;border:1px solid var(--border);border-left:4px solid var(--textMuted);border-radius:7px;padding:8px 9px;margin-bottom:7px;cursor:pointer;transition:.1s}
   .obox:hover{box-shadow:var(--shadow)}
   .obox.sel{box-shadow:0 0 0 2px var(--navy)}
@@ -107,6 +116,16 @@
   .obox.neut{border-left-color:var(--textMuted)} .obox.def{border-left-color:var(--magenta)}
   .obox .obh{display:flex;align-items:center;gap:6px}
   .obox .opc{font-size:15px;font-weight:800}
+  .obox .opc.why{cursor:pointer;border-bottom:1.5px dotted currentColor;padding-bottom:1px}
+  .obox .opc.why:hover{opacity:.7}
+  .obox .whyhint{font-size:8.5px;font-weight:700;color:var(--textMuted);text-transform:uppercase;letter-spacing:.04em;margin-top:5px;opacity:0;transition:.15s}
+  .obox:hover .whyhint{opacity:1}
+  .wsec{margin-bottom:16px}
+  .wsec-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--textMuted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .wsec-txt{font-size:12.5px;line-height:1.65;color:var(--text)}
+  .wsec.concept .wsec-txt{color:var(--textSec);font-size:12px}
+  .ia-tag{background:var(--navy);color:#fff;font-size:8px;font-weight:800;padding:2px 5px;border-radius:4px;letter-spacing:.04em}
+  .ia-foot{font-size:10.5px;color:var(--textMuted);font-style:italic;line-height:1.5;padding:10px 12px;background:var(--bg);border-left:3px solid var(--amber);border-radius:0 6px 6px 0;margin-top:4px}
   .obox.fav .opc{color:var(--green)} .obox.desf .opc{color:var(--red)} .obox.neut .opc{color:var(--textSec)} .obox.def .opc{color:var(--magenta)}
   .obox .on{font-size:9px;color:var(--textMuted);font-weight:700}
   .obox .badge{margin-left:auto;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;padding:2px 6px;border-radius:10px}
@@ -122,6 +141,10 @@
   .b91Note b{color:#1B4E86}
 
   .read{background:#fff;border:1px solid var(--border);border-radius:10px;padding:13px 16px;margin-top:16px;font-size:12.5px;line-height:1.55}
+  .aibox{background:#fff;border:1px solid var(--border);border-left:4px solid var(--purple);border-radius:10px;padding:13px 16px;margin-top:10px;font-size:12.5px;line-height:1.6}
+  .aibox .al{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textMuted);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .aibox .ai-tag{background:var(--purple);color:#fff;font-size:8px;font-weight:800;padding:2px 5px;border-radius:4px;letter-spacing:.04em}
+  .aibox .adisc{font-size:10px;color:var(--textMuted);font-style:italic;line-height:1.45;margin-top:9px;padding-top:8px;border-top:1px dashed var(--border)}
   .read .rl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textMuted);display:block;margin-bottom:4px}
   .jnote{font-size:10.5px;color:var(--textMuted);font-style:italic;margin-top:10px;line-height:1.5}
   .anchor{background:#FFF8E1;border:1px solid #FBE7B0;border-radius:8px;padding:10px 14px;font-size:11px;color:#8a6d1a;margin-bottom:16px;line-height:1.55}
@@ -305,16 +328,21 @@
       <div class="breadcrumb" id="crumb"></div>
       <div class="flowhint" id="flowhint"></div>
       <div class="histgrid">
-        <div>
-          <div class="spine-head"><div class="col-lbl">Petição inicial · alegação</div></div>
+        <div class="spine-col">
+          <div class="spine-head">
+            <div class="ph">Petição inicial</div>
+            <div class="phn" id="spineN"></div>
+            <div class="lens">O que o reclamante alega na petição inicial</div>
+          </div>
           <div id="spine"></div>
         </div>
         <div>
           <div class="scroller"><div class="pcols" id="pcols"></div></div>
-          <div class="read" id="read"></div>
-          <div class="jnote" id="jnote"></div>
         </div>
       </div>
+      <div class="read" id="read"></div>
+      <div class="aibox" id="aibox"></div>
+      <div class="jnote" id="jnote"></div>
     </div>
 
     <div class="sec"><span class="bar"></span><h2>Por que ganha e por que perde</h2><span class="cap">o que a fundamentação considera, por marco</span></div>
@@ -340,7 +368,7 @@
 <div class="drawer-backdrop" id="backdrop" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
-    <div><div class="dh-lbl">Desdobramentos da alegação</div><div class="dh-nm" id="dhNm"></div><div class="dh-sub" id="dhSub"></div></div>
+    <div><div class="dh-lbl" id="dhLbl">Desdobramentos da alegação</div><div class="dh-nm" id="dhNm"></div><div class="dh-sub" id="dhSub"></div></div>
     <button class="dh-close" onclick="closeDrawer()">✕</button>
   </div>
   <div class="drawer-body" id="drawerBody"></div>
@@ -402,6 +430,58 @@ const OUT={
     naoProv:['Não Provido — mantém a decisão','fav','Súmula 126 impede reexame de fatos e provas; mantida a decisão.'],
     prov:['Provido — reforma','desf','Reforma pontual reconhecendo nulidade da dispensa.']
   }
+};
+/* WHY: o "porquê" — síntese em prosa, gerada por IA a partir das peças, na voz de CONSTATAÇÃO
+   (o que de fato pesou nestes processos), não de conceito. Escopo: Liminar, Laudo e Sentença.
+   Texto ILUSTRATIVO — em produção vem do motor de IA sobre o recorte selecionado.
+   Sem percentuais: prosa não força contagem, o que reduz o risco de alucinação. */
+const WHY={
+  lim:{
+    semLim:'Nesses processos o reclamante não chegou a pedir a tutela de urgência. O que se observa nas petições iniciais é a ausência do requisito de urgência: em boa parte delas o afastamento previdenciário já garantia a renda no momento do ajuizamento, e a discussão foi levada direto ao mérito. Aparecem também iniciais em que o pedido de reintegração é acessório a outros pleitos, e casos em que o próprio decurso do tempo entre a dispensa e o ajuizamento enfraqueceu a alegação de urgência.',
+    indef:'O que derrubou a liminar, nesses casos, foi a fragilidade da prova apresentada logo na inicial. Os juízos apontaram que os documentos juntados — atestados genéricos, sem CID, ou receituários avulsos — não demonstravam de plano a doença ocupacional nem a estabilidade alegada. Pesou muito a ausência de CAT e de benefício acidentário: sem eles, não havia presunção de nexo a sustentar a cognição sumária. Em vários despachos o juízo consignou expressamente que a matéria dependia de perícia e postergou a análise para depois da instrução.',
+    veross:'Aqui o juízo se convenceu já na cognição sumária. O elemento que mais apareceu foi a proximidade temporal entre o afastamento médico e a dispensa — em muitos casos a rescisão ocorreu poucos dias após a alta ou durante o próprio tratamento, o que os despachos leram como indício forte. Somam-se atestados contemporâneos com CID compatível com a função e, em parte dos casos, exame demissional que já registrava restrição. O risco de dano irreparável foi fundamentado na perda do plano de saúde no curso do tratamento.',
+    estab:'O que decidiu essas liminares foi o INSS. A concessão de benefício acidentário (espécie B91) e a existência de CAT nos autos criaram a presunção de nexo, e os juízos concederam a reintegração sem esperar a perícia — em vários despachos consta que o reconhecimento do caráter acidentário pela autarquia basta para a cognição sumária. Nesses casos a defesa do banco raramente atacou o enquadramento do benefício; discutiu o mérito da doença, não a espécie concedida.',
+    defCassada:'Nesses casos o banco reverteu a liminar por via do Mandado de Segurança. O fundamento que mais prosperou no TRT foi a ausência de prova pré-constituída do nexo: o relator entendeu que a reintegração imediata, sem perícia, antecipou o próprio mérito da ação. Também prosperou o argumento de irreversibilidade — o retorno ao posto antes da instrução criaria situação de difícil desfazimento. Onde o MS foi impetrado rapidamente após a decisão, o índice de cassação apareceu mais alto.',
+    indefRevertida:'Aqui foi o reclamante quem impetrou o Mandado de Segurança e obteve a reintegração que a liminar havia negado. O que virou o resultado foi, na maior parte, a documentação previdenciária que não havia sido devidamente considerada em primeiro grau — em especial o benefício acidentário e a CAT, que o TRT leu como presunção de estabilidade. Também pesou o argumento de risco à saúde: a perda do plano médico no curso do tratamento foi acolhida como dano de difícil reparação.'
+  },
+  laudo:{
+    semPericia:'Nesses processos a perícia não chegou a acontecer. Na maior parte deles o feito terminou em acordo antes da instrução — e vale o registro: isso significa que boa parte desse grupo foi encerrada sem que o nexo fosse tecnicamente apurado. Em outra parcela o juízo dispensou a prova pericial porque a controvérsia já estava resolvida no plano documental, com prontuário, CAT e comunicação de afastamento nos autos. Restam os casos em que o pedido não dependia da apuração do nexo, como as alegações de dispensa discriminatória.',
+    naoRec:'O que fez o perito afastar o nexo, nesses laudos, foi principalmente o padrão degenerativo dos achados: alterações compatíveis com a faixa etária e com o histórico clínico, sem correspondência com o segmento exigido pela função. Em boa parte deles pesou a preexistência registrada em prontuário anterior à admissão. Um terceiro motivo recorrente é a lacuna probatória — não havia exames do período do vínculo que permitissem datar o início do quadro, e sem isso o perito não conseguiu correlacionar o adoecimento à atividade. Nos quadros psíquicos, os laudos atribuíram o adoecimento a fatores externos ao trabalho.',
+    inconc:'Nesses laudos o perito reconheceu a doença, mas disse não ter elementos para afirmar nem afastar a origem ocupacional. O motivo que mais apareceu foi a falta de documentação do período trabalhado: sem exames ocupacionais admissionais e periódicos, sem registro de afastamentos e sem descrição confiável das atividades, o perito não teve linha de base para comparar. Em outra parcela, o próprio quadro tinha causas concorrentes — fatores pessoais e laborais que o perito não conseguiu isolar. É um grupo que sinaliza lacuna de prova documental do banco, não neutralidade técnica.',
+    concausa:'Aqui o perito reconheceu que o trabalho não foi a causa única, mas agravou ou acelerou um quadro que já existia. O que sustentou essa conclusão foi, em boa parte dos laudos, a análise ergonômica do posto combinada ao tempo de exposição e à progressão documentada do quadro após a admissão — os exames mostram piora ao longo do vínculo. Alerta de leitura: para o Direito do Trabalho a concausa já caracteriza o nexo, então o efeito prático desse grupo é igual ao do nexo causal.',
+    causal:'Nesses laudos o perito estabeleceu relação direta entre a doença e a atividade. O que mais pesou foi a convergência entre a análise ergonômica do posto — repetitividade, postura, ausência de pausas — e o segmento do corpo acometido: o achado clínico bate com a exigência da função. Somam-se exames contemporâneos ao vínculo, que permitiram datar o início do quadro dentro do contrato, e a ausência de histórico prévio que explicasse a doença por outra via. Em vários laudos o perito registrou que o posto não havia passado por adequação ergonômica.',
+  },
+  sent:{
+    improc:'O que decidiu essas sentenças foi, na maior parte, o próprio laudo: o juízo encampou a conclusão pericial que afastara o nexo e, a partir dela, considerou prejudicada a discussão sobre estabilidade — sem doença ocupacional, não há garantia de emprego, e a dispensa é válida. O segundo elemento mais citado é o exame demissional sem restrição, que os juízos usaram para afastar a alegação de que o empregado foi dispensado doente. A ausência de CAT e de benefício acidentário aparece como reforço recorrente. Nos pedidos de origem discriminatória, o que afastou a Súmula 443 do TST foi a demonstração, pelo banco, de motivo objetivo para a dispensa.',
+    reint:'Nessas sentenças o juízo deferiu a reintegração ancorado no nexo reconhecido pela perícia — e, na maior parte dos casos, sem se afastar dela: a decisão seguiu o laudo. O elemento que mais aparece na fundamentação é a documentação previdenciária: benefício acidentário (B91) e CAT, que os juízos trataram como presunção robusta de nexo, com o ônus de desconstituí-la recaindo sobre o banco. Um segundo padrão recorrente é a dispensa ocorrida na vigência do tratamento, lida como conduta discriminatória. Onde o banco não produziu prova do ambiente de trabalho — laudo ergonômico do posto, PPRA/PGR, registro de adequações — a sentença consignou essa omissão.',
+    indeniz:'Nesses casos o juízo reconheceu o direito à estabilidade, mas entendeu que a volta ao posto não era viável — e converteu a reintegração em indenização do período estabilitário. O motivo mais recorrente foi o simples decurso do tempo: quando a sentença saiu, o período de garantia já estava exaurido, e não havia mais o que reintegrar. Em seguida vêm a incompatibilidade entre o quadro de saúde e a função e a animosidade entre as partes registrada na instrução. Nota jurídica importante: a conversão pressupõe o reconhecimento prévio do direito à reintegração — este é um desfecho dentro do deferido, não uma negativa do pedido.',
+    semMerito:'Nesses processos não houve pronunciamento sobre o mérito da reintegração. Predominam largamente os acordos homologados antes do julgamento; em menor medida aparecem extinções por questões processuais e feitos ainda aguardando sentença. Não há, portanto, fundamentação de nexo a resumir — e o mais relevante para leitura de risco é que esse grupo saiu da base sem gerar tese: não é vitória nem derrota técnica, e o banco não sabe como teria decidido o juízo.'
+  }
+  ,acor:{
+    semRecurso:'Esses processos pararam na primeira instância — ninguém recorreu. Nas improcedências, o que se observa é que o reclamante não recorreu quando a sentença veio bem ancorada num laudo negativo: sem nexo reconhecido pela perícia, o recurso ordinário teria pouca margem, já que o TRT tende a prestigiar a prova técnica. Nos casos favoráveis ao reclamante, o não-recurso do banco aparece associado a valores baixos e a período estabilitário já vencido, em que a discussão perdeu objeto prático. Vale o registro: esse é o grupo em que a decisão de primeiro grau virou definitiva sem qualquer revisão.',
+    mantemImproc:'O TRT confirmou a improcedência e, na maior parte desses acórdãos, o fez apoiado na mesma prova técnica: o relator manteve a conclusão pericial que afastara o nexo e registrou que o reclamante não trouxe elemento capaz de infirmar o laudo. É o padrão de maior estabilidade da base — quando a perícia é negativa e a sentença a acompanha, o recurso ordinário raramente reverte. Aparece com frequência a consignação de que o exame demissional não registrava restrição.',
+    reformaAfasta:'Aqui o TRT desfez um nexo que a sentença havia reconhecido. O que mais sustentou a reforma foi a releitura da própria perícia: o relator entendeu que o juízo de origem extraiu do laudo mais do que ele afirmava — em especial quando a sentença tratou como nexo aquilo que o perito havia posto como possibilidade ou concausa frágil. Um segundo fundamento recorrente é a preexistência documentada que o primeiro grau não valorou. Nesses casos a prova documental do banco — prontuário, admissional, histórico de afastamentos — foi decisiva para virar o resultado.',
+    mantemProc:'O TRT confirmou a reintegração deferida na origem. O que sustentou a manutenção foi, na maior parte, o conjunto laudo favorável + documentação previdenciária: com nexo reconhecido pela perícia e benefício acidentário concedido, os acórdãos consignaram que o banco não se desincumbiu do ônus de desconstituir a presunção. Onde o recurso do banco se limitou a rediscutir a conclusão pericial, sem prova nova, o TRT registrou a ausência de elemento capaz de afastá-la.',
+    reformaRec:'Aqui o TRT reconheceu um nexo que a sentença havia negado. O fundamento que mais aparece é o revolvimento da prova em segundo grau: o relator deu peso à prova testemunhal sobre as condições do posto e à documentação previdenciária, entendendo que o laudo, isoladamente, não bastava para afastar o nexo. Em parte dos acórdãos há inversão do ônus da prova, com o TRT consignando que cabia ao banco demonstrar a adequação do ambiente de trabalho — e que essa prova não foi produzida.'
+  },
+  tst:{
+    semTST:'Esses processos encerraram no TRT. O que se observa é que a decisão de segundo grau, quando bem ancorada em fatos e provas, oferece pouca margem ao recurso de revista — que exige violação de lei ou divergência jurisprudencial, e não reexame de prova. A leitura prática é que, na maior parte da base, o acórdão do TRT é a última palavra: é ali que o resultado efetivamente se define, não no TST.',
+    naoProv:'O que barrou esses recursos não foi o mérito da doença — foi a Súmula 126 do TST, que impede o reexame de fatos e provas em instância extraordinária. Os acórdãos registram que a revisão pretendida exigiria reanalisar o laudo pericial e a prova testemunhal, o que a via não comporta, e o recurso não passou do juízo de admissibilidade. Consequência estratégica: o que foi fixado sobre o nexo no TRT tende a ficar imutável, seja favorável ou não ao banco.',
+    prov:'Nos poucos casos em que o TST reformou, o que abriu a via não foi discussão de prova, e sim matéria estritamente jurídica: os acórdãos apontam violação de dispositivo legal ou divergência entre Turmas na aplicação das regras de estabilidade — enquadramento do período de garantia, exigência de CAT e alcance da Súmula 378 do TST. A leitura é que o TST corrige tese jurídica, não fato: onde o banco quer reverter, o argumento precisa ser de direito, não de perícia.'
+  }
+};
+/* INSIGHT: leitura da trilha INTEIRA por alegação — síntese de IA (ilustrativa).
+   Responde o que a caixa-a-caixa não responde: onde o grupo se decide, qual tese de defesa
+   funcionou, e o que o banco poderia ter feito diferente. É aqui que a eficácia da
+   contestação aparece — por isso as caixas de Contestação não têm "porquê" individual. */
+const INSIGHT={
+  all:'Olhando a base inteira, o resultado se decide cedo: o laudo pericial é o ponto de virada, e a sentença raramente se afasta dele. Quando a perícia afasta o nexo, o banco vence e o resultado se estabiliza; quando reconhece — inclusive na forma concausal, que juridicamente já é nexo —, a reintegração tende a ser deferida e o TRT a confirma. O padrão que mais chama atenção é o peso da documentação previdenciária: onde há benefício acidentário e CAT, a presunção de nexo se forma antes mesmo da perícia e o ônus de desconstituí-la recai sobre o banco, inclusive em liminar. <b>No perfil dos autores</b>, a concentração é clara: predominam funções de atendimento na rede de agências — caixa, escriturário e gerente de relacionamento —, com tempo de casa longo e permanência prolongada na mesma função. A rede responde pela maior parte dos pedidos; a retaguarda, por uma fração pequena. A defesa que mais funcionou foi a que atacou o nexo com prova técnica e documental própria; a que menos funcionou foi a que se limitou a negar genericamente a alegação. Ponto cego relevante: uma parcela expressiva dos processos sai da base sem gerar tese — acordo ou extinção sem mérito —, e sobre esses o banco não sabe como o juízo teria decidido.',
+  esf:'Nessa alegação a disputa é essencialmente técnica, e é no laudo que ela se resolve. O que separa vitória de derrota é a existência de prova sobre o posto de trabalho: onde o banco apresentou laudo ergonômico, PPRA/PGR e registro de adequações, o perito teve base para descartar a correlação entre o achado clínico e a função — e a improcedência veio ancorada nisso. Onde essa prova não existia, o perito trabalhou apenas com a versão do reclamante e com a plausibilidade anatômica, e o nexo foi reconhecido, inclusive na forma concausal. <b>No perfil dos autores</b>, o grupo é bastante homogêneo: caixas e escriturários de agência, com muitos anos na mesma função e sem registro de rodízio ou mudança de posto. O tempo de permanência na função é o dado mais forte — a exposição continuada é justamente o que o perito usa para sustentar o nexo, e o banco raramente traz contraprova de rodízio, pausas ou adequação do mobiliário. A tese de defesa mais eficaz foi a de origem degenerativa sustentada em prontuário e exames anteriores à admissão; a menos eficaz foi a negativa genérica de nexo, sem prova do ambiente. Causa raiz acionável: a fragilidade não está na tese jurídica, está na produção de prova sobre a ergonomia da agência e no controle de rodízio de função — e ela precede o processo.',
+  ass:'Aqui a lógica é oposta à do esforço repetitivo: a perícia importa menos e a prova testemunhal decide. Boa parte desses processos corre sem perícia ou com laudo psíquico inconclusivo, e o juízo forma convicção pelo depoimento — o que torna o resultado menos previsível e mais sensível à instrução. <b>No perfil dos autores</b>, predominam funções comerciais com meta individual — gerente de relacionamento, gerente de contas e assistentes da rede —, e o tempo de casa costuma ser menor que o do grupo de esforço repetitivo: o adoecimento aparece cedo. Mais relevante que o perfil do autor, porém, é o <b>cargo apontado como assediador</b>: as petições iniciais mencionam com frequência a gerência da própria agência e a supervisão regional, e as menções tendem a se concentrar em poucas unidades — sinal de problema localizado de liderança, não difuso. A tese de defesa que mais funcionou foi a de metas dentro da política interna, quando acompanhada de documento que comprovasse a praxe do setor; a que mais falhou foi a alegação de ausência de prova, que se esvazia diante de testemunha consistente. O ponto que mais aparece nas condenações é a ausência de registro de apuração interna: quando não há canal de denúncia acionado, sindicância ou tratativa documentada, o juízo lê o silêncio do banco como omissão. Causa raiz acionável: o problema é de governança e registro — prática de liderança, apuração e trilha de evidência —, não de tese processual.',
+  def:'Grupo pequeno e de comportamento previsível: é o único em que a prova documental do banco costuma chegar pronta ao processo. Como a condição é preexistente e está registrada em prontuário e exame admissional, o perito afasta o nexo com facilidade e a improcedência se confirma nas instâncias superiores. <b>No perfil dos autores</b>, não há concentração por função — os casos se espalham por cargos e unidades, o que reforça que a origem é clínica e não ocupacional. O risco aqui não é técnico, é de enquadramento: quando o reclamante é pessoa com deficiência ou empregado reabilitado, a discussão migra do nexo para a validade da dispensa (cota legal e caráter discriminatório), e nesse terreno a prova de motivo objetivo passa a ser o que decide. Causa raiz acionável: garantir que a dispensa desses empregados tenha motivação objetiva documentada — o nexo, aqui, é a batalha errada.',
+  evt:'Grupo pequeno, mas de alta taxa de reconhecimento: o evento crítico é datado, documentado em boletim de ocorrência e quase sempre acompanhado de CAT, o que praticamente elimina a controvérsia sobre o nexo. A perícia tende a confirmar o quadro psíquico pós-traumático, e a defesa raramente consegue afastá-lo. <b>No perfil dos autores</b>, a concentração é quase total no atendimento presencial — caixas e funções de caixa/tesouraria, expostos ao público e ao numerário — e os casos se agrupam por unidade, não por pessoa: são as agências que sofreram o evento. O tempo de casa aqui é irrelevante; o que determina é a exposição ao evento. Causa raiz acionável: a prevenção não está no processo, está no protocolo pós-evento — acolhimento, acompanhamento psicológico e afastamento adequado após assalto ou sequestro. Onde há registro dessas medidas, a defesa tem argumento; onde não há, o processo já chega perdido. E como os casos se concentram por agência, a leitura por unidade é mais útil que a leitura por indivíduo.',
+  disc:'Aqui a disputa não é sobre doença, é sobre o motivo da dispensa — e o ônus da prova é o eixo. Nas alegações de doença grave, a Súmula 443 do TST faz presumir o caráter discriminatório, e cabe ao banco demonstrar motivo lícito e objetivo. Onde essa demonstração existiu — desempenho documentado, reestruturação, critério objetivo aplicado a um grupo —, a improcedência veio; onde a dispensa não tinha registro de motivação, a presunção prevaleceu e o pedido foi deferido. <b>No perfil dos autores</b>, o dado que mais aparece não é cargo nem tempo de casa, e sim o <b>momento da dispensa</b>: desligamentos ocorridos logo após afastamento médico, retorno de licença ou diagnóstico recente. É a proximidade temporal entre o fato de saúde e o desligamento que aciona a presunção. A tese de ausência de prova da discriminação praticamente não funciona: ela ignora que a presunção já inverteu o ônus. Causa raiz acionável: o problema é de trilha documental da decisão de desligamento e do momento em que ela é tomada — tudo isso acontece antes e fora do processo.',
+  estab:'Este grupo tem a menor margem de defesa da base, e por um motivo objetivo: a estabilidade decorre de um fato verificável — gestação, CAT e benefício acidentário, mandato de cipeiro ou dirigente sindical. Não há nexo a discutir; há uma condição que existia ou não existia na data da dispensa. Por isso o desfecho é quase binário e a discussão migra para o desconhecimento da condição pelo banco — tese que raramente prospera, já que a estabilidade da gestante independe do conhecimento do empregador. <b>No perfil dos autores</b>, o que define o grupo não é cargo nem tempo de casa: é a condição estabilitária vigente na data do desligamento, e ela atravessa funções e unidades. O único padrão operacional relevante é que os casos se concentram em desligamentos feitos sem consulta prévia ao status de afastamento, CAT e mandatos. Causa raiz acionável: é falha de controle prévio, não de defesa. O ponto de intervenção está na checagem, antes do desligamento, de afastamentos acidentários, CAT emitida, mandatos vigentes e exames recentes — verificação que custa pouco e evita o processo inteiro.'
 };
 /* por causa: só os resultados cabíveis (keyed, somam ~100% na fase). nexoRec = % de nexo reconhecido no laudo p/ nota. */
 const CAUSES={
@@ -513,10 +593,40 @@ const SUBS={
   disc:[{nm:'Doença grave / estigmatizante (Súm. 443)',n:4,desf:68},{nm:'Exercício de atividade sindical',n:3,desf:55},{nm:'Retaliação por denúncia / reclamação',n:2,desf:60},{nm:'Deficiência / empregado reabilitado',n:2,desf:48}],
   estab:[{nm:'Gestante',n:3,desf:62},{nm:'Acidentária (art. 118 / B91)',n:2,desf:58},{nm:'Membro da CIPA (cipeiro)',n:1,desf:50},{nm:'Dirigente sindical',n:1,desf:45}]
 };
+/* Drawer "o porquê": conceito (regra de negócio) + fundamentação resumida (síntese de IA), separados.
+   WHYCTX é preenchido no render — garante que o drawer mostre exatamente o que a caixa exibe
+   (inclusive quando sentContext reescreve o rótulo da sentença conforme o laudo da trilha). */
+const WHYCTX={};
+function openWhy(phaseId,key){
+  const ctx=WHYCTX[phaseId+':'+key]; const why=WHY[phaseId] && WHY[phaseId][key];
+  if(!ctx||!why) return;
+  const c=CAUSES[sel];
+  const fase=PHASES.find(p=>p.id===phaseId);
+  const escopo = sel==='all' ? 'todas as causas' : c.nm;
+  const sideTxt={fav:'favorável ao banco',desf:'desfavorável ao banco',neut:'neutro',def:'tese de defesa'}[ctx.side]||'';
+  const unidade = phaseId==='sent' ? 'decisões' : 'processos';
+  document.querySelector('.drawer-head').style.borderTopColor=(fase&&fase.color)||C.navy;
+  document.getElementById('dhLbl').textContent=`O porquê · ${fase?fase.label:phaseId}`;
+  document.getElementById('dhNm').textContent=ctx.nm;
+  document.getElementById('dhSub').textContent=`${ctx.cnt} ${unidade} · ${ctx.pct}% da fase · ${escopo}${globalState!=='Todos'?' · '+globalState:''} · ${sideTxt}`;
+  document.getElementById('drawerBody').innerHTML=`
+    <div class="wsec concept">
+      <div class="wsec-lbl">O que significa</div>
+      <div class="wsec-txt">${ctx.desc}</div>
+    </div>
+    <div class="wsec">
+      <div class="wsec-lbl">Por que esses processos caíram aqui <span class="ia-tag">IA</span></div>
+      <div class="wsec-txt">${why}</div>
+    </div>
+    <div class="ia-foot">Síntese gerada por IA a partir das peças do processo. É um apoio à leitura — não substitui o laudo nem a íntegra da decisão, e não deve ser tomada como verdade absoluta.</div>`;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+}
 function openDrawer(k){
   const c=CAUSES[k], subs=SUBS[k]; if(!subs) return;
   const gs=ESTADOS[globalState].scale;
   document.querySelector('.drawer-head').style.borderTopColor=c.color;
+  document.getElementById('dhLbl').textContent='Desdobramentos da alegação';
   document.getElementById('dhNm').textContent=c.nm;
   document.getElementById('dhSub').textContent=`${Math.round(c.qtd*gs)} processos · ${subs.length} desdobramentos${globalState!=='Todos'?' · '+globalState:''}`;
   const maxn=Math.max(...subs.map(s=>s.n));
@@ -536,6 +646,7 @@ function clearSub(){ subFilter=null; renderCols(); }
 
 function renderSpine(){
   const dimOthers = sel!=='all'; const gs=ESTADOS[globalState].scale;
+  document.getElementById('spineN').textContent=`${Math.round(TOTAL_ALEG*gs).toLocaleString('pt-BR')} alegações`;
   document.getElementById('spine').innerHTML=ORDER.map(k=>{
     const c=CAUSES[k]; const isSel=sel===k; const dim=(dimOthers&&!isSel)?' dim':'';
     if(c.all){
@@ -624,10 +735,14 @@ function renderCols(){
     const boxes=items.map(it=>{
       const isSel=it.key===selKey, dimmed=selKey&&!isSel;
       const cls=it.side+(isSel?' sel':'')+(dimmed?' dim':'');
-      const pctLbl = isContFreq ? `<span class="opc">${it.pct}%</span><span class="on">das contest.</span>` : `<span class="opc">${it.pct}%</span><span class="on">${it.cnt}</span>`;
+      const hasWhy = !!(WHY[p.id] && WHY[p.id][it.key]);
+      if(hasWhy){ WHYCTX[p.id+':'+it.key]={nm:it.nm,desc:it.desc,side:it.side,pct:it.pct,cnt:it.cnt}; }
+      const pctCls = hasWhy ? 'opc why' : 'opc';
+      const pctClick = hasWhy ? ` onclick="event.stopPropagation();openWhy('${p.id}','${it.key}')" title="Ver a fundamentação resumida"` : '';
+      const pctLbl = isContFreq ? `<span class="opc">${it.pct}%</span><span class="on">das contest.</span>` : `<span class="${pctCls}"${pctClick}>${it.pct}%</span><span class="on">${it.cnt}</span>`;
       return `<div class="obox ${cls}" onclick="selectBox('${p.id}','${it.key}')">
         <div class="obh">${pctLbl}<span class="badge ${it.side}">${sideBadge[it.side]}</span></div>
-        <div class="obn">${it.nm}</div>${it.selo?`<div class="selo">🛡 ${it.selo}</div>`:''}<div class="obd">${it.desc}</div></div>`;
+        <div class="obn">${it.nm}</div>${it.selo?`<div class="selo">🛡 ${it.selo}</div>`:''}<div class="obd">${it.desc}</div>${hasWhy?'<div class="whyhint">▸ clique no % para ver o porquê</div>':''}</div>`;
     }).join('');
     let freqNote='';
     if(isContFreq){
@@ -640,8 +755,8 @@ function renderCols(){
     const selItem=items.find(x=>x.key===selKey);
     COMP[p.id]={selPct:selItem?selItem.pct:null,selCnt:selItem?selItem.cnt:null};
     const col=`<div class="pcol" style="border-top-color:${p.color}">
-      <div class="ph">${p.label}</div><div class="phn">${nn} ${unit}</div>
-      <div class="lens">${p.lens}</div>${freqNote}${boxes}${nexoNote}${illus}</div>`;
+      <div class="pchead"><div class="ph">${p.label}</div><div class="phn">${nn} ${unit}</div>
+      <div class="lens">${p.lens}</div></div>${freqNote}${boxes}${nexoNote}${illus}</div>`;
     if(selItem){ lean=Math.max(-1,Math.min(1,lean+(LEAN[selKey]||0))); frac=frac*(selItem.pct/100); }
     return col;
   }).join('');
@@ -664,6 +779,8 @@ function renderCols(){
     read = buildGroupSummary(opening, ph=>condDist(c.dist[ph], gl+subLean));
   }
   document.getElementById('read').innerHTML=`<span class="rl">🔎 Leitura da trilha · ${c.nm}</span>${read}`;
+  const ins=INSIGHT[sel];
+  document.getElementById('aibox').innerHTML = ins ? `<span class="al">💡 Insight da trilha · ${c.nm} <span class="ai-tag">IA</span></span>${ins}<div class="adisc">Síntese gerada por IA sobre o conjunto da trilha desta alegação — inclui a leitura de eficácia das teses de defesa e o perfil <b>agregado</b> dos autores (função, tempo de exposição e unidade). O perfil é descritivo e não deve ser usado como critério de decisão sobre pessoas. É apoio à análise: não substitui a leitura das peças e não deve ser tomado como verdade absoluta.</div>` : '';
   document.getElementById('jnote').textContent=c.note;
 }
 
