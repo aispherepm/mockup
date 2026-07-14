@@ -200,6 +200,14 @@
   .gp-toggle button.on{background:var(--navy);color:#fff}
   .gp-tot{font-size:12px;color:var(--textSec);margin:0 0 16px}
   .gp-tot b{color:var(--text)} .gp-tot .win{color:var(--green);font-weight:800} .gp-tot .lose{color:var(--red);font-weight:800}
+  .gb-fr{font-size:9.5px;color:var(--textMuted);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:56px;text-align:right}
+  .gp-scope{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);border-left:4px solid var(--sc,var(--navy))}
+  .gp-scope.filtered{background:#fff}
+  .gp-scope .gs-lbl{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--textMuted)}
+  .gp-scope .gs-nm{font-size:12.5px;font-weight:800;color:var(--sc,var(--navy))}
+  .gp-scope .gs-hint{font-size:10.5px;color:var(--textSec);font-style:italic}
+  .gp-scope .gs-clear{margin-left:auto;font-size:10px;font-weight:700;color:var(--textSec);background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 9px;cursor:pointer}
+  .gp-scope .gs-clear:hover{border-color:var(--sc,var(--navy));color:var(--sc,var(--navy))}
   .gpcols{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   .gp-low{display:inline-block;margin-left:10px;background:var(--amberLight);color:#8a5a00;border:1px solid #F3D48A;border-radius:6px;padding:2px 7px;font-size:9.5px;font-weight:700;font-style:normal}
   .gpcol .gh{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:800;margin-bottom:3px}
@@ -349,6 +357,7 @@
     <div class="sec"><span class="bar"></span><h2>Por que ganha e por que perde</h2><span class="cap">o que a fundamentação considera, por marco</span></div>
     <div class="card">
       <div class="gp-note">📌 <b>Como ler:</b> os fundamentos que <b>mais mudam o resultado</b>. Cada fundamento traz duas barras: a taxa de vitória do banco <b>com</b> ele (tom cheio) e <b>sem</b> ele (tom claro) — quanto maior a diferença, mais decisivo. <b>"Após a liminar"</b> usa o resultado que prevalece. Segue a causa selecionada na trilha acima.</div>
+      <div class="gp-scope" id="gpScope"></div>
       <div class="gp-toggle" id="gpToggle"></div>
       <div class="gp-tot" id="gpTot"></div>
       <div class="gpcols" id="gpCols"></div>
@@ -812,23 +821,32 @@ const FATORES={
 };
 let gpMarco='lim';
 function gpForca(d){ return d>=45?['alta','força alta']:d>=25?['media','força média']:['baixa','força baixa']; }
-function gpFator(f){ const [nm,com,sem,freq,n]=f,[fc,fl]=gpForca(com-sem),gs=ESTADOS[globalState].scale;
+function gpFator(f,tot,verbo){ const [nm,com,sem,freq,n]=f,[fc,fl]=gpForca(com-sem),gs=ESTADOS[globalState].scale;
+  const totN=Math.round(tot*gs);
+  const nCom=Math.round(n*gs), nSem=Math.max(0,totN-nCom);           // as duas populações
+  const vCom=Math.round(nCom*com/100), vSem=Math.round(nSem*sem/100); // o numerador que faltava
   return `<div class="gfat"><div class="gfat-top"><span class="gfat-nm">${nm}</span><span class="gfat-force ${fc}">${fl}</span></div>
     <div class="gbars">
-      <div class="gb"><span class="gb-l">com</span><div class="gb-tk"><i class="s" style="width:${com}%"></i></div><span class="gb-v">${com}%</span></div>
-      <div class="gb"><span class="gb-l">sem</span><div class="gb-tk"><i class="w" style="width:${sem}%"></i></div><span class="gb-v">${sem}%</span></div>
+      <div class="gb"><span class="gb-l">com</span><div class="gb-tk"><i class="s" style="width:${com}%"></i></div><span class="gb-v">${com}%</span><span class="gb-fr" title="o banco ${verbo} em ${vCom} das ${nCom} decisões em que este fundamento apareceu">${vCom} de ${nCom}</span></div>
+      <div class="gb"><span class="gb-l">sem</span><div class="gb-tk"><i class="w" style="width:${sem}%"></i></div><span class="gb-v">${sem}%</span><span class="gb-fr" title="o banco ${verbo} em ${vSem} das ${nSem} decisões em que este fundamento não apareceu">${vSem} de ${nSem}</span></div>
     </div>
-    <div class="gfat-detail">presente em ${freq}% das decisões · ${Math.round(n*gs)} casos</div></div>`; }
+    <div class="gfat-detail">presente em ${freq}% das decisões · ${nCom} de ${totN} · o banco ${verbo} em <b>${vCom}</b> delas</div></div>`; }
 function setGpMarco(m){ gpMarco=m; renderGanhaPerde(); }
 function renderGanhaPerde(){
   const d=FATORES[sel]||FATORES.all, m=d[gpMarco], gs=ESTADOS[globalState].scale;
   const winLbl=gpMarco==='lim'?'indeferimento':'improcedência', loseLbl=gpMarco==='lim'?'deferimento':'reintegração';
   const gan=[...m.ganhar].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2])), per=[...m.perder].sort((a,b)=>(b[1]-b[2])-(a[1]-a[2]));
+  const cSel=CAUSES[sel], filtrado=sel!=='all';
+  document.getElementById('gpScope').className='gp-scope'+(filtrado?' filtered':'');
+  document.getElementById('gpScope').style.setProperty('--sc', filtrado?cSel.color:C.navy);
+  document.getElementById('gpScope').innerHTML = filtrado
+    ? `<span class="gs-lbl">Filtrado pela alegação</span><span class="gs-nm">${cSel.nm}</span><span class="gs-hint">— os fundamentos abaixo são só desta alegação</span><button class="gs-clear" onclick="pick('all')">✕ ver todas as causas</button>`
+    : `<span class="gs-lbl">Escopo</span><span class="gs-nm">Todas as causas</span><span class="gs-hint">— selecione uma alegação na trilha acima para ver os fundamentos dela</span>`;
   document.getElementById('gpToggle').innerHTML=`<button class="${gpMarco==='lim'?'on':''}" onclick="setGpMarco('lim')">Liminar</button><button class="${gpMarco==='apos'?'on':''}" onclick="setGpMarco('apos')">Após a liminar</button>`;
   const totN=Math.round(m.tot*gs);
   const lowN = totN<20 ? `<span class="gp-low">⚠ amostra pequena — percentuais indicativos, não conclusivos</span>` : '';
   document.getElementById('gpTot').innerHTML=`<b>${totN}</b> decisões neste marco · <span class="win">${Math.round(m.win*gs)} favoráveis</span> · <span class="lose">${Math.round(m.lose*gs)} desfavoráveis</span>${gpMarco==='apos'?' · resultado que prevalece':''}${lowN}`;
-  document.getElementById('gpCols').innerHTML=`<div class="gpcol win"><div class="gh"><span class="gi">✓</span>Causas de ganhar<span class="gtag">${winLbl}</span></div><div class="gcap">% em que o banco venceu — com e sem o fundamento</div>${gan.map(gpFator).join('')}</div><div class="gpcol lose"><div class="gh"><span class="gi">✕</span>Causas de perder<span class="gtag">${loseLbl}</span></div><div class="gcap">% em que o banco perdeu — com e sem o fundamento</div>${per.map(gpFator).join('')}</div>`;
+  document.getElementById('gpCols').innerHTML=`<div class="gpcol win"><div class="gh"><span class="gi">✓</span>Causas de ganhar<span class="gtag">${winLbl}</span></div><div class="gcap">% em que o banco venceu — com e sem o fundamento</div>${gan.map(f=>gpFator(f,m.tot,'venceu')).join('')}</div><div class="gpcol lose"><div class="gh"><span class="gi">✕</span>Causas de perder<span class="gtag">${loseLbl}</span></div><div class="gcap">% em que o banco perdeu — com e sem o fundamento</div>${per.map(f=>gpFator(f,m.tot,'perdeu')).join('')}</div>`;
 }
 
 const EVOL={
