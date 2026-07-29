@@ -85,6 +85,7 @@
   .b-analise{background:var(--blueLight);color:var(--blue)}.b-analise .bdot{background:var(--blue)}
   .b-pend{background:var(--amberLight);color:var(--amber)}.b-pend .bdot{background:var(--amber)}
   .b-aguard{background:var(--purpleLight);color:var(--purple)}.b-aguard .bdot{background:var(--purple)}
+  .b-rh{background:#E0F2F1;color:#00695C}.b-rh .bdot{background:#00695C}
   .b-final{background:var(--greenLight);color:var(--green)}.b-final .bdot{background:var(--green)}
   .tag{background:#EEF0F3;color:var(--textSec);font-size:12px;font-weight:600;padding:5px 11px;border-radius:8px}
   .tag-inst{background:var(--blueLight);color:var(--blue)}
@@ -150,6 +151,13 @@
   .tl-title{font-weight:700;font-size:13px;margin:2px 0}
   .tl-desc{font-size:13px;color:var(--textSec)}
   .tl-ator{font-size:12px;color:var(--textMuted);margin-top:3px}
+  .doc-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+  .doc-row:last-child{border-bottom:none}
+  .doc-row .fic{width:18px;height:18px;color:var(--red);flex-shrink:0}
+  .doc-name{font-weight:600;font-size:13px;flex:1;word-break:break-all}
+  .doc-actions{display:flex;gap:14px}
+  .doc-link{color:var(--blue);font-weight:700;font-size:13px;text-decoration:none;cursor:pointer}
+  .doc-link:hover{text-decoration:underline}
   .hidden{display:none!important}
 </style>
 </head>
@@ -183,7 +191,7 @@
       </div>
       <div class="topright">
         <div class="perfil-switch">Perfil (demo):
-          <select id="perfilSel"><option value="Jurídico">Jurídico (Naara)</option><option value="RH">RH</option></select>
+          <select id="perfilSel"><option value="Jurídico">Jurídico (Naara)</option><option value="RH">RH</option><option value="Escritório">Escritório</option></select>
         </div>
         <div class="chip-restrito"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>MÓDULO RESTRITO</div>
       </div>
@@ -229,11 +237,14 @@ let DB = [
       { cnj:"0007788-12.2024.5.15.0032", tipo:"Reintegração c/ estabilidade — dirigente sindical", instancia:"1ª instância · TRT-15", resultado:"Impedido", estab:{dataReintegracao:"2024-03-10",inicioEstab:"2024-03-10",prazoDias:"365",dataImped:"2027-03-10"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"Dirigente sindical (art. 543 da CLT) — 12 meses após o encerramento do mandato",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Não"}, recIA:"Estabilidade sindical vigente e liminar deferida sem sentença posterior. Desligamento não recomendado enquanto perdurar o impedimento." },
       { cnj:"0004521-90.2022.5.01.0044", tipo:"Reintegração c/ estabilidade — gestante", instancia:"2ª instância · TRT-1", resultado:"Liberado", estab:{dataReintegracao:"2022-05-02",inicioEstab:"2022-02-14",prazoDias:"210",dataImped:""}, dec:{decisao:"Reintegração indenizada",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Acórdão - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da licença maternidade",encerrado:"Sim"}, recIA:"Estabilidade gestacional já encerrada; acórdão improcedente. Sem impedimento — desligamento liberado." }
   ]},
-  { cpf:"402.117.336-19", nome:"Renata Lopes Vasconcelos", dataDesligamento:"2025-11-20", dataAnalise:"2026-07-22", situacao:"Finalizada", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-23"}, processos:[
+  { cpf:"402.117.336-19", nome:"Renata Lopes Vasconcelos", dataDesligamento:"2025-11-20", dataAnalise:"2026-07-22", situacao:"Finalizada", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-23"}, finalizacao:{tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"}, processos:[
       { cnj:"0002199-73.2025.5.03.0018", tipo:"Reintegração c/ estabilidade — CIPA", instancia:"1ª instância · TRT-3", resultado:"Liberado", estab:{dataReintegracao:"2025-02-01",inicioEstab:"2024-08-01",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Membro CIPA (art. 10, II, \"a\" do ADCT da CF/88) — 12 meses após o encerramento do mandato",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Sim"}, recIA:"Mandato encerrado e estabilidade expirada; sentença improcedente transitada. Desligamento liberado." }
   ]},
-  { cpf:"231.669.478-02", nome:"Anderson Ribeiro da Cruz", dataDesligamento:"2025-09-08", dataAnalise:"2026-07-20", situacao:"Finalizada", aval:{resultado:"Impedido",por:"Naara Ribeiro",data:"2026-07-21"}, processos:[
+  { cpf:"231.669.478-02", nome:"Anderson Ribeiro da Cruz", dataDesligamento:"2025-09-08", dataAnalise:"2026-07-20", situacao:"Finalizada", aval:{resultado:"Impedido",por:"Naara Ribeiro",data:"2026-07-21"}, finalizacao:{tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}, processos:[
       { cnj:"0005630-41.2024.5.09.0021", tipo:"Reintegração c/ estabilidade — PCD", instancia:"1ª instância · TRT-9", resultado:"Impedido", estab:{dataReintegracao:"2024-11-12",inicioEstab:"2024-11-12",prazoDias:"",dataImped:"2027-11-12"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"PCD (art. 93 Lei 8.213/91) — desligamento somente se observada a cota",situacaoPedido:"Sentença - pedido procedente",medidaJudicial:"MS impetrado – mantida a decisão de reintegração",eventoEncerra:"Efetivação da reintegração",encerrado:"Não"}, recIA:"Reintegração deferida e mantida em MS; cota de PCD não observada. Desligamento impedido." }
+  ]},
+  { cpf:"527.611.404-90", nome:"Beatriz Campos Rocha", dataDesligamento:"2025-12-15", dataAnalise:"2026-07-28", situacao:"Aguardando RH", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-28"}, processos:[
+      { cnj:"0007742-19.2025.5.02.0033", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2025-03-01",inicioEstab:"2025-03-01",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Sim"}, recIA:"Sentença improcedente e estabilidade encerrada. Desligamento liberado." }
   ]},
   { cpf:"918.554.207-64", nome:"Cláudia Maria Nogueira", dataDesligamento:"2026-01-30", dataAnalise:"2026-07-26", situacao:"Em análise", aval:null, processos:[
       { cnj:"0006012-58.2025.5.02.0007", tipo:"Reintegração c/ estabilidade — pré-aposentadoria", instancia:"1ª instância · TRT-2", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"Normativa",fundamento:"Pré-aposentadoria CCT — cláusula 27, alínea e — 12 meses anteriores",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Documentos em leitura — classificação ainda não concluída." },
@@ -261,22 +272,44 @@ const _TL={
  "918.554.207-64":[["2026-07-26T10:22","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-26T10:22","Consulta","Consulta à base dos tribunais","Busca por CPF — 2 processos localizados.","Sistema · IA"],["2026-07-26T10:24","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-26T10:40","Leitura","Leitura de documentos em andamento","API Tribunal (~2h).","Sistema · IA"]],
  "654.023.881-37":[["2026-07-28T15:21","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-28T15:21","Consulta","Aguardando consulta à base","Fila de captura.","Sistema · IA"]],
  "305.778.612-90":[["2026-07-25T08:10","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-25T08:10","Consulta","Consulta retornou sem dados","Processo em segredo de justiça.","Sistema · IA"],["2026-07-25T08:11","Sinalização","Sinalizada: segredo de justiça","Encaminhar para preenchimento manual.","Sistema · IA"],["2026-07-25T09:30","Distribuição","Distribuída ao escritório","Escritório Meurer & Associados.","Naara Ribeiro"]],
+ "527.611.404-90":[["2026-07-27T08:30","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-27T08:30","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-27T08:31","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-27T10:05","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-27T10:20","Classificação","Classificação de IA concluída","1 liberado.","Sistema · IA"],["2026-07-28T09:10","Aval","Parecer emitido: Liberado","Estabilidade encerrada e sentença improcedente.","Naara Ribeiro"],["2026-07-28T09:10","Encaminhamento","Devolvido ao RH","Aguardando finalização do RH.","Sistema"]],
  "478.912.335-06":[["2026-07-24T14:02","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-24T14:02","Consulta","Consulta não localizou documentos","Possível erro de captura na API do tribunal.","Sistema · IA"],["2026-07-24T14:03","Sinalização","Sinalizada: documento não localizado","Aguardando distribuição para escritório.","Sistema · IA"]]
 };
 Object.keys(_TL).forEach(cpf=>{const p=DB.find(x=>x.cpf===cpf);if(p)p.timeline=_TL[cpf].map(a=>({ts:a[0],tipo:a[1],titulo:a[2],desc:a[3],ator:a[4]}));});
 DB.forEach(p=>{ if(!p.timeline)p.timeline=[]; });
+DB.push({ cpf:"529.982.247-25", nome:"Beatriz Carvalho Lima", dataDesligamento:"2026-01-20", dataAnalise:"2026-07-28", situacao:"Aguardando RH", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-28"}, finalizacao:null, historico:[], timeline:[], processos:[{ cnj:"0007321-45.2025.5.02.0033", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2025-03-01",inicioEstab:"2025-03-01",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Sim"}, recIA:"Sentença improcedente e estabilidade encerrada. Desligamento liberado.", edited:{} }] });
+(function(){ const b=DB.find(p=>p.cpf==="529.982.247-25"); b.timeline=[
+ {ts:"2026-07-28T08:30",tipo:"Criação",titulo:"Demanda criada",desc:"Gatilho: impedimento administrativo caiu.",ator:"RH · Camila Duarte"},
+ {ts:"2026-07-28T08:30",tipo:"Consulta",titulo:"Consulta à base dos tribunais",desc:"1 processo localizado.",ator:"Sistema · IA"},
+ {ts:"2026-07-28T09:50",tipo:"Classificação",titulo:"Classificação de IA concluída",desc:"1 liberado.",ator:"Sistema · IA"},
+ {ts:"2026-07-28T11:00",tipo:"Aval",titulo:"Parecer emitido: Liberado",desc:"Estabilidade encerrada.",ator:"Naara Ribeiro"},
+ {ts:"2026-07-28T11:00",tipo:"Encaminhamento",titulo:"Devolvido ao RH",desc:"Aguardando finalização do RH.",ator:"Sistema"}];
+ const r=DB.find(p=>p.cpf==="402.117.336-19"); if(r) r.finalizacao={tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"};
+ const a=DB.find(p=>p.cpf==="231.669.478-02"); if(a) a.finalizacao={tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}; })();
+DB.push({ cpf:"617.284.539-11", nome:"Vanessa Rocha Martins", dataDesligamento:"2026-01-12", dataAnalise:"2026-07-28", situacao:"Aguardando aval", aval:null, encaminhado:"Escritório Andrade Advocacia", encaminhadoData:"2026-07-25", matchDocs:["contestacao_vanessa.pdf","sentenca_1a_instancia.pdf"], match:{total:12,conf:11,divergencias:["Data de Impedimento Judicial"]}, historico:[], timeline:[], processos:[{ cnj:"0004902-15.2025.5.15.0099", tipo:"Reintegração c/ estabilidade — gestante", instancia:"1ª instância · TRT-15", resultado:"Impedido", estab:{dataReintegracao:"2025-06-01",inicioEstab:"2025-03-15",prazoDias:"300",dataImped:"2026-11-15"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da licença maternidade",encerrado:"Não"}, recIA:"Dados preenchidos pelo escritório; estabilidade gestacional vigente e liminar deferida. Classificação: impedido.", edited:{} }] });
+(function(){ const v=DB.find(p=>p.cpf==="617.284.539-11"); v.timeline=[
+ {ts:"2026-07-24T09:00",tipo:"Criação",titulo:"Demanda criada",desc:"Gatilho: impedimento administrativo caiu.",ator:"RH · Paulo Nunes"},
+ {ts:"2026-07-24T09:00",tipo:"Consulta",titulo:"Consulta retornou sem dados",desc:"Processo em segredo de justiça.",ator:"Sistema · IA"},
+ {ts:"2026-07-24T09:02",tipo:"Sinalização",titulo:"Sinalizada: segredo de justiça",desc:"Encaminhar para preenchimento manual.",ator:"Sistema · IA"},
+ {ts:"2026-07-25T10:15",tipo:"Distribuição",titulo:"Distribuída ao escritório",desc:"Escritório Andrade Advocacia.",ator:"Naara Ribeiro"},
+ {ts:"2026-07-28T14:30",tipo:"Leitura",titulo:"Dados preenchidos e documentos anexados pelo escritório",desc:"contestacao_vanessa.pdf, sentenca_1a_instancia.pdf",ator:"Escritório Andrade Advocacia"},
+ {ts:"2026-07-28T14:35",tipo:"Classificação",titulo:"Análise automática da IA concluída",desc:"11/12 campos conferem com o documento.",ator:"Sistema · IA"},
+ {ts:"2026-07-28T14:35",tipo:"Encaminhamento",titulo:"Encaminhada para aval do jurídico",desc:"",ator:"Sistema"}]; })();
+DB.forEach(p=>{ if(p.matchDocs) p.matchDocs=p.matchDocs.map(d=> typeof d==="string"?{name:d,url:makeDocURL(d),sim:true}:d); });
 
 /* ---- helpers ---- */
 const $=s=>document.querySelector(s);
 const view=$("#view");
 let filtroBusca="", filtroSituacao="", perfil="Jurídico";
+let consultasSemana=12; const LIMITE_SEMANA=30;
 let cur={v:'fila'};
 let editMode={}, openProcs=new Set(), detTab='solic';
+let loteUsadosSemana=12; const LOTE_LIMITE_SEMANA=30; let novaMode='ind';
 
 function fmtDate(d){ if(!d) return "—"; const[y,m,dd]=d.split("-"); return `${dd}/${m}/${y}`; }
 function fget(x,k){ return k.includes('.')?x[k.split('.')[0]][k.split('.')[1]]:x[k]; }
 function fset(x,k,v){ if(k.includes('.')){const[a,b]=k.split('.');x[a][b]=v;} else x[k]=v; }
-function situacaoBadge(s){ const map={"Aberta":"b-aberta","Em análise":"b-analise","Pendência de captura":"b-pend","Aguardando aval":"b-aguard","Finalizada":"b-final"}; return `<span class="badge ${map[s]||'b-aberta'}"><span class="bdot"></span>${s}</span>`; }
+function situacaoBadge(s){ const map={"Aberta":"b-aberta","Em análise":"b-analise","Pendência de captura":"b-pend","Aguardando aval":"b-aguard","Aguardando RH":"b-rh","Finalizada":"b-final"}; return `<span class="badge ${map[s]||'b-aberta'}"><span class="bdot"></span>${s}</span>`; }
 function resultadoBadge(r){ if(!r) return "—"; return r==="Liberado"?`<span class="badge b-lib"><span class="bdot"></span>Liberado</span>`:`<span class="badge b-imp"><span class="bdot"></span>Impedido</span>`; }
 function consolidado(p){ return {lib:p.processos.filter(x=>x.resultado==="Liberado").length, imp:p.processos.filter(x=>x.resultado==="Impedido").length}; }
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
@@ -301,7 +334,7 @@ function renderFila(){
     <div class="search"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
       <input id="busca" placeholder="Buscar CPF ou CNJ..." value="${esc(filtroBusca)}"></div>
     <select id="fsit"><option value="">Todos os status</option>
-      ${["Aberta","Em análise","Pendência de captura","Aguardando aval","Finalizada"].map(s=>`<option ${s===filtroSituacao?"selected":""}>${s}</option>`).join("")}</select>
+      ${["Aberta","Em análise","Pendência de captura","Aguardando aval","Aguardando RH","Finalizada"].map(s=>`<option ${s===filtroSituacao?"selected":""}>${s}</option>`).join("")}</select>
     ${novaBtn}
   </div>
   <div class="card"><div class="sec-title">Solicitações <span class="count">${rows.length} ${rows.length===1?"solicitação":"solicitações"}</span></div>
@@ -362,10 +395,9 @@ function renderProcCard(p,i){
   body+=`<div class="fieldgrid" style="margin-top:14px"><div class="field"><label>Resultado da análise (regra)</label><div style="padding-top:2px">${x.resultado?resultadoBadge(x.resultado):'<span class="tag">Em análise</span>'}</div></div></div>`;
   // actions
   let actions="";
-  if(p.situacao!=="Pendência de captura"){
-    if(editing) actions=`<button class="btn btn-ghost btn-sm" onclick="cancelProc(${i})">Cancelar</button><button class="btn btn-primary btn-sm" onclick="saveProc('${p.cpf}',${i})">Salvar alterações</button>`;
-    else if(perfil==="Jurídico") actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Editar dados</button>`;
-  }
+  if(editing) actions=`<button class="btn btn-ghost btn-sm" onclick="cancelProc(${i})">Cancelar</button><button class="btn btn-primary btn-sm" onclick="saveProc('${p.cpf}',${i})">Salvar alterações</button>`;
+  else if(perfil==="Jurídico" && p.situacao!=="Pendência de captura") actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Editar dados</button>`;
+  else if(perfil==="Escritório" && p.situacao==="Pendência de captura") actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Preencher dados</button>`;
   return `<div class="proc-item ${isOpen?'open':''}" id="proc-${i}">
     <div class="proc-header" onclick="toggleProc(${i},event)">
       <span class="chev">${chevSVG}</span><span class="cnj">${x.cnj}</span><span class="tag">${x.tipo}</span><span class="tag tag-inst">${x.instancia}</span>
@@ -402,32 +434,50 @@ function renderDetalhe(cpf){
       <div><b>Pendência de captura — ${p.motivoPendencia}.</b> A IA não localizou os documentos. Selecione abaixo o escritório para distribuir a demanda para preenchimento manual.</div></div>`;
   }
 
-  // aval
+  // aval + finalização
+  const _imp=p.processos.find(x=>x.resultado==="Impedido");
+  const prazoTxt=(_imp&&_imp.estab.dataImped)?` O impedimento se estende até ${fmtDate(_imp.estab.dataImped)}.`:"";
   let avalHtml="";
-  if(p.aval){
-    avalHtml=`<div class="resolved">${resultadoBadge(p.aval.resultado)}<span style="color:var(--textSec)">Aval registrado por <b>${p.aval.por}</b> em ${fmtDate(p.aval.data)}</span></div>`;
+  if(p.situacao==="Finalizada"){
+    let fin="";
+    if(p.finalizacao){ const f=p.finalizacao; const t=f.tipo==="desligamento"?`Desligamento realizado · evidência: <b>${f.evidencia||'—'}</b>`:f.tipo==="nao_desligado"?`Não desligado · justificativa: "${f.justificativa}"`:`Ciência do impedimento registrada`;
+      fin=`<div class="foot-note" style="margin-top:10px">${t} — por <b>${f.por}</b> em ${fmtDate(f.data)}</div>`; }
+    avalHtml=`<div class="resolved">${p.aval?resultadoBadge(p.aval.resultado):"—"}<span style="color:var(--textSec)">Parecer por <b>${p.aval?p.aval.por:"—"}</b>${p.aval?` em ${fmtDate(p.aval.data)}`:""}</span></div>${fin}`;
+  } else if(p.situacao==="Aguardando RH"){
+    const head=`<div class="resolved" style="margin-bottom:14px">${resultadoBadge(p.aval.resultado)}<span style="color:var(--textSec)">Parecer emitido por <b>${p.aval.por}</b> em ${fmtDate(p.aval.data)}.</span></div>`;
+    if(perfil==="RH"){
+      if(p.aval.resultado==="Liberado"){
+        avalHtml=head+`<div class="subsec">Finalização — desligamento (RH)</div>
+          <div class="field"><label>Situação do desligamento</label><select id="finTipo" onchange="finToggle()"><option value="">— Selecione —</option><option value="desligamento">Desligamento realizado</option><option value="nao_desligado">Não desligado</option></select></div>
+          <div id="finDeslig" class="hidden" style="margin-top:12px"><div class="field"><label>Evidência do desligamento (upload)</label><input type="file" id="finFile"></div></div>
+          <div id="finJust" class="hidden" style="margin-top:12px"><div class="field"><label>Justificativa por não desligar</label><textarea id="finJustTxt" placeholder="Descreva o motivo de não ter desligado..."></textarea></div></div>
+          <div class="aval-actions"><button class="btn btn-green" onclick="finalizarRH('${p.cpf}')">Finalizar demanda</button></div>`;
+      } else {
+        avalHtml=head+`<div class="subsec">Finalização — ciência (RH)</div>
+          <div class="banner" style="background:var(--redLight);border-color:#f0c2cc"><svg style="color:var(--red)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div>Colaborador <b>impedido</b>: o vínculo deve ser mantido.${prazoTxt} Registre a ciência para finalizar.</div></div>
+          <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--textSec);margin-top:10px"><input type="checkbox" id="finCiencia"> Estou ciente do impedimento e da manutenção do vínculo.</label>
+          <div class="aval-actions"><button class="btn btn-red" onclick="finalizarRH('${p.cpf}')">Dar ciência e finalizar</button></div>`;
+      }
+    } else {
+      avalHtml=head+`<div class="resolved"><span style="color:var(--textMuted)">Aguardando finalização do RH (evidência de desligamento, justificativa ou ciência).</span></div>`;
+    }
   } else if(p.situacao==="Aguardando aval"){
     if(perfil==="Jurídico"){
-      avalHtml=`<div class="aval-summary">
+      avalHtml=`${p.match?`<div class="banner" style="background:var(--blueLight);border-color:#bcd8f5;margin-bottom:14px"><svg fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Análise automática da IA sobre o documento do escritório: <b>${p.match.conf}/${p.match.total}</b> campos conferem${p.match.divergencias.length?` · revisar: ${p.match.divergencias.join("; ")}`:""}.</div></div>`:""}<div class="aval-summary">
         <div class="aval-kpi"><div class="num" style="color:var(--green)">${lib}</div><div class="lbl">Processos liberados</div></div>
         <div class="aval-kpi"><div class="num" style="color:var(--red)">${imp}</div><div class="lbl">Processos impedidos</div></div></div>
         <div class="field full"><label>Justificativa</label><textarea id="justif" placeholder="Registre a justificativa do aval..."></textarea></div>
         <div class="aval-actions"><button class="btn btn-green" onclick="darAval('${p.cpf}','Liberado')">Liberar CPF</button><button class="btn btn-red" onclick="darAval('${p.cpf}','Impedido')">Impedir CPF</button></div>`;
     } else {
-      avalHtml=`<div class="resolved"><span style="color:var(--textMuted)">Aguardando aval do time <b>Jurídico (Naara)</b>. Perfil RH não realiza o aval.</span></div>`;
+      avalHtml=`<div class="resolved"><span style="color:var(--textMuted)">Aguardando aval do time <b>Jurídico (Naara)</b>.</span></div>`;
     }
   } else {
     avalHtml=`<div class="resolved"><span style="color:var(--textMuted)">Aval indisponível — a solicitação está <b>${p.situacao.toLowerCase()}</b>.</span></div>`;
   }
 
-  let distCard="";
+  let distCard="", escCard="";
   if(p.situacao==="Pendência de captura"){
-    if(perfil==="RH"){
-      distCard=`<div class="card"><div class="sec-title">Distribuição da demanda</div>
-        <div class="field"><label>Escritório responsável</label><div class="locked">${p.encaminhado||'<span style="color:var(--textMuted)">Ainda não distribuída</span>'}</div></div>
-        <div class="foot-note">${p.encaminhado?`Distribuída${p.encaminhadoData?` em ${fmtDate(p.encaminhadoData)}`:''}.`:'Aguardando distribuição pelo time responsável.'} Perfil RH: somente visualização.</div>
-      </div>`;
-    } else {
+    if(perfil==="Jurídico"){
       distCard=`<div class="card"><div class="sec-title">Distribuição da demanda</div>
         <div class="fieldgrid" style="grid-template-columns:1fr auto;align-items:end;gap:14px">
           <div class="field"><label>Escritório responsável</label>
@@ -437,9 +487,23 @@ function renderDetalhe(cpf){
         </div>
         <div class="foot-note">${p.encaminhado?`Distribuída para <b>${p.encaminhado}</b>${p.encaminhadoData?` em ${fmtDate(p.encaminhadoData)}`:''}.`:'Ainda não distribuída.'}</div>
       </div>`;
+    } else {
+      distCard=`<div class="card"><div class="sec-title">Distribuição da demanda</div>
+        <div class="field"><label>Escritório responsável</label><div class="locked">${p.encaminhado||'<span style="color:var(--textMuted)">Ainda não distribuída</span>'}</div></div>
+        <div class="foot-note">${p.encaminhado?`Distribuída${p.encaminhadoData?` em ${fmtDate(p.encaminhadoData)}`:''}.`:'Aguardando distribuição pelo Jurídico.'} Somente o Jurídico distribui.</div>
+      </div>`;
+    }
+    if(perfil==="Escritório"){
+      escCard=`<div class="card"><div class="sec-title">Preenchimento do escritório <span class="count">upload + análise automática da IA</span></div>
+        <div class="foot-note" style="margin-bottom:10px">1) Preencha os campos dos processos abaixo (botão "Preencher dados"). 2) Anexe o documento. Ao subir o arquivo, a IA analisa automaticamente a partir dos dados preenchidos + documento e envia o resultado para avaliação do Jurídico.</div>
+        <div class="field"><label>Documentos do processo (upload)</label><input type="file" id="escFile" multiple onchange="analisarDocsEscritorio('${p.cpf}')"></div>
+      </div>`;
+    } else {
+      escCard=`<div class="card"><div class="sec-title">Preenchimento do escritório</div><div class="foot-note">${p.matchDocs&&p.matchDocs.length?`Documentos recebidos: <b>${p.matchDocs.map(d=>d.name).join(", ")}</b> — ver abaixo.`:'Aguardando envio de documentos pelo escritório.'}</div></div>`;
     }
   }
   let procs=p.processos.map((x,i)=>renderProcCard(p,i)).join("");
+  let docsCard=renderDocs(p);
 
   view.innerHTML=`
     <div class="backlink" onclick="renderFila()">‹ Voltar para a fila</div>
@@ -461,8 +525,10 @@ function renderDetalhe(cpf){
       </div>
     </div>
     ${distCard}
+    ${escCard}
     <div class="card"><div class="sec-title">Processos ativos <span class="count">${p.processos.length} processo(s)</span></div>${procs}</div>
-    <div class="card"><div class="sec-title">Aval do CPF</div>${avalHtml}</div>
+    ${docsCard}
+    <div class="card"><div class="sec-title">Aval e finalização</div>${avalHtml}</div>
     <div class="foot-note">Dados simulados para mockup · dados marcados <b>IA</b> foram classificados automaticamente; <b>EDITADO</b> indica ajuste humano registrado no histórico.</div>
     </div>
     <div id="tabHist" class="${detTab==='hist'?'':'hidden'}">
@@ -492,12 +558,12 @@ function saveProc(cpf,i){
   controls.forEach(c=>{ const key=c.dataset.key; const novo=c.value; const antigo=fget(x,key)||"";
     if(novo!==antigo){
       const label=(FIELDS.find(f=>f.k===key)||{}).l||key;
-      p.historico.unshift({ref:"Processo "+x.cnj,cnj:x.cnj,campo:label,de:antigo,para:novo,usuario:"Naara Ribeiro",data:new Date().toISOString().slice(0,10)});
+      p.historico.unshift({ref:"Processo "+x.cnj,cnj:x.cnj,campo:label,de:antigo,para:novo,usuario:usuarioAtual(),data:new Date().toISOString().slice(0,10)});
       fset(x,key,novo); x.edited[key]=true; changes++;
     }
   });
   editMode[i]=false; refreshProc(cpf,i);
-  if(changes){ pushTL(p,"Edição","Classificação ajustada",`${changes} campo(s) no processo ${x.cnj}.`,"Naara Ribeiro"); }
+  if(changes){ pushTL(p,"Edição",perfil==="Escritório"?"Dados preenchidos pelo escritório":"Classificação ajustada",`${changes} campo(s) no processo ${x.cnj}.`,usuarioAtual()); }
   const hb=document.getElementById("histBox"); if(hb) hb.innerHTML=renderHistorico(p);
   const tb=document.getElementById("tlBox"); if(tb) tb.innerHTML=renderTimeline(p);
   toast(changes?`${changes} campo(s) alterado(s) · registrado no histórico`:"Nenhuma alteração");
@@ -505,13 +571,13 @@ function saveProc(cpf,i){
 function darAval(cpf,resultado){
   const p=DB.find(x=>x.cpf===cpf); const j=$("#justif")?$("#justif").value.trim():"";
   if(!j){ toast("Registre a justificativa antes de dar o aval"); $("#justif")?.focus(); return; }
-  p.aval={resultado,por:"Naara Ribeiro",data:new Date().toISOString().slice(0,10)}; p.situacao="Finalizada";
-  pushTL(p,"Aval",`Aval registrado: ${resultado}`,`Justificativa: ${j}`,"Naara Ribeiro");
-  pushTL(p,"Encaminhamento","Demanda finalizada","Resultado devolvido ao RH.","Sistema");
-  toast(`CPF ${resultado.toLowerCase()} · aval registrado`); setTimeout(()=>renderFila(),700);
+  p.aval={resultado,por:"Naara Ribeiro",data:new Date().toISOString().slice(0,10)}; p.situacao="Aguardando RH";
+  pushTL(p,"Aval",`Parecer emitido: ${resultado}`,`Justificativa: ${j}`,"Naara Ribeiro");
+  pushTL(p,"Encaminhamento","Devolvido ao RH","Aguardando finalização do RH.","Sistema");
+  toast(`Parecer ${resultado.toLowerCase()} · devolvido ao RH`); setTimeout(()=>renderFila(),700);
 }
 function distribuir(cpf){
-  if(perfil==="RH"){ toast("Perfil RH: somente visualização"); return; }
+  if(perfil!=="Jurídico"){ toast("Apenas o Jurídico distribui a demanda"); return; }
   const p=DB.find(x=>x.cpf===cpf); const sel=$("#escSel"); const escVal=sel.value;
   if(!escVal){ toast("Selecione um escritório"); sel.focus(); return; }
   const old=p.encaminhado||"(não distribuída)";
@@ -524,29 +590,143 @@ function distribuir(cpf){
 /* ---- NOVA (RH) ---- */
 function renderNova(){
   cur={v:'nova'}; $("#topSub").textContent="Nova solicitação (RH)";
+  const restam=LOTE_LIMITE_SEMANA-loteUsadosSemana;
   view.innerHTML=`<div class="backlink" onclick="renderFila()">‹ Voltar para a fila</div>
-  <div class="card rh-wrap"><div class="sec-title">Abrir solicitação de impedimento</div>
-    <div class="fieldgrid" style="grid-template-columns:1fr">
-      <div class="field"><label>CPF do colaborador</label><input id="cpfIn" placeholder="000.000.000-00" autocomplete="off"><div class="cpf-status" id="cpfStatus"></div></div>
-      <div class="field"><label>Nome completo</label><input id="nomeIn" placeholder="Nome do colaborador"></div>
+  <div class="tabs"><div class="tab ${novaMode==='ind'?'active':''}" onclick="setNovaMode('ind')">CPF individual</div><div class="tab ${novaMode==='lote'?'active':''}" onclick="setNovaMode('lote')">Em lote</div></div>
+  <div id="novaInd" class="${novaMode==='lote'?'hidden':''}">
+    <div class="card rh-wrap"><div class="sec-title">Abrir solicitação de impedimento</div>
+      <div class="fieldgrid" style="grid-template-columns:1fr">
+        <div class="field"><label>CPF do colaborador</label><input id="cpfIn" placeholder="000.000.000-00" autocomplete="off"><div class="cpf-status" id="cpfStatus"></div></div>
+        <div class="field"><label>Nome completo</label><input id="nomeIn" placeholder="Nome do colaborador"></div>
+      </div>
+      <div id="novaMsg"></div>
+      <div style="margin-top:18px"><button class="btn btn-primary" onclick="abrirSolicitacao()">Abrir solicitação</button></div>
+      <div class="foot-note">Ex.: CPF válido para teste — 111.444.777-35. A validação confere os dígitos verificadores; não confirma existência da pessoa.</div>
     </div>
-    <div style="margin-top:18px"><button class="btn btn-primary" onclick="abrirSolicitacao()">Abrir solicitação</button></div>
-    <div class="foot-note">Ex.: CPF válido para teste — 111.444.777-35. A validação confere os dígitos verificadores; não confirma existência da pessoa.</div>
+  </div>
+  <div id="novaLote" class="${novaMode==='lote'?'':'hidden'}">
+    <div class="card rh-wrap"><div class="sec-title">Abrir solicitações em lote <span class="count">limite de ${LOTE_LIMITE_SEMANA} por semana</span></div>
+      <div class="banner" style="background:var(--blueLight);border-color:#bcd8f5"><svg style="color:var(--blue)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Cota semanal: <b>${loteUsadosSemana}</b> de ${LOTE_LIMITE_SEMANA} usados · <b>${restam}</b> restantes.</div></div>
+      <div class="field" style="margin-top:14px"><label>Arquivo (CSV/TXT) — opcional</label><input type="file" id="loteFile" accept=".csv,.txt" onchange="carregarArquivoLote()"></div>
+      <div class="field" style="margin-top:12px"><label>CPFs — um por linha (formato: CPF ou CPF;Nome)</label><textarea id="loteTxt" style="min-height:130px" placeholder="529.982.247-25;João da Silva&#10;111.444.777-35;Maria Souza"></textarea></div>
+      <div id="loteMsg"></div>
+      <div style="margin-top:16px"><button class="btn btn-primary" onclick="processarLote()">Processar lote</button></div>
+    </div>
   </div>`;
-  const cpfIn=$("#cpfIn"),st=$("#cpfStatus");
-  cpfIn.addEventListener("input",()=>{ cpfIn.value=maskCPF(cpfIn.value); const d=cpfIn.value.replace(/\D/g,"");
-    cpfIn.classList.remove("input-valid","input-err"); st.className="cpf-status";
-    if(d.length<11){ st.textContent=""; return; }
-    if(validarCPF(cpfIn.value)){ st.textContent="✓ CPF válido"; st.classList.add("ok"); cpfIn.classList.add("input-valid"); }
-    else { st.textContent="✕ CPF inválido"; st.classList.add("err"); cpfIn.classList.add("input-err"); } });
+  if(novaMode==='ind'){
+    const cpfIn=$("#cpfIn"),st=$("#cpfStatus");
+    cpfIn.addEventListener("input",()=>{ cpfIn.value=maskCPF(cpfIn.value); const d=cpfIn.value.replace(/\D/g,"");
+      cpfIn.classList.remove("input-valid","input-err"); st.className="cpf-status";
+      if(d.length<11){ st.textContent=""; return; }
+      if(validarCPF(cpfIn.value)){ st.textContent="✓ CPF válido"; st.classList.add("ok"); cpfIn.classList.add("input-valid"); }
+      else { st.textContent="✕ CPF inválido"; st.classList.add("err"); cpfIn.classList.add("input-err"); } });
+  }
 }
 function abrirSolicitacao(){
   const cpf=$("#cpfIn").value.trim(),nome=$("#nomeIn").value.trim();
   if(!validarCPF(cpf)){ toast("Informe um CPF válido"); $("#cpfIn").focus(); return; }
   if(!nome){ toast("Informe o nome do colaborador"); $("#nomeIn").focus(); return; }
-  if(DB.some(p=>p.cpf===cpf)){ toast("Já existe solicitação para este CPF"); return; }
+  const existente=DB.find(p=>p.cpf===cpf);
+  if(existente){
+    if(existente.aval||existente.situacao==="Finalizada"){
+      $("#novaMsg").innerHTML=`<div class="banner" style="margin-top:12px"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Análise de CPF solicitada há menos de 6 meses. Não houve nenhuma nova movimentação e nenhum novo CNJ. Para consultar o resultado da análise já feita, <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">clique aqui</a>.</div></div>`;
+    } else {
+      $("#novaMsg").innerHTML=`<div class="banner" style="margin-top:12px"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Já existe uma solicitação <b>em andamento</b> para este CPF. <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">Abrir solicitação</a>.</div></div>`;
+    }
+    return;
+  }
   DB.unshift({ cpf,nome,dataDesligamento:"",dataAnalise:"",situacao:"Aberta",aval:null,historico:[],timeline:[], processos:[{cnj:"—",tipo:"Aguardando captura",instancia:"—",resultado:null,estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""},dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"},recIA:"Solicitação recém-aberta — captura de dados pendente.",edited:{}}] }); pushTL(DB[0],"Criação","Demanda criada","Aberta manualmente pelo RH.","RH · (você)");
   toast("Solicitação aberta com sucesso"); setTimeout(()=>renderFila(),700);
+}
+
+function finToggle(){ const t=$("#finTipo").value; $("#finDeslig").classList.toggle("hidden",t!=="desligamento"); $("#finJust").classList.toggle("hidden",t!=="nao_desligado"); }
+function finalizarRH(cpf){
+  const p=DB.find(x=>x.cpf===cpf);
+  if(p.aval.resultado==="Liberado"){
+    const tipo=$("#finTipo")?$("#finTipo").value:"";
+    if(!tipo){ toast("Selecione a situação do desligamento"); return; }
+    if(tipo==="desligamento"){
+      const fi=$("#finFile"); const fname=fi&&fi.files&&fi.files.length?fi.files[0].name:"";
+      if(!fname){ toast("Anexe a evidência do desligamento"); return; }
+      p.finalizacao={tipo:"desligamento",evidencia:fname,por:"RH · (você)",data:new Date().toISOString().slice(0,10)};
+      pushTL(p,"Encaminhamento","Desligamento confirmado pelo RH","Evidência anexada: "+fname,"RH · (você)");
+    } else {
+      const txt=$("#finJustTxt")?$("#finJustTxt").value.trim():"";
+      if(!txt){ toast("Descreva a justificativa por não desligar"); return; }
+      p.finalizacao={tipo:"nao_desligado",justificativa:txt,por:"RH · (você)",data:new Date().toISOString().slice(0,10)};
+      pushTL(p,"Encaminhamento","RH não realizou o desligamento","Justificativa registrada.","RH · (você)");
+    }
+  } else {
+    const ck=$("#finCiencia");
+    if(!ck||!ck.checked){ toast("Confirme a ciência do impedimento"); return; }
+    p.finalizacao={tipo:"ciencia",por:"RH · (você)",data:new Date().toISOString().slice(0,10)};
+    pushTL(p,"Encaminhamento","Ciência do impedimento registrada","Vínculo mantido.","RH · (você)");
+  }
+  p.situacao="Finalizada"; pushTL(p,"Encaminhamento","Demanda finalizada","","Sistema");
+  toast("Demanda finalizada"); setTimeout(()=>renderFila(),800);
+}
+function makeDocURL(name){
+  const body=`Documento simulado para verificação\nArquivo: ${name}\n\n(Conteúdo de exemplo — mockup. Em produção, o arquivo real enviado pelo escritório é exibido aqui.)`;
+  return URL.createObjectURL(new Blob([body],{type:"text/plain"}));
+}
+function renderDocs(p){
+  if(!p.matchDocs||!p.matchDocs.length) return "";
+  const fic=`<svg class="fic" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`;
+  const rows=p.matchDocs.map(d=>`<div class="doc-row">${fic}<span class="doc-name">${d.name}</span>${d.sim?'<span class="tag" style="font-size:10px">exemplo</span>':''}<span class="doc-actions"><a class="doc-link" href="${d.url}" target="_blank" rel="noopener">Visualizar</a><a class="doc-link" href="${d.url}" download="${d.name}">Baixar</a></span></div>`).join("");
+  return `<div class="card"><div class="sec-title">Documentos anexados <span class="count">${p.matchDocs.length} arquivo(s)</span></div>${rows}</div>`;
+}
+function usuarioAtual(){ return perfil==="RH"?"RH · (você)":perfil==="Escritório"?"Escritório (você)":"Naara Ribeiro"; }
+function classificarProcesso(x){
+  const d=x.dec.decisao||"", s=x.dec.situacaoPedido||"";
+  if(/Indeferida reintegra|Sem decisão - liberado|Reintegração indenizada/i.test(d)) return "Liberado";
+  if(/Sem decisão - impedido|reconhecida a estabilidade/i.test(d)) return "Impedido";
+  if(/improcedente|indeferida/i.test(s)) return "Liberado";
+  if(/procedente|deferida/i.test(s)) return "Impedido";
+  return "Impedido";
+}
+function analisarDocsEscritorio(cpf){
+  const p=DB.find(x=>x.cpf===cpf); const fi=$("#escFile"); const files=fi&&fi.files?Array.from(fi.files):[];
+  if(!files.length) return;
+  const semDados=p.processos.some(x=>!x.dec.decisao && !x.dec.situacaoPedido);
+  if(semDados){ toast("Preencha os dados dos processos antes de anexar o documento"); if(fi)fi.value=""; return; }
+  p.matchDocs=files.map(f=>({name:f.name,url:URL.createObjectURL(f),sim:false}));
+  // IA usa os dados preenchidos pelo escritório + o documento anexado
+  p.processos.forEach(x=>{
+    if(x.cnj==="—") x.cnj="0009988-77.2026.5.02.0050";
+    if(x.tipo==="Documento sob sigilo"||x.tipo==="Aguardando captura") x.tipo="Reintegração c/ estabilidade";
+    if(x.instancia==="—") x.instancia="1ª instância · TRT-2";
+    x.resultado=classificarProcesso(x);
+    x.recIA="Classificação gerada pela IA a partir dos dados preenchidos e do documento anexado pelo escritório.";
+  });
+  p.match={total:12,conf:11,divergencias:["Data de Impedimento Judicial"]};
+  p.situacao="Aguardando aval"; p.dataAnalise=new Date().toISOString().slice(0,10);
+  pushTL(p,"Leitura","Dados preenchidos e documentos anexados pelo escritório",p.matchDocs.map(d=>d.name).join(", "),"Escritório "+(p.encaminhado||""));
+  pushTL(p,"Classificação","Análise automática da IA concluída",`${p.match.conf}/${p.match.total} campos conferem com o documento.`,"Sistema · IA");
+  pushTL(p,"Encaminhamento","Encaminhada para aval do jurídico","","Sistema");
+  toast("IA analisou · enviado para a Naara avaliar");
+  setTimeout(()=>renderDetalhe(cpf),800);
+}
+function setNovaMode(m){ novaMode=m; renderNova(); }
+function carregarArquivoLote(){ const f=$("#loteFile").files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ $("#loteTxt").value=r.result; }; r.readAsText(f); }
+function processarLote(){
+  const lines=$("#loteTxt").value.split(/\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){ toast("Cole ou carregue os CPFs"); return; }
+  let add=0,inval=0,dup=0,over=0; const restam0=LOTE_LIMITE_SEMANA-loteUsadosSemana;
+  for(const line of lines){
+    const parts=line.split(/[;,\t]/).map(s=>s.trim());
+    const cpf=maskCPF(parts[0]||""); const nome=parts[1]||"(nome pendente)";
+    if(!validarCPF(cpf)){ inval++; continue; }
+    if(DB.some(p=>p.cpf===cpf)){ dup++; continue; }
+    if(add>=restam0){ over++; continue; }
+    DB.unshift({ cpf,nome,dataDesligamento:"",dataAnalise:"",situacao:"Aberta",aval:null,historico:[],timeline:[], processos:[{cnj:"—",tipo:"Aguardando captura",instancia:"—",resultado:null,estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""},dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"},recIA:"Solicitação em lote — captura pendente.",edited:{}}] });
+    pushTL(DB[0],"Criação","Demanda criada (lote)","Importada em lote pelo RH.","RH · (você)"); add++;
+  }
+  loteUsadosSemana+=add; const restam=LOTE_LIMITE_SEMANA-loteUsadosSemana;
+  let msg=`<div class="banner" style="background:${add?'var(--greenLight)':'var(--amberLight)'};border-color:#d9e6d9;margin-top:12px"><div><b>${add} solicitação(ões) aberta(s).</b> `;
+  if(inval)msg+=`${inval} CPF(s) inválido(s). `; if(dup)msg+=`${dup} já existente(s). `; if(over)msg+=`${over} ignorado(s) por exceder a cota semanal. `;
+  msg+=`Cota: ${loteUsadosSemana}/${LOTE_LIMITE_SEMANA} usados · ${restam} restantes.</div></div>`;
+  $("#loteMsg").innerHTML=msg;
+  if(add) setTimeout(()=>renderFila(),1500);
 }
 
 /* ---- perfil switch ---- */
