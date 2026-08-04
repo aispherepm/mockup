@@ -67,6 +67,17 @@
   thead th{text-align:left;text-transform:uppercase;font-size:10px;font-weight:700;color:var(--textSec);letter-spacing:.5px;padding:10px 12px;border-bottom:1px solid var(--border)}
   tbody td{padding:14px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
   tbody tr.mother:hover{background:#FFF5F6}
+  .fila-scroll{overflow-x:auto}
+  .fila-table{table-layout:auto}
+  .fila-table td,.fila-table th{white-space:nowrap}
+  .fila-table td{font-size:11px;padding:8px 7px}
+  .fila-table thead th{padding:8px 7px;font-size:9px;letter-spacing:.3px;text-align:center}
+  .fila-table .badge{font-size:9.5px;padding:3px 7px;gap:4px}
+  .fila-table .badge .bdot{width:5px;height:5px}
+  .fila-table .tag{font-size:9.5px;padding:3px 6px}
+  .fila-table .cnj,.fila-table .mono{font-size:10.5px}
+  .fila-table .btn-sm{padding:5px 10px;font-size:11px}
+  .fila-table .chev{width:18px;height:18px}
   .mono{font-family:'Cascadia Code','Consolas',monospace;font-size:13px}
   .cnj{color:var(--blue);font-family:'Cascadia Code','Consolas',monospace;font-size:13px}
   .name{font-weight:700}
@@ -87,6 +98,11 @@
   .b-aguard{background:var(--purpleLight);color:var(--purple)}.b-aguard .bdot{background:var(--purple)}
   .b-rh{background:#E0F2F1;color:#00695C}.b-rh .bdot{background:#00695C}
   .b-final{background:var(--greenLight);color:var(--green)}.b-final .bdot{background:var(--green)}
+  .b-proativa{background:var(--amberLight);color:var(--amber)}
+  .b-reativa{background:#ECEFF1;color:var(--textSec)}
+  tr.row-proativa td{background:#FFFBF0}
+  tr.row-proativa:hover td{background:#FFF4DC}
+  tr.row-proativa td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
   .tag{background:#EEF0F3;color:var(--textSec);font-size:12px;font-weight:600;padding:5px 11px;border-radius:8px}
   .tag-inst{background:var(--blueLight);color:var(--blue)}
   .backlink{display:inline-flex;align-items:center;gap:8px;color:var(--textSec);font-weight:600;cursor:pointer;margin-bottom:16px;font-size:13px}
@@ -110,6 +126,8 @@
   .locked.edited{background:var(--greenLight);border:1px solid #cfe8d0;color:var(--text)}
   .subsec{font-size:12px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px}
   .proc-item{border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden}
+  .proc-item.proc-fill{border-color:var(--amber)}
+  .proc-item.proc-fill>.proc-header{background:#FFFBF0;box-shadow:inset 4px 0 0 var(--amber)}
   .proc-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;flex-wrap:wrap}
   .proc-header:hover{background:#FAFBFC}
   .proc-header .grow{flex:1}
@@ -232,48 +250,48 @@ const FIELDS=[
 const ESCRITORIOS=["Escritório Meurer & Associados","Escritório interno Bradesco","Escritório Andrade Advocacia","Escritório Lima & Costa Advogados","Escritório Nogueira Trabalhista"];
 
 let DB = [
-  { cpf:"187.442.908-53", nome:"Marcelo Andrade Figueiredo", dataDesligamento:"2024-01-15", dataAnalise:"2026-07-27", situacao:"Aguardando aval", aval:null, processos:[
+  { cpf:"187.442.908-10", nome:"Marcelo Andrade Figueiredo", dataDesligamento:"2024-01-15", dataAnalise:"2026-07-27", situacao:"Aguardando aval", aval:null, processos:[
       { cnj:"0001234-56.2023.5.02.0011", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2023-06-10",inicioEstab:"2023-06-10",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Não"}, recIA:"Sentença improcedente (12/03/2026) supera a liminar deferida em 2024. Sem impedimento vigente — desligamento liberado." },
       { cnj:"0007788-12.2024.5.15.0032", tipo:"Reintegração c/ estabilidade — dirigente sindical", instancia:"1ª instância · TRT-15", resultado:"Impedido", estab:{dataReintegracao:"2024-03-10",inicioEstab:"2024-03-10",prazoDias:"365",dataImped:"2027-03-10"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"Dirigente sindical (art. 543 da CLT) — 12 meses após o encerramento do mandato",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Não"}, recIA:"Estabilidade sindical vigente e liminar deferida sem sentença posterior. Desligamento não recomendado enquanto perdurar o impedimento." },
       { cnj:"0004521-90.2022.5.01.0044", tipo:"Reintegração c/ estabilidade — gestante", instancia:"2ª instância · TRT-1", resultado:"Liberado", estab:{dataReintegracao:"2022-05-02",inicioEstab:"2022-02-14",prazoDias:"210",dataImped:""}, dec:{decisao:"Reintegração indenizada",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Acórdão - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da licença maternidade",encerrado:"Sim"}, recIA:"Estabilidade gestacional já encerrada; acórdão improcedente. Sem impedimento — desligamento liberado." }
   ]},
-  { cpf:"402.117.336-19", nome:"Renata Lopes Vasconcelos", dataDesligamento:"2025-11-20", dataAnalise:"2026-07-22", situacao:"Finalizada", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-23"}, finalizacao:{tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"}, processos:[
+  { cpf:"402.117.336-60", nome:"Renata Lopes Vasconcelos", dataDesligamento:"2025-11-20", dataAnalise:"2026-07-22", situacao:"Finalizada", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-23"}, finalizacao:{tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"}, processos:[
       { cnj:"0002199-73.2025.5.03.0018", tipo:"Reintegração c/ estabilidade — CIPA", instancia:"1ª instância · TRT-3", resultado:"Liberado", estab:{dataReintegracao:"2025-02-01",inicioEstab:"2024-08-01",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Membro CIPA (art. 10, II, \"a\" do ADCT da CF/88) — 12 meses após o encerramento do mandato",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Sim"}, recIA:"Mandato encerrado e estabilidade expirada; sentença improcedente transitada. Desligamento liberado." }
   ]},
-  { cpf:"231.669.478-02", nome:"Anderson Ribeiro da Cruz", dataDesligamento:"2025-09-08", dataAnalise:"2026-07-20", situacao:"Finalizada", aval:{resultado:"Impedido",por:"Naara Ribeiro",data:"2026-07-21"}, finalizacao:{tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}, processos:[
+  { cpf:"231.669.478-09", nome:"Anderson Ribeiro da Cruz", dataDesligamento:"2025-09-08", dataAnalise:"2026-07-20", situacao:"Finalizada", aval:{resultado:"Impedido",por:"Naara Ribeiro",data:"2026-07-21"}, finalizacao:{tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}, processos:[
       { cnj:"0005630-41.2024.5.09.0021", tipo:"Reintegração c/ estabilidade — PCD", instancia:"1ª instância · TRT-9", resultado:"Impedido", estab:{dataReintegracao:"2024-11-12",inicioEstab:"2024-11-12",prazoDias:"",dataImped:"2027-11-12"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"PCD (art. 93 Lei 8.213/91) — desligamento somente se observada a cota",situacaoPedido:"Sentença - pedido procedente",medidaJudicial:"MS impetrado – mantida a decisão de reintegração",eventoEncerra:"Efetivação da reintegração",encerrado:"Não"}, recIA:"Reintegração deferida e mantida em MS; cota de PCD não observada. Desligamento impedido." }
   ]},
   { cpf:"527.611.404-90", nome:"Beatriz Campos Rocha", dataDesligamento:"2025-12-15", dataAnalise:"2026-07-28", situacao:"Aguardando RH", aval:{resultado:"Liberado",por:"Naara Ribeiro",data:"2026-07-28"}, processos:[
       { cnj:"0007742-19.2025.5.02.0033", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2025-03-01",inicioEstab:"2025-03-01",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Sim"}, recIA:"Sentença improcedente e estabilidade encerrada. Desligamento liberado." }
   ]},
-  { cpf:"918.554.207-64", nome:"Cláudia Maria Nogueira", dataDesligamento:"2026-01-30", dataAnalise:"2026-07-26", situacao:"Em análise", aval:null, processos:[
+  { cpf:"918.554.207-59", nome:"Cláudia Maria Nogueira", dataDesligamento:"2026-01-30", dataAnalise:"2026-07-26", situacao:"Em análise", aval:null, processos:[
       { cnj:"0006012-58.2025.5.02.0007", tipo:"Reintegração c/ estabilidade — pré-aposentadoria", instancia:"1ª instância · TRT-2", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"Normativa",fundamento:"Pré-aposentadoria CCT — cláusula 27, alínea e — 12 meses anteriores",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Documentos em leitura — classificação ainda não concluída." },
       { cnj:"0009471-33.2024.5.04.0015", tipo:"Reintegração c/ estabilidade — doença comum (B31)", instancia:"1ª instância · TRT-4", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"Normativa",fundamento:"Afastamento por doença comum (B31) superior a 6 meses — cláusula 27, alínea c — 60 dias da alta",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Documentos em leitura — classificação ainda não concluída." }
   ]},
-  { cpf:"654.023.881-37", nome:"Jorge Tavares Bittencourt", dataDesligamento:"2026-02-10", dataAnalise:"", situacao:"Aberta", aval:null, processos:[
+  { cpf:"654.023.881-99", nome:"Jorge Tavares Bittencourt", dataDesligamento:"2026-02-10", dataAnalise:"", situacao:"Aberta", aval:null, processos:[
       { cnj:"0003014-88.2023.5.04.0007", tipo:"Reintegração c/ estabilidade — dirigente cooperativa", instancia:"1ª instância · TRT-4", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"Legal",fundamento:"Dirigente de cooperativa (art. 55 Lei 5.764/71 e art. 543, §3º CLT) — 12 meses após o mandato",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Solicitação recém-aberta — captura de dados pendente." }
   ]},
-  { cpf:"305.778.612-90", nome:"Fernanda Alves Pereira", dataDesligamento:"2026-01-05", dataAnalise:"2026-07-25", situacao:"Pendência de captura", motivoPendencia:"Segredo de justiça", encaminhado:"Escritório Meurer & Associados", encaminhadoData:"2026-07-25", aval:null, processos:[
+  { cpf:"305.778.612-04", nome:"Fernanda Alves Pereira", dataDesligamento:"2026-01-05", dataAnalise:"2026-07-25", situacao:"Pendência de captura", motivoPendencia:"Segredo de justiça", encaminhado:"Escritório Meurer & Associados", encaminhadoData:"2026-07-25", aval:null, processos:[
       { cnj:"—", tipo:"Documento sob sigilo", instancia:"—", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Processo em segredo de justiça — API não retornou documentos. Encaminhado ao escritório para preenchimento manual." }
   ]},
-  { cpf:"478.912.335-06", nome:"Ricardo Souza Menezes", dataDesligamento:"2026-02-01", dataAnalise:"2026-07-24", situacao:"Pendência de captura", motivoPendencia:"Documento não localizado", encaminhado:"", encaminhadoData:"", aval:null, processos:[
+  { cpf:"478.912.335-94", nome:"Ricardo Souza Menezes", dataDesligamento:"2026-02-01", dataAnalise:"2026-07-24", situacao:"Pendência de captura", motivoPendencia:"Documento não localizado", encaminhado:"", encaminhadoData:"", aval:null, processos:[
       { cnj:"0008123-77.2024.5.02.0044", tipo:"Aguardando captura", instancia:"1ª instância · TRT-2", resultado:null, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Documentos não localizados na API do tribunal (possível erro de captura). Encaminhado ao escritório." }
   ]}
 ];
 // init audit/edit fields
 DB.forEach(p=>{ if(!p.historico)p.historico=[]; p.processos.forEach(x=>{ if(!x.edited)x.edited={}; }); });
 // seed: uma edição prévia registrada (rastreabilidade)
-(function(){ const m=DB.find(p=>p.cpf==="187.442.908-53"); m.processos[1].edited={'dec.medidaJudicial':true};
+(function(){ const m=DB.find(p=>p.cpf==="187.442.908-10"); m.processos[1].edited={'dec.medidaJudicial':true};
   m.historico=[{cnj:m.processos[1].cnj,campo:"Medida Judicial Adotada",de:"Nenhuma medida adotada",para:"MS impetrado – aguardando decisão",usuario:"Naara Ribeiro",data:"2026-07-27"}]; })();
 const _TL={
- "187.442.908-53":[["2026-07-27T09:12","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-27T09:12","Consulta","Consulta à base dos tribunais","Busca por CPF — 3 processos localizados.","Sistema · IA"],["2026-07-27T09:14","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-27T11:03","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-27T11:20","Classificação","Classificação de IA concluída","2 liberados, 1 impedido.","Sistema · IA"],["2026-07-27T14:05","Edição","Classificação ajustada","Medida Judicial no processo 0007788-12.2024.5.15.0032.","Naara Ribeiro"],["2026-07-27T14:06","Encaminhamento","Encaminhada para aval do jurídico","","Sistema"]],
- "402.117.336-19":[["2026-07-22T08:40","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-22T08:40","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-22T08:41","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-22T10:15","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-22T10:30","Classificação","Classificação de IA concluída","1 liberado.","Sistema · IA"],["2026-07-23T13:22","Aval","Aval registrado: Liberado","Estabilidade encerrada e sentença improcedente.","Naara Ribeiro"],["2026-07-23T13:22","Encaminhamento","Demanda finalizada","Resultado devolvido ao RH.","Sistema"]],
- "231.669.478-02":[["2026-07-20T09:05","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-20T09:05","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-20T09:06","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-20T11:40","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-20T12:02","Classificação","Classificação de IA concluída","1 impedido.","Sistema · IA"],["2026-07-21T10:18","Aval","Aval registrado: Impedido","Reintegração mantida em MS; cota PCD não observada.","Naara Ribeiro"],["2026-07-21T10:18","Encaminhamento","Demanda finalizada","Resultado devolvido ao RH.","Sistema"]],
- "918.554.207-64":[["2026-07-26T10:22","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-26T10:22","Consulta","Consulta à base dos tribunais","Busca por CPF — 2 processos localizados.","Sistema · IA"],["2026-07-26T10:24","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-26T10:40","Leitura","Leitura de documentos em andamento","API Tribunal (~2h).","Sistema · IA"]],
- "654.023.881-37":[["2026-07-28T15:21","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-28T15:21","Consulta","Aguardando consulta à base","Fila de captura.","Sistema · IA"]],
- "305.778.612-90":[["2026-07-25T08:10","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-25T08:10","Consulta","Consulta retornou sem dados","Processo em segredo de justiça.","Sistema · IA"],["2026-07-25T08:11","Sinalização","Sinalizada: segredo de justiça","Encaminhar para preenchimento manual.","Sistema · IA"],["2026-07-25T09:30","Distribuição","Distribuída ao escritório","Escritório Meurer & Associados.","Naara Ribeiro"]],
+ "187.442.908-10":[["2026-07-27T09:12","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-27T09:12","Consulta","Consulta à base dos tribunais","Busca por CPF — 3 processos localizados.","Sistema · IA"],["2026-07-27T09:14","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-27T11:03","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-27T11:20","Classificação","Classificação de IA concluída","2 liberados, 1 impedido.","Sistema · IA"],["2026-07-27T14:05","Edição","Classificação ajustada","Medida Judicial no processo 0007788-12.2024.5.15.0032.","Naara Ribeiro"],["2026-07-27T14:06","Encaminhamento","Encaminhada para aval do jurídico","","Sistema"]],
+ "402.117.336-60":[["2026-07-22T08:40","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-22T08:40","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-22T08:41","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-22T10:15","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-22T10:30","Classificação","Classificação de IA concluída","1 liberado.","Sistema · IA"],["2026-07-23T13:22","Aval","Aval registrado: Liberado","Estabilidade encerrada e sentença improcedente.","Naara Ribeiro"],["2026-07-23T13:22","Encaminhamento","Demanda finalizada","Resultado devolvido ao RH.","Sistema"]],
+ "231.669.478-09":[["2026-07-20T09:05","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-20T09:05","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-20T09:06","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-20T11:40","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-20T12:02","Classificação","Classificação de IA concluída","1 impedido.","Sistema · IA"],["2026-07-21T10:18","Aval","Aval registrado: Impedido","Reintegração mantida em MS; cota PCD não observada.","Naara Ribeiro"],["2026-07-21T10:18","Encaminhamento","Demanda finalizada","Resultado devolvido ao RH.","Sistema"]],
+ "918.554.207-59":[["2026-07-26T10:22","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-26T10:22","Consulta","Consulta à base dos tribunais","Busca por CPF — 2 processos localizados.","Sistema · IA"],["2026-07-26T10:24","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-26T10:40","Leitura","Leitura de documentos em andamento","API Tribunal (~2h).","Sistema · IA"]],
+ "654.023.881-99":[["2026-07-28T15:21","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-28T15:21","Consulta","Aguardando consulta à base","Fila de captura.","Sistema · IA"]],
+ "305.778.612-04":[["2026-07-25T08:10","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-25T08:10","Consulta","Consulta retornou sem dados","Processo em segredo de justiça.","Sistema · IA"],["2026-07-25T08:11","Sinalização","Sinalizada: segredo de justiça","Encaminhar para preenchimento manual.","Sistema · IA"],["2026-07-25T09:30","Distribuição","Distribuída ao escritório","Escritório Meurer & Associados.","Naara Ribeiro"]],
  "527.611.404-90":[["2026-07-27T08:30","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Paulo Nunes"],["2026-07-27T08:30","Consulta","Consulta à base dos tribunais","Busca por CPF — 1 processo localizado.","Sistema · IA"],["2026-07-27T08:31","Filtragem","Filtragem aplicada","Polo passivo + reintegração.","Sistema · IA"],["2026-07-27T10:05","Leitura","Leitura de documentos concluída","API Tribunal.","Sistema · IA"],["2026-07-27T10:20","Classificação","Classificação de IA concluída","1 liberado.","Sistema · IA"],["2026-07-28T09:10","Aval","Parecer emitido: Liberado","Estabilidade encerrada e sentença improcedente.","Naara Ribeiro"],["2026-07-28T09:10","Encaminhamento","Devolvido ao RH","Aguardando finalização do RH.","Sistema"]],
- "478.912.335-06":[["2026-07-24T14:02","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-24T14:02","Consulta","Consulta não localizou documentos","Possível erro de captura na API do tribunal.","Sistema · IA"],["2026-07-24T14:03","Sinalização","Sinalizada: documento não localizado","Aguardando distribuição para escritório.","Sistema · IA"]]
+ "478.912.335-94":[["2026-07-24T14:02","Criação","Demanda criada","Gatilho: impedimento administrativo caiu.","RH · Camila Duarte"],["2026-07-24T14:02","Consulta","Consulta não localizou documentos","Possível erro de captura na API do tribunal.","Sistema · IA"],["2026-07-24T14:03","Sinalização","Sinalizada: documento não localizado","Aguardando distribuição para escritório.","Sistema · IA"]]
 };
 Object.keys(_TL).forEach(cpf=>{const p=DB.find(x=>x.cpf===cpf);if(p)p.timeline=_TL[cpf].map(a=>({ts:a[0],tipo:a[1],titulo:a[2],desc:a[3],ator:a[4]}));});
 DB.forEach(p=>{ if(!p.timeline)p.timeline=[]; });
@@ -284,10 +302,10 @@ DB.push({ cpf:"529.982.247-25", nome:"Beatriz Carvalho Lima", dataDesligamento:"
  {ts:"2026-07-28T09:50",tipo:"Classificação",titulo:"Classificação de IA concluída",desc:"1 liberado.",ator:"Sistema · IA"},
  {ts:"2026-07-28T11:00",tipo:"Aval",titulo:"Parecer emitido: Liberado",desc:"Estabilidade encerrada.",ator:"Naara Ribeiro"},
  {ts:"2026-07-28T11:00",tipo:"Encaminhamento",titulo:"Devolvido ao RH",desc:"Aguardando finalização do RH.",ator:"Sistema"}];
- const r=DB.find(p=>p.cpf==="402.117.336-19"); if(r) r.finalizacao={tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"};
- const a=DB.find(p=>p.cpf==="231.669.478-02"); if(a) a.finalizacao={tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}; })();
-DB.push({ cpf:"617.284.539-11", nome:"Vanessa Rocha Martins", dataDesligamento:"2026-01-12", dataAnalise:"2026-07-28", situacao:"Aguardando aval", aval:null, encaminhado:"Escritório Andrade Advocacia", encaminhadoData:"2026-07-25", matchDocs:["contestacao_vanessa.pdf","sentenca_1a_instancia.pdf"], match:{total:12,conf:11,divergencias:["Data de Impedimento Judicial"]}, historico:[], timeline:[], processos:[{ cnj:"0004902-15.2025.5.15.0099", tipo:"Reintegração c/ estabilidade — gestante", instancia:"1ª instância · TRT-15", resultado:"Impedido", estab:{dataReintegracao:"2025-06-01",inicioEstab:"2025-03-15",prazoDias:"300",dataImped:"2026-11-15"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da licença maternidade",encerrado:"Não"}, recIA:"Dados preenchidos pelo escritório; estabilidade gestacional vigente e liminar deferida. Classificação: impedido.", edited:{} }] });
-(function(){ const v=DB.find(p=>p.cpf==="617.284.539-11"); v.timeline=[
+ const r=DB.find(p=>p.cpf==="402.117.336-60"); if(r) r.finalizacao={tipo:"desligamento",evidencia:"termo_rescisao_renata.pdf",por:"RH · Paulo Nunes",data:"2026-07-24"};
+ const a=DB.find(p=>p.cpf==="231.669.478-09"); if(a) a.finalizacao={tipo:"ciencia",por:"RH · Camila Duarte",data:"2026-07-22"}; })();
+DB.push({ cpf:"617.284.539-09", nome:"Vanessa Rocha Martins", dataDesligamento:"2026-01-12", dataAnalise:"2026-07-28", situacao:"Aguardando aval", aval:null, encaminhado:"Escritório Andrade Advocacia", encaminhadoData:"2026-07-25", match:{total:12,conf:11,divergencias:["Data de Impedimento Judicial"]}, historico:[], timeline:[], processos:[{ cnj:"0004902-15.2025.5.15.0099", tipo:"Reintegração c/ estabilidade — gestante", instancia:"1ª instância · TRT-15", resultado:"Impedido", docs:["contestacao_vanessa.pdf","sentenca_1a_instancia.pdf"], estab:{dataReintegracao:"2025-06-01",inicioEstab:"2025-03-15",prazoDias:"300",dataImped:"2026-11-15"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da licença maternidade",encerrado:"Não"}, recIA:"Dados preenchidos pelo escritório; estabilidade gestacional vigente e liminar deferida. Classificação: impedido.", edited:{} }] });
+(function(){ const v=DB.find(p=>p.cpf==="617.284.539-09"); v.timeline=[
  {ts:"2026-07-24T09:00",tipo:"Criação",titulo:"Demanda criada",desc:"Gatilho: impedimento administrativo caiu.",ator:"RH · Paulo Nunes"},
  {ts:"2026-07-24T09:00",tipo:"Consulta",titulo:"Consulta retornou sem dados",desc:"Processo em segredo de justiça.",ator:"Sistema · IA"},
  {ts:"2026-07-24T09:02",tipo:"Sinalização",titulo:"Sinalizada: segredo de justiça",desc:"Encaminhar para preenchimento manual.",ator:"Sistema · IA"},
@@ -295,12 +313,54 @@ DB.push({ cpf:"617.284.539-11", nome:"Vanessa Rocha Martins", dataDesligamento:"
  {ts:"2026-07-28T14:30",tipo:"Leitura",titulo:"Dados preenchidos e documentos anexados pelo escritório",desc:"contestacao_vanessa.pdf, sentenca_1a_instancia.pdf",ator:"Escritório Andrade Advocacia"},
  {ts:"2026-07-28T14:35",tipo:"Classificação",titulo:"Análise automática da IA concluída",desc:"11/12 campos conferem com o documento.",ator:"Sistema · IA"},
  {ts:"2026-07-28T14:35",tipo:"Encaminhamento",titulo:"Encaminhada para aval do jurídico",desc:"",ator:"Sistema"}]; })();
-DB.forEach(p=>{ if(p.matchDocs) p.matchDocs=p.matchDocs.map(d=> typeof d==="string"?{name:d,url:makeDocURL(d),sim:true}:d); });
+function convDoc(d){ return typeof d==="string"?{name:d,url:makeDocURL(d),sim:true}:d; }
+DB.forEach(p=>{ if(p.matchDocs) p.matchDocs=p.matchDocs.map(convDoc); p.processos.forEach(x=>{ if(x.docs) x.docs=x.docs.map(convDoc); }); });
+DB.push(
+{ cpf:"390.533.447-05", nome:"Marcos Vinícius Teixeira", origem:"proativa", dataDesligamento:"", dataAnalise:"2026-07-28", situacao:"Aguardando RH", aval:{resultado:"Liberado",por:"Sistema · monitoramento",data:"2026-07-28"}, finalizacao:null, historico:[], timeline:[], processos:[{ cnj:"0002710-33.2024.5.02.0018", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2024-05-10",inicioEstab:"2024-05-10",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Não"}, recIA:"Monitoramento: reintegração antes deferida em liminar foi DERRUBADA por sentença improcedente na fase atual. Sem impedimento vigente — liberado.", edited:{} }] },
+{ cpf:"271.845.339-76", nome:"Luciana Ferreira Gomes", origem:"proativa", dataDesligamento:"", dataAnalise:"2026-07-28", situacao:"Aguardando aval", aval:null, finalizacao:null, historico:[], timeline:[], processos:[
+  { cnj:"0003980-24.2023.5.09.0007", tipo:"Reintegração c/ estabilidade — gestante", instancia:"2ª instância · TRT-9", resultado:"Liberado", estab:{dataReintegracao:"2023-04-01",inicioEstab:"2023-01-10",prazoDias:"210",dataImped:""}, dec:{decisao:"Reintegração indenizada",tipoEstab:"Normativa",fundamento:"Gestante — cláusula 27, alínea a — da confirmação da gravidez até 60 dias após o parto",situacaoPedido:"Acórdão - pedido improcedente",medidaJudicial:"Nenhuma medida adotada",eventoEncerra:"Fim da licença maternidade",encerrado:"Sim"}, recIA:"Monitoramento: reintegração deferida em liminar foi DERRUBADA por acórdão improcedente (não provido) — liberado.", edited:{} },
+  { cnj:"0005114-88.2024.5.15.0021", tipo:"Reintegração c/ estabilidade — CIPA", instancia:"1ª instância · TRT-15", resultado:"Liberado", estab:{dataReintegracao:"2024-02-15",inicioEstab:"2023-08-15",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Membro CIPA (art. 10, II, \"a\" do ADCT da CF/88) — 12 meses após o encerramento do mandato",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Não"}, recIA:"Monitoramento: reintegração deferida DERRUBADA por sentença improcedente na fase atual — liberado.", edited:{} }
+] },
+{ cpf:"846.201.573-17", nome:"Eduardo Nunes Barbosa", origem:"proativa", dataDesligamento:"", dataAnalise:"2026-07-28", situacao:"Aguardando aval", aval:null, finalizacao:null, historico:[], timeline:[], processos:[
+  { cnj:"0006233-51.2024.5.03.0033", tipo:"Reintegração c/ estabilidade — dirigente sindical", instancia:"1ª instância · TRT-3", resultado:"Impedido", estab:{dataReintegracao:"2024-02-01",inicioEstab:"2024-02-01",prazoDias:"365",dataImped:"2027-02-01"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"Dirigente sindical (art. 543 da CLT) — 12 meses após o encerramento do mandato",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Não"}, recIA:"Monitoramento: neste processo a reintegração SEGUE deferida (liminar vigente) — ainda impede.", edited:{} },
+  { cnj:"0007002-19.2023.5.02.0044", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-2", resultado:"Liberado", estab:{dataReintegracao:"2023-09-10",inicioEstab:"2023-09-10",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Não"}, recIA:"Monitoramento: reintegração deferida DERRUBADA por sentença improcedente — liberado neste processo.", edited:{} }
+] }
+);
+(function(){
+ const m=DB.find(p=>p.cpf==="390.533.447-05"); m.timeline=[
+  {ts:"2026-07-28T06:10",tipo:"Criação",titulo:"Demanda gerada pelo monitoramento",desc:"Reintegração deferida derrubada na fase atual (liminar → sentença improcedente).",ator:"Sistema · monitoramento"},
+  {ts:"2026-07-28T06:10",tipo:"Classificação",titulo:"Classificação de IA concluída",desc:"1 processo · liberado. Sem captura: processo já estava na plataforma.",ator:"Sistema · IA"},
+  {ts:"2026-07-28T06:11",tipo:"Aval",titulo:"Parecer automático: Liberado",desc:"CNJ único — não passa pelo jurídico.",ator:"Sistema · monitoramento"},
+  {ts:"2026-07-28T06:11",tipo:"Encaminhamento",titulo:"Devolvido ao RH",desc:"Aguardando finalização do RH.",ator:"Sistema"}];
+ const l=DB.find(p=>p.cpf==="271.845.339-76"); l.timeline=[
+  {ts:"2026-07-28T06:20",tipo:"Criação",titulo:"Demanda gerada pelo monitoramento",desc:"Reintegrações deferidas derrubadas na fase atual.",ator:"Sistema · monitoramento"},
+  {ts:"2026-07-28T06:20",tipo:"Classificação",titulo:"Classificação de IA concluída",desc:"2 processos analisados. Sem captura: já estavam na plataforma.",ator:"Sistema · IA"},
+  {ts:"2026-07-28T06:21",tipo:"Encaminhamento",titulo:"Encaminhada para aval do jurídico",desc:"Vários CNJ — consolidação pela Naara.",ator:"Sistema"}];
+ const e=DB.find(p=>p.cpf==="846.201.573-17"); e.timeline=[
+  {ts:"2026-07-28T06:30",tipo:"Criação",titulo:"Demanda gerada pelo monitoramento",desc:"Mudança de fase detectada em processo de reintegração.",ator:"Sistema · monitoramento"},
+  {ts:"2026-07-28T06:30",tipo:"Classificação",titulo:"Classificação de IA concluída",desc:"2 processos · 1 ainda impede. Sem captura: já estavam na plataforma.",ator:"Sistema · IA"},
+  {ts:"2026-07-28T06:31",tipo:"Encaminhamento",titulo:"Encaminhada para aval do jurídico",desc:"Vários CNJ — consolidação pela Naara.",ator:"Sistema"}];
+})();
+DB.forEach(p=>{ if(!p.origem) p.origem="reativa"; });
+DB.push({ cpf:"703.518.924-60", nome:"Sérgio Almeida Prado", origem:"reativa", dataDesligamento:"2026-01-18", dataAnalise:"2026-07-28", situacao:"Pendência de captura", motivoPendencia:"Segredo de justiça (1 processo)", encaminhado:"Escritório Meurer & Associados", encaminhadoData:"2026-07-26", aval:null, finalizacao:null, historico:[], timeline:[], processos:[
+  { cnj:"0005871-29.2024.5.02.0031", tipo:"Reintegração c/ estabilidade — dirigente sindical", instancia:"1ª instância · TRT-2", resultado:"Impedido", estab:{dataReintegracao:"2024-04-01",inicioEstab:"2024-04-01",prazoDias:"365",dataImped:"2027-04-01"}, dec:{decisao:"Deferida a reintegração e reconhecida a estabilidade",tipoEstab:"Legal",fundamento:"Dirigente sindical (art. 543 da CLT) — 12 meses após o encerramento do mandato",situacaoPedido:"Medida liminar deferida",medidaJudicial:"MS impetrado – aguardando decisão",eventoEncerra:"Fim da estabilidade pós mandato do cooperativado/dirigente sindical/cipeiro",encerrado:"Não"}, recIA:"Liminar deferida vigente sem sentença posterior — impede.", edited:{} },
+  { cnj:"0006233-84.2023.5.09.0012", tipo:"Reintegração c/ estabilidade — acidentária", instancia:"1ª instância · TRT-9", resultado:"Liberado", estab:{dataReintegracao:"2023-05-10",inicioEstab:"2023-05-10",prazoDias:"365",dataImped:""}, dec:{decisao:"Indeferida reintegração – liberado",tipoEstab:"Legal",fundamento:"Doença ocupacional ou acidente de trabalho (art. 118 Lei 8.213/91) — 12 meses após a alta previdenciária",situacaoPedido:"Sentença - pedido improcedente",medidaJudicial:"RO – improcedente",eventoEncerra:"Fim da estabilidade pós benefício previdenciário",encerrado:"Não"}, recIA:"Sentença improcedente supera a liminar anterior — liberado.", edited:{} },
+  { cnj:"0007744-15.2024.5.15.0007", tipo:"Documento sob sigilo", instancia:"1ª instância · TRT-15", resultado:null, segredo:true, estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""}, dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"}, recIA:"Processo em segredo de justiça — aguardando preenchimento do escritório.", edited:{} }
+] });
+(function(){ const s=DB.find(p=>p.cpf==="703.518.924-60"); s.timeline=[
+ {ts:"2026-07-26T08:00",tipo:"Criação",titulo:"Demanda criada",desc:"Gatilho: impedimento administrativo caiu.",ator:"RH · Camila Duarte"},
+ {ts:"2026-07-26T08:00",tipo:"Consulta",titulo:"Consulta à base dos tribunais",desc:"3 processos localizados — 1 em segredo de justiça.",ator:"Sistema · IA"},
+ {ts:"2026-07-26T08:02",tipo:"Filtragem",titulo:"Filtragem aplicada",desc:"Polo passivo + reintegração.",ator:"Sistema · IA"},
+ {ts:"2026-07-26T10:30",tipo:"Classificação",titulo:"Classificação de IA concluída (parcial)",desc:"2 processos classificados: 1 impedido, 1 liberado. 1 processo em segredo não pôde ser lido.",ator:"Sistema · IA"},
+ {ts:"2026-07-26T10:31",tipo:"Sinalização",titulo:"Sinalizado: processo em segredo de justiça",desc:"CNJ 0007744-15.2024.5.15.0007 — encaminhar ao escritório.",ator:"Sistema · IA"},
+ {ts:"2026-07-26T14:00",tipo:"Distribuição",titulo:"Processo em segredo distribuído ao escritório",desc:"Escritório Meurer & Associados.",ator:"Naara Ribeiro"}]; })();
 
 /* ---- helpers ---- */
 const $=s=>document.querySelector(s);
 const view=$("#view");
-let filtroBusca="", filtroSituacao="", perfil="Jurídico";
+let filtroBusca="", filtroSituacao="", filtroOrigem="", perfil="Jurídico";
+let sortKey="abertura", sortDir="asc";
+const SITORD=["Aberta","Em análise","Pendência de captura","Aguardando aval","Aguardando RH","Finalizada"];
 let consultasSemana=12; const LIMITE_SEMANA=30;
 let cur={v:'fila'};
 let editMode={}, openProcs=new Set(), detTab='solic';
@@ -310,6 +370,20 @@ function fmtDate(d){ if(!d) return "—"; const[y,m,dd]=d.split("-"); return `${
 function fget(x,k){ return k.includes('.')?x[k.split('.')[0]][k.split('.')[1]]:x[k]; }
 function fset(x,k,v){ if(k.includes('.')){const[a,b]=k.split('.');x[a][b]=v;} else x[k]=v; }
 function situacaoBadge(s){ const map={"Aberta":"b-aberta","Em análise":"b-analise","Pendência de captura":"b-pend","Aguardando aval":"b-aguard","Aguardando RH":"b-rh","Finalizada":"b-final"}; return `<span class="badge ${map[s]||'b-aberta'}"><span class="bdot"></span>${s}</span>`; }
+function origemBadge(o){ return o==="proativa" ? `<span class="badge b-proativa">⚡ Sistema - Monitoramento</span>` : `<span class="badge b-reativa">RH</span>`; }
+function responsavelAtual(p){
+  if(p.situacao==="Finalizada") return "";
+  if(p.situacao==="Aguardando aval") return "Jurídico";
+  if(p.situacao==="Aguardando RH") return "RH";
+  if(p.situacao==="Pendência de captura") return p.encaminhado ? "Escritório" : "Jurídico";
+  return "Sistema";
+}
+function responsavelBadge(p){
+  const r=responsavelAtual(p); if(!r) return '<span style="color:var(--textMuted)">—</span>';
+  const c={"Jurídico":"var(--purple)","RH":"var(--blue)","Escritório":"var(--amber)","Sistema":"var(--textSec)"}[r];
+  const bg={"Jurídico":"var(--purpleLight)","RH":"var(--blueLight)","Escritório":"var(--amberLight)","Sistema":"#ECEFF1"}[r];
+  return `<span class="badge" style="background:${bg};color:${c}">${r}</span>`;
+}
 function resultadoBadge(r){ if(!r) return "—"; return r==="Liberado"?`<span class="badge b-lib"><span class="bdot"></span>Liberado</span>`:`<span class="badge b-imp"><span class="bdot"></span>Impedido</span>`; }
 function consolidado(p){ return {lib:p.processos.filter(x=>x.resultado==="Liberado").length, imp:p.processos.filter(x=>x.resultado==="Impedido").length}; }
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2200); }
@@ -322,39 +396,49 @@ function validarCPF(r){ const c=(r||"").replace(/\D/g,""); if(c.length!==11)retu
 function maskCPF(v){ v=v.replace(/\D/g,"").slice(0,11); return v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2"); }
 
 /* ---- FILA ---- */
+function dataAberturaRaw(p){ const c=(p.timeline||[]).find(e=>e.tipo==="Criação"); return c?c.ts:(p.dataAnalise||""); }
+function dataAberturaFmt(p){ const ts=dataAberturaRaw(p); if(!ts) return "—"; return fmtDate(ts.split("T")[0]); }
+function sortVal(p,key){ if(key==="abertura") return dataAberturaRaw(p); if(key==="cpf") return p.cpf; if(key==="nome") return (p.nome||"").toLowerCase(); if(key==="origem") return p.origem||""; if(key==="situacao"){ const i=SITORD.indexOf(p.situacao); return i<0?99:i; } if(key==="responsavel") return responsavelAtual(p); return ""; }
+function thSort(label,key){ const arrow=sortKey===key?(sortDir==="asc"?" ▲":" ▼"):""; return `<th style="cursor:pointer;white-space:nowrap" onclick="setSort('${key}')">${label}${arrow}</th>`; }
+function setSort(key){ if(sortKey===key) sortDir=sortDir==="asc"?"desc":"asc"; else { sortKey=key; sortDir="asc"; } renderFila(); }
 function renderFila(){
   cur={v:'fila'}; $("#topSub").textContent="Fila de solicitações";
   const rows=DB.filter(p=>{
     if(filtroSituacao && p.situacao!==filtroSituacao) return false;
+    if(filtroOrigem && p.origem!==filtroOrigem) return false;
+    if(perfil==="Escritório" && p.origem==="proativa") return false;
     if(filtroBusca){ const q=filtroBusca.toLowerCase(); const inCnj=p.processos.some(x=>x.cnj.includes(q)); if(!p.cpf.includes(q)&&!p.nome.toLowerCase().includes(q)&&!inCnj) return false; }
     return true;
   });
+  rows.sort((a,b)=>{ const va=sortVal(a,sortKey),vb=sortVal(b,sortKey); let c=va<vb?-1:(va>vb?1:0); return sortDir==="asc"?c:-c; });
   const novaBtn = perfil==="RH" ? `<button class="btn btn-primary" onclick="renderNova()">+ Nova solicitação</button>` : "";
   let html=`<div class="filters">
     <div class="search"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
       <input id="busca" placeholder="Buscar CPF ou CNJ..." value="${esc(filtroBusca)}"></div>
     <select id="fsit"><option value="">Todos os status</option>
       ${["Aberta","Em análise","Pendência de captura","Aguardando aval","Aguardando RH","Finalizada"].map(s=>`<option ${s===filtroSituacao?"selected":""}>${s}</option>`).join("")}</select>
+    <select id="forig"><option value="">Todas as origens</option><option value="reativa" ${filtroOrigem==="reativa"?"selected":""}>RH</option><option value="proativa" ${filtroOrigem==="proativa"?"selected":""}>Sistema - Monitoramento</option></select>
     ${novaBtn}
   </div>
   <div class="card"><div class="sec-title">Solicitações <span class="count">${rows.length} ${rows.length===1?"solicitação":"solicitações"}</span></div>
-  <table><thead><tr><th style="width:34px"></th><th>CPF</th><th>NOME</th><th>CNJ</th><th>SITUAÇÃO</th><th>RESULTADO</th><th style="text-align:right">AÇÃO</th></tr></thead><tbody>`;
+  <div class="fila-scroll"><table class="fila-table"><thead><tr><th style="width:34px"></th>${thSort("ABERTURA","abertura")}${thSort("ORIGEM","origem")}${thSort("CPF","cpf")}${thSort("NOME","nome")}<th>CNJ</th>${thSort("SITUAÇÃO","situacao")}${thSort("RESPONSÁVEL","responsavel")}<th>RESULTADO</th><th>AÇÃO</th></tr></thead><tbody>`;
   rows.forEach(p=>{
     const multi=p.processos.length>1;
     const cnjCell=multi?"—":(p.processos[0].cnj==="—"?'<span class="tag">sob sigilo</span>':`<span class="cnj">${p.processos[0].cnj}</span>`);
     const resCell=(!multi&&p.situacao==="Finalizada")?resultadoBadge(p.processos[0].resultado):"—";
     const chev=multi?`<span class="chev" onclick="toggleFilaRow('${p.cpf}')" id="chev-${p.cpf}">${chevSVG}</span>`:"";
-    html+=`<tr class="mother"><td>${chev}</td><td class="mono">${p.cpf}</td><td class="name">${p.nome}</td><td>${cnjCell}</td><td>${situacaoBadge(p.situacao)}</td><td>${resCell}</td>
+    html+=`<tr class="mother ${p.origem==='proativa'?'row-proativa':''}"><td>${chev}</td><td class="mono" style="white-space:nowrap">${dataAberturaFmt(p)}</td><td>${origemBadge(p.origem)}</td><td class="mono">${p.cpf}</td><td class="name">${p.nome}</td><td>${cnjCell}</td><td>${situacaoBadge(p.situacao)}</td><td>${responsavelBadge(p)}</td><td>${resCell}</td>
       <td style="text-align:right"><button class="btn btn-ghost btn-sm" onclick="renderDetalhe('${p.cpf}')">Abrir</button></td></tr>`;
-    if(multi){ html+=`<tr class="subrow hidden" id="sub-${p.cpf}"><td colspan="7"><div class="inner">`;
-      p.processos.forEach(x=>{ html+=`<div class="subproc"><span class="cnj">${x.cnj}</span><span class="tag">${x.tipo}</span><span class="tag tag-inst">${x.instancia}</span><span style="margin-left:auto">${x.resultado?resultadoBadge(x.resultado):'<span class="tag">Em análise</span>'}</span></div>`; });
+    if(multi){ html+=`<tr class="subrow hidden ${p.origem==='proativa'?'row-proativa':''}" id="sub-${p.cpf}"><td colspan="10"><div class="inner">`;
+      p.processos.forEach(x=>{ html+=`<div class="subproc"><span class="cnj">${x.cnj}</span><span class="tag">${x.tipo}</span><span class="tag tag-inst">${x.instancia}</span><span style="margin-left:auto">${x.segredo?'<span class="tag" style="background:var(--amberLight);color:var(--amber)">🔒 Segredo</span>':(x.resultado?resultadoBadge(x.resultado):'<span class="tag">Em análise</span>')}</span></div>`; });
       html+=`</div></td></tr>`; }
   });
-  if(!rows.length) html+=`<tr><td colspan="7" style="text-align:center;color:var(--textMuted);padding:28px">Nenhuma solicitação encontrada.</td></tr>`;
-  html+=`</tbody></table><div class="foot-note">Mostrando ${rows.length} de ${DB.length} · Dados simulados para mockup</div></div>`;
+  if(!rows.length) html+=`<tr><td colspan="10" style="text-align:center;color:var(--textMuted);padding:28px">Nenhuma solicitação encontrada.</td></tr>`;
+  html+=`</tbody></table></div><div class="foot-note">Mostrando ${rows.length} de ${DB.length} · Dados simulados para mockup</div></div>`;
   view.innerHTML=html;
   const b=$("#busca"); b.addEventListener("input",e=>{ filtroBusca=e.target.value; const pos=e.target.selectionStart; renderFila(); const nb=$("#busca"); nb.focus(); nb.setSelectionRange(pos,pos); });
   $("#fsit").addEventListener("change",e=>{ filtroSituacao=e.target.value; renderFila(); });
+  $("#forig").addEventListener("change",e=>{ filtroOrigem=e.target.value; renderFila(); });
 }
 function toggleFilaRow(cpf){ document.getElementById("sub-"+cpf).classList.toggle("hidden"); document.getElementById("chev-"+cpf).classList.toggle("open"); }
 
@@ -374,6 +458,10 @@ function editField(x,f){
   if(f.t==='select'){ const opts=f.o==='FUND'?fundOpts(x):f.o;
     return `<select data-key="${f.k}"><option value=""${!val?" selected":""}>—</option>${opts.map(o=>`<option ${o===val?"selected":""}>${o}</option>`).join("")}</select>`; }
   return `<input type="${f.t}" data-key="${f.k}" value="${esc(val)}">`;
+}
+function docRow(d){
+  const fic=`<svg class="fic" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`;
+  return `<div class="doc-row">${fic}<span class="doc-name">${d.name}</span>${d.sim?'<span class="tag" style="font-size:10px">exemplo</span>':''}<span class="doc-actions"><a class="doc-link" href="${d.url}" target="_blank" rel="noopener">Visualizar</a><a class="doc-link" href="${d.url}" download="${d.name}">Baixar</a></span></div>`;
 }
 function renderProcCard(p,i){
   const x=p.processos[i]; const editing=!!editMode[i]; const isOpen=openProcs.has(i);
@@ -397,13 +485,19 @@ function renderProcCard(p,i){
   let actions="";
   if(editing) actions=`<button class="btn btn-ghost btn-sm" onclick="cancelProc(${i})">Cancelar</button><button class="btn btn-primary btn-sm" onclick="saveProc('${p.cpf}',${i})">Salvar alterações</button>`;
   else if(perfil==="Jurídico" && p.situacao!=="Pendência de captura") actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Editar dados</button>`;
-  else if(perfil==="Escritório" && p.situacao==="Pendência de captura") actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Preencher dados</button>`;
-  return `<div class="proc-item ${isOpen?'open':''}" id="proc-${i}">
+  else if(perfil==="Escritório" && p.situacao==="Pendência de captura" && !x.resultado) actions=`<button class="btn btn-ghost btn-sm" onclick="editProc('${p.cpf}',${i})">✎ Preencher dados</button>`;
+  let procExtra="";
+  if(x.docs&&x.docs.length){ procExtra+=`<div class="subsec">Documento(s) do processo</div>`+x.docs.map(docRow).join(""); }
+  if(perfil==="Escritório" && p.situacao==="Pendência de captura" && !x.resultado){
+    procExtra+=`<div class="subsec">Anexar documento (escritório)</div><div class="foot-note" style="margin-bottom:8px">Preencha os campos acima e anexe o documento deste processo — a IA analisa e o processo segue para avaliação.</div><div class="field"><label>Upload do documento</label><input type="file" id="escFile-${i}" multiple onchange="analisarDocEscritorioProc('${p.cpf}',${i})"></div>`;
+  }
+  const fillClass=(p.situacao==="Pendência de captura" && !x.resultado)?" proc-fill":"";
+  return `<div class="proc-item ${isOpen?'open':''}${fillClass}" id="proc-${i}">
     <div class="proc-header" onclick="toggleProc(${i},event)">
-      <span class="chev">${chevSVG}</span><span class="cnj">${x.cnj}</span><span class="tag">${x.tipo}</span><span class="tag tag-inst">${x.instancia}</span>
+      <span class="chev">${chevSVG}</span><span class="cnj">${x.cnj}</span><span class="tag">${x.tipo}</span><span class="tag tag-inst">${x.instancia}</span>${x.segredo?'<span class="tag" style="background:var(--amberLight);color:var(--amber)">🔒 Segredo de justiça</span>':''}
       <span class="grow"></span>${x.resultado?resultadoBadge(x.resultado):'<span class="tag">Em análise</span>'}
     </div>
-    <div class="proc-body">${body}<div class="proc-actions">${actions}</div></div>
+    <div class="proc-body">${actions?`<div class="proc-actions" style="margin:14px 0 16px">${actions}</div>`:""}${body}${procExtra}</div>
   </div>`;
 }
 function renderHistorico(p){
@@ -422,16 +516,23 @@ function pushTL(p,tipo,titulo,desc,ator){ p.timeline=p.timeline||[]; p.timeline.
 function switchTab(t){ detTab=t; document.getElementById("tabSolic").classList.toggle("hidden",t!=="solic"); document.getElementById("tabHist").classList.toggle("hidden",t!=="hist"); document.querySelectorAll(".tabs .tab").forEach((el,i)=>el.classList.toggle("active",(i===0&&t==="solic")||(i===1&&t==="hist"))); }
 function renderDetalhe(cpf){
   cur={v:'det',cpf}; const p=DB.find(x=>x.cpf===cpf);
+  if(perfil==="Escritório" && p.origem==="proativa"){ toast("Casos proativos não são visíveis ao escritório"); renderFila(); return; }
   $("#topSub").textContent="Detalhe da solicitação";
-  editMode={}; openProcs=new Set([0]); detTab='solic';
+  editMode={}; openProcs = p.processos.length>1 ? new Set() : new Set([0]); detTab='solic';
   window.scrollTo(0,0);
   const {lib,imp}=consolidado(p);
 
   // banner pendência
   let banner="";
   if(p.situacao==="Pendência de captura"){
-    banner=`<div class="banner"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <div><b>Pendência de captura — ${p.motivoPendencia}.</b> A IA não localizou os documentos. Selecione abaixo o escritório para distribuir a demanda para preenchimento manual.</div></div>`;
+    const parcial=p.processos.some(x=>x.resultado)&&p.processos.some(x=>!x.resultado);
+    const svg=`<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+    banner = parcial
+      ? `<div class="banner">${svg}<div><b>Pendência parcial — ${p.motivoPendencia}.</b> Os processos legíveis já foram classificados; apenas o processo em segredo de justiça aguarda preenchimento do escritório. A demanda só segue para aval quando todos os processos forem avaliados.</div></div>`
+      : `<div class="banner">${svg}<div><b>Pendência de captura — ${p.motivoPendencia}.</b> A IA não localizou os documentos. Selecione abaixo o escritório para distribuir a demanda para preenchimento manual.</div></div>`;
+  }
+  if(p.origem==="proativa"){
+    banner+=`<div class="banner" style="background:var(--amberLight);border-color:#f0dca6"><svg fill="none" stroke="var(--amber)" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg><div>Demanda gerada automaticamente pelo monitoramento — a reintegração deferida foi derrubada na fase atual. Sem captura: o processo já estava na plataforma.</div></div>`;
   }
 
   // aval + finalização
@@ -440,18 +541,26 @@ function renderDetalhe(cpf){
   let avalHtml="";
   if(p.situacao==="Finalizada"){
     let fin="";
-    if(p.finalizacao){ const f=p.finalizacao; const t=f.tipo==="desligamento"?`Desligamento realizado · evidência: <b>${f.evidencia||'—'}</b>`:f.tipo==="nao_desligado"?`Não desligado · justificativa: "${f.justificativa}"`:`Ciência do impedimento registrada`;
+    if(p.finalizacao){ const f=p.finalizacao; const t=f.tipo==="desligamento"?`Desligamento realizado · evidência: <b>${f.evidencia||'—'}</b>`:f.tipo==="nao_desligado"?`Não desligado · justificativa: "${f.justificativa}"`:`Ciência registrada${f.motivo?` · ${f.motivo}`:""}${f.justificativa?` · justificativa: "${f.justificativa}"`:""}`;
       fin=`<div class="foot-note" style="margin-top:10px">${t} — por <b>${f.por}</b> em ${fmtDate(f.data)}</div>`; }
     avalHtml=`<div class="resolved">${p.aval?resultadoBadge(p.aval.resultado):"—"}<span style="color:var(--textSec)">Parecer por <b>${p.aval?p.aval.por:"—"}</b>${p.aval?` em ${fmtDate(p.aval.data)}`:""}</span></div>${fin}`;
   } else if(p.situacao==="Aguardando RH"){
     const head=`<div class="resolved" style="margin-bottom:14px">${resultadoBadge(p.aval.resultado)}<span style="color:var(--textSec)">Parecer emitido por <b>${p.aval.por}</b> em ${fmtDate(p.aval.data)}.</span></div>`;
     if(perfil==="RH"){
       if(p.aval.resultado==="Liberado"){
+        if(p.origem==="proativa"){
+        avalHtml=head+`<div class="subsec">Finalização — verificação de impedimento administrativo (RH)</div>
+          <div class="field"><label>Há impedimento administrativo vigente?</label><select id="finAdmin" onchange="finAdminToggle()"><option value="">— Selecione —</option><option value="nao">Não há — prosseguir com desligamento</option><option value="sim">Há impedimento — sinalizar e encerrar</option></select></div>
+          <div id="finDeslig" class="hidden" style="margin-top:12px"><div class="field"><label>Evidência do desligamento (upload)</label><input type="file" id="finFile"></div></div>
+          <div id="finSinal" class="hidden" style="margin-top:12px"><div class="banner" style="background:var(--amberLight);border-color:#f0dca6"><svg fill="none" stroke="var(--amber)" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div>Impedimento administrativo — a demanda será encerrada com ciência, sem desligamento.</div></div><div class="field" style="margin-top:12px"><label>Justificativa do impedimento administrativo</label><textarea id="finAdminJust" placeholder="Descreva o impedimento administrativo..."></textarea></div></div>
+          <div class="aval-actions"><button class="btn btn-green" onclick="finalizarRH('${p.cpf}')">Finalizar demanda</button></div>`;
+        } else {
         avalHtml=head+`<div class="subsec">Finalização — desligamento (RH)</div>
           <div class="field"><label>Situação do desligamento</label><select id="finTipo" onchange="finToggle()"><option value="">— Selecione —</option><option value="desligamento">Desligamento realizado</option><option value="nao_desligado">Não desligado</option></select></div>
           <div id="finDeslig" class="hidden" style="margin-top:12px"><div class="field"><label>Evidência do desligamento (upload)</label><input type="file" id="finFile"></div></div>
           <div id="finJust" class="hidden" style="margin-top:12px"><div class="field"><label>Justificativa por não desligar</label><textarea id="finJustTxt" placeholder="Descreva o motivo de não ter desligado..."></textarea></div></div>
           <div class="aval-actions"><button class="btn btn-green" onclick="finalizarRH('${p.cpf}')">Finalizar demanda</button></div>`;
+        }
       } else {
         avalHtml=head+`<div class="subsec">Finalização — ciência (RH)</div>
           <div class="banner" style="background:var(--redLight);border-color:#f0c2cc"><svg style="color:var(--red)" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div>Colaborador <b>impedido</b>: o vínculo deve ser mantido.${prazoTxt} Registre a ciência para finalizar.</div></div>
@@ -493,17 +602,8 @@ function renderDetalhe(cpf){
         <div class="foot-note">${p.encaminhado?`Distribuída${p.encaminhadoData?` em ${fmtDate(p.encaminhadoData)}`:''}.`:'Aguardando distribuição pelo Jurídico.'} Somente o Jurídico distribui.</div>
       </div>`;
     }
-    if(perfil==="Escritório"){
-      escCard=`<div class="card"><div class="sec-title">Preenchimento do escritório <span class="count">upload + análise automática da IA</span></div>
-        <div class="foot-note" style="margin-bottom:10px">1) Preencha os campos dos processos abaixo (botão "Preencher dados"). 2) Anexe o documento. Ao subir o arquivo, a IA analisa automaticamente a partir dos dados preenchidos + documento e envia o resultado para avaliação do Jurídico.</div>
-        <div class="field"><label>Documentos do processo (upload)</label><input type="file" id="escFile" multiple onchange="analisarDocsEscritorio('${p.cpf}')"></div>
-      </div>`;
-    } else {
-      escCard=`<div class="card"><div class="sec-title">Preenchimento do escritório</div><div class="foot-note">${p.matchDocs&&p.matchDocs.length?`Documentos recebidos: <b>${p.matchDocs.map(d=>d.name).join(", ")}</b> — ver abaixo.`:'Aguardando envio de documentos pelo escritório.'}</div></div>`;
-    }
   }
   let procs=p.processos.map((x,i)=>renderProcCard(p,i)).join("");
-  let docsCard=renderDocs(p);
 
   view.innerHTML=`
     <div class="backlink" onclick="renderFila()">‹ Voltar para a fila</div>
@@ -513,7 +613,7 @@ function renderDetalhe(cpf){
     <div class="card">
       <div class="person-head">
         <div><div class="plabel">Pessoa analisada</div><h2>${p.nome}</h2><div class="cpf">CPF ${p.cpf}</div></div>
-        <div style="text-align:right">${situacaoBadge(p.situacao)}<div class="meta">${p.processos.length} processo(s) ativo(s)${p.dataAnalise?` · última atualização ${fmtDate(p.dataAnalise)}`:""}</div></div>
+        <div style="text-align:right">${origemBadge(p.origem)} ${situacaoBadge(p.situacao)}<div class="meta">${p.processos.length} processo(s) ativo(s)${p.dataAnalise?` · última atualização ${fmtDate(p.dataAnalise)}`:""}</div></div>
       </div>
       <div style="border-top:1px solid var(--border);margin:18px 0 0;padding-top:18px"></div>
       <div class="subsec">Dados do reintegrado</div>
@@ -525,9 +625,7 @@ function renderDetalhe(cpf){
       </div>
     </div>
     ${distCard}
-    ${escCard}
     <div class="card"><div class="sec-title">Processos ativos <span class="count">${p.processos.length} processo(s)</span></div>${procs}</div>
-    ${docsCard}
     <div class="card"><div class="sec-title">Aval e finalização</div>${avalHtml}</div>
     <div class="foot-note">Dados simulados para mockup · dados marcados <b>IA</b> foram classificados automaticamente; <b>EDITADO</b> indica ajuste humano registrado no histórico.</div>
     </div>
@@ -571,10 +669,15 @@ function saveProc(cpf,i){
 function darAval(cpf,resultado){
   const p=DB.find(x=>x.cpf===cpf); const j=$("#justif")?$("#justif").value.trim():"";
   if(!j){ toast("Registre a justificativa antes de dar o aval"); $("#justif")?.focus(); return; }
-  p.aval={resultado,por:"Naara Ribeiro",data:new Date().toISOString().slice(0,10)}; p.situacao="Aguardando RH";
+  p.aval={resultado,por:"Naara Ribeiro",data:new Date().toISOString().slice(0,10)};
   pushTL(p,"Aval",`Parecer emitido: ${resultado}`,`Justificativa: ${j}`,"Naara Ribeiro");
+  if(resultado==="Impedido" && p.origem==="proativa"){
+    p.situacao="Finalizada"; pushTL(p,"Encaminhamento","Demanda encerrada no jurídico","Processo ainda impede; não segue ao RH.","Sistema");
+    toast("CPF impedido · demanda encerrada"); setTimeout(()=>renderFila(),800); return;
+  }
+  p.situacao="Aguardando RH";
   pushTL(p,"Encaminhamento","Devolvido ao RH","Aguardando finalização do RH.","Sistema");
-  toast(`Parecer ${resultado.toLowerCase()} · devolvido ao RH`); setTimeout(()=>renderFila(),700);
+  toast(`Parecer ${resultado.toLowerCase()} · devolvido ao RH`); setTimeout(()=>renderFila(),800);
 }
 function distribuir(cpf){
   if(perfil!=="Jurídico"){ toast("Apenas o Jurídico distribui a demanda"); return; }
@@ -588,6 +691,19 @@ function distribuir(cpf){
 }
 
 /* ---- NOVA (RH) ---- */
+function bannerExistente(existente,cpf){
+  const ic=`<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  if(existente.aval||existente.situacao==="Finalizada"){
+    return `<div class="banner" style="margin-top:12px">${ic}<div>Análise de CPF solicitada há menos de 6 meses. Não houve nenhuma nova movimentação e nenhum novo CNJ. Para consultar o resultado da análise já feita, <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">clique aqui</a>.</div></div>`;
+  }
+  return `<div class="banner" style="margin-top:12px">${ic}<div>Já existe uma solicitação <b>em andamento</b> para este CPF. <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">Abrir solicitação</a>.</div></div>`;
+}
+function checarExistente(cpf){
+  const msg=$("#novaMsg"); if(!msg) return false;
+  const existente=DB.find(p=>p.cpf===cpf);
+  if(!existente){ msg.innerHTML=""; return false; }
+  msg.innerHTML=bannerExistente(existente,cpf); return true;
+}
 function renderNova(){
   cur={v:'nova'}; $("#topSub").textContent="Nova solicitação (RH)";
   const restam=LOTE_LIMITE_SEMANA-loteUsadosSemana;
@@ -617,31 +733,43 @@ function renderNova(){
     const cpfIn=$("#cpfIn"),st=$("#cpfStatus");
     cpfIn.addEventListener("input",()=>{ cpfIn.value=maskCPF(cpfIn.value); const d=cpfIn.value.replace(/\D/g,"");
       cpfIn.classList.remove("input-valid","input-err"); st.className="cpf-status";
+      const msg=$("#novaMsg"); if(msg) msg.innerHTML="";
       if(d.length<11){ st.textContent=""; return; }
-      if(validarCPF(cpfIn.value)){ st.textContent="✓ CPF válido"; st.classList.add("ok"); cpfIn.classList.add("input-valid"); }
+      if(validarCPF(cpfIn.value)){ st.textContent="✓ CPF válido"; st.classList.add("ok"); cpfIn.classList.add("input-valid"); checarExistente(cpfIn.value); }
       else { st.textContent="✕ CPF inválido"; st.classList.add("err"); cpfIn.classList.add("input-err"); } });
   }
 }
 function abrirSolicitacao(){
   const cpf=$("#cpfIn").value.trim(),nome=$("#nomeIn").value.trim();
   if(!validarCPF(cpf)){ toast("Informe um CPF válido"); $("#cpfIn").focus(); return; }
-  if(!nome){ toast("Informe o nome do colaborador"); $("#nomeIn").focus(); return; }
   const existente=DB.find(p=>p.cpf===cpf);
-  if(existente){
-    if(existente.aval||existente.situacao==="Finalizada"){
-      $("#novaMsg").innerHTML=`<div class="banner" style="margin-top:12px"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Análise de CPF solicitada há menos de 6 meses. Não houve nenhuma nova movimentação e nenhum novo CNJ. Para consultar o resultado da análise já feita, <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">clique aqui</a>.</div></div>`;
-    } else {
-      $("#novaMsg").innerHTML=`<div class="banner" style="margin-top:12px"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>Já existe uma solicitação <b>em andamento</b> para este CPF. <a style="color:var(--red);font-weight:700;text-decoration:underline;cursor:pointer" onclick="renderDetalhe('${cpf}')">Abrir solicitação</a>.</div></div>`;
-    }
-    return;
-  }
+  if(existente){ $("#novaMsg").innerHTML=bannerExistente(existente,cpf); return; }
+  if(!nome){ toast("Informe o nome do colaborador"); $("#nomeIn").focus(); return; }
   DB.unshift({ cpf,nome,dataDesligamento:"",dataAnalise:"",situacao:"Aberta",aval:null,historico:[],timeline:[], processos:[{cnj:"—",tipo:"Aguardando captura",instancia:"—",resultado:null,estab:{dataReintegracao:"",inicioEstab:"",prazoDias:"",dataImped:""},dec:{decisao:"",tipoEstab:"",fundamento:"",situacaoPedido:"",medidaJudicial:"",eventoEncerra:"",encerrado:"Não"},recIA:"Solicitação recém-aberta — captura de dados pendente.",edited:{}}] }); pushTL(DB[0],"Criação","Demanda criada","Aberta manualmente pelo RH.","RH · (você)");
   toast("Solicitação aberta com sucesso"); setTimeout(()=>renderFila(),700);
 }
 
 function finToggle(){ const t=$("#finTipo").value; $("#finDeslig").classList.toggle("hidden",t!=="desligamento"); $("#finJust").classList.toggle("hidden",t!=="nao_desligado"); }
+function finAdminToggle(){ const v=$("#finAdmin").value; $("#finDeslig").classList.toggle("hidden",v!=="nao"); $("#finSinal").classList.toggle("hidden",v!=="sim"); }
 function finalizarRH(cpf){
   const p=DB.find(x=>x.cpf===cpf);
+  if(p.origem==="proativa" && p.aval.resultado==="Liberado"){
+    const adm=$("#finAdmin")?$("#finAdmin").value:"";
+    if(!adm){ toast("Verifique o impedimento administrativo"); return; }
+    if(adm==="sim"){
+      const jus=$("#finAdminJust")?$("#finAdminJust").value.trim():"";
+      if(!jus){ toast("Justifique o impedimento administrativo"); return; }
+      p.finalizacao={tipo:"ciencia",motivo:"impedimento administrativo",justificativa:jus,por:"RH · (você)",data:new Date().toISOString().slice(0,10)};
+      pushTL(p,"Encaminhamento","Impedimento administrativo sinalizado",`Justificativa: ${jus}`,"RH · (você)");
+    } else {
+      const fi=$("#finFile"); const fname=fi&&fi.files&&fi.files.length?fi.files[0].name:"";
+      if(!fname){ toast("Anexe a evidência do desligamento"); return; }
+      p.finalizacao={tipo:"desligamento",evidencia:fname,por:"RH · (você)",data:new Date().toISOString().slice(0,10)};
+      pushTL(p,"Encaminhamento","Desligamento confirmado pelo RH","Sem impedimento administrativo. Evidência: "+fname,"RH · (você)");
+    }
+    p.situacao="Finalizada"; pushTL(p,"Encaminhamento","Demanda finalizada","","Sistema");
+    toast("Demanda finalizada"); setTimeout(()=>renderFila(),800); return;
+  }
   if(p.aval.resultado==="Liberado"){
     const tipo=$("#finTipo")?$("#finTipo").value:"";
     if(!tipo){ toast("Selecione a situação do desligamento"); return; }
@@ -684,26 +812,22 @@ function classificarProcesso(x){
   if(/procedente|deferida/i.test(s)) return "Impedido";
   return "Impedido";
 }
-function analisarDocsEscritorio(cpf){
-  const p=DB.find(x=>x.cpf===cpf); const fi=$("#escFile"); const files=fi&&fi.files?Array.from(fi.files):[];
+function analisarDocEscritorioProc(cpf,i){
+  const p=DB.find(x=>x.cpf===cpf); const x=p.processos[i];
+  if(!x.dec.decisao && !x.dec.situacaoPedido){ toast("Preencha os dados do processo antes de anexar o documento"); const fe=$("#escFile-"+i); if(fe)fe.value=""; return; }
+  const fi=$("#escFile-"+i); const files=fi&&fi.files?Array.from(fi.files):[];
   if(!files.length) return;
-  const semDados=p.processos.some(x=>!x.dec.decisao && !x.dec.situacaoPedido);
-  if(semDados){ toast("Preencha os dados dos processos antes de anexar o documento"); if(fi)fi.value=""; return; }
-  p.matchDocs=files.map(f=>({name:f.name,url:URL.createObjectURL(f),sim:false}));
-  // IA usa os dados preenchidos pelo escritório + o documento anexado
-  p.processos.forEach(x=>{
-    if(x.cnj==="—") x.cnj="0009988-77.2026.5.02.0050";
-    if(x.tipo==="Documento sob sigilo"||x.tipo==="Aguardando captura") x.tipo="Reintegração c/ estabilidade";
-    if(x.instancia==="—") x.instancia="1ª instância · TRT-2";
-    x.resultado=classificarProcesso(x);
-    x.recIA="Classificação gerada pela IA a partir dos dados preenchidos e do documento anexado pelo escritório.";
-  });
+  const docs=files.map(f=>({name:f.name,url:URL.createObjectURL(f),sim:false}));
+  x.docs=(x.docs||[]).concat(docs);
+  if(x.cnj==="—") x.cnj="0009988-77.2026.5.02.0050";
+  if(x.tipo==="Documento sob sigilo"||x.tipo==="Aguardando captura") x.tipo="Reintegração c/ estabilidade";
+  x.resultado=classificarProcesso(x); x.segredo=false;
+  x.recIA="Classificação gerada pela IA a partir dos dados preenchidos e do documento anexado pelo escritório.";
   p.match={total:12,conf:11,divergencias:["Data de Impedimento Judicial"]};
-  p.situacao="Aguardando aval"; p.dataAnalise=new Date().toISOString().slice(0,10);
-  pushTL(p,"Leitura","Dados preenchidos e documentos anexados pelo escritório",p.matchDocs.map(d=>d.name).join(", "),"Escritório "+(p.encaminhado||""));
-  pushTL(p,"Classificação","Análise automática da IA concluída",`${p.match.conf}/${p.match.total} campos conferem com o documento.`,"Sistema · IA");
-  pushTL(p,"Encaminhamento","Encaminhada para aval do jurídico","","Sistema");
-  toast("IA analisou · enviado para a Naara avaliar");
+  pushTL(p,"Leitura","Documento anexado pelo escritório",`Processo ${x.cnj}: `+docs.map(d=>d.name).join(", "),"Escritório "+(p.encaminhado||""));
+  pushTL(p,"Classificação","Processo analisado pela IA",`Processo ${x.cnj}: ${x.resultado}.`,"Sistema · IA");
+  if(p.processos.some(pp=>!pp.resultado)){ toast("Processo analisado · ainda há processo pendente"); }
+  else { p.situacao="Aguardando aval"; p.dataAnalise=new Date().toISOString().slice(0,10); pushTL(p,"Encaminhamento","Encaminhada para aval do jurídico","Todos os processos avaliados.","Sistema"); toast("Processo analisado · demanda enviada para aval"); }
   setTimeout(()=>renderDetalhe(cpf),800);
 }
 function setNovaMode(m){ novaMode=m; renderNova(); }
