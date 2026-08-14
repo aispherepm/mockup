@@ -167,7 +167,16 @@ table.dt tr:last-child td{border-bottom:none}
 .btn{border:1px solid var(--border);background:#fff;border-radius:7px;padding:8px 13px;font-size:11.5px;font-weight:600;color:var(--textSec);cursor:pointer}
 .note{font-size:10.5px;color:var(--textMuted);font-style:italic;margin-top:12px}
 
-/* CNJ link */
+/* ---- histórico: multi-CID expansível ---- */
+.cidtog{display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--blue);font-weight:600;font-size:12px;user-select:none}
+.cidtog .cv{font-size:9px;transition:transform .15s}
+tr.hrow.open .cidtog .cv{transform:rotate(90deg)}
+tr.sub{background:#FAFBFC}
+tr.sub td{border-bottom:1px solid #F1F2F5;font-size:12px;color:var(--textSec);padding:10px 10px}
+tr.sub.hide{display:none}
+tr.sub td.first{padding-left:24px;position:relative}
+tr.sub td.first::before{content:'└';position:absolute;left:8px;color:var(--textMuted);font-size:11px}
+.multichip{display:inline-block;background:var(--blueLight);color:var(--blue);font-size:10px;font-weight:700;border-radius:10px;padding:2px 8px;margin-left:6px}
 a.cnj{color:var(--blue);font-weight:700;text-decoration:none;border-bottom:1px solid transparent;display:inline-flex;align-items:center;gap:5px}
 a.cnj:hover{border-bottom-color:var(--blue);background:var(--blueLight);border-radius:4px;padding:0 3px;margin:0 -3px}
 a.cnj .ext{font-size:9px;opacity:.65}
@@ -542,14 +551,56 @@ table.dw tr:hover td{background:#FCFCFD}
 
       <div class="card" style="margin-top:14px">
         <div class="cardttl">Histórico de Processos com Laudo</div>
-        <div class="cardsub">Clique no CNJ para abrir o detalhe do processo</div>
+        <div class="cardsub">Clique no CNJ para abrir o detalhe do processo. Processos com mais de um CID podem ser expandidos.</div>
         <table class="dt">
-          <thead><tr><th>Processo</th><th>CID</th><th>Enquadramento</th><th>Nexo</th><th>NTEP</th><th>Vara / Juiz</th></tr></thead>
+          <thead><tr><th>Processo</th><th>Data</th><th>CID</th><th>Grupo</th><th>Nexo</th><th>NTEP</th><th>Vara / Juiz</th></tr></thead>
           <tbody>
-            <tr><td><a class="cnj" href="#" onclick="return proc('0000163-59.2026.5.14.0161')">0000163-59.2026.5.14.0161 <span class="ext">↗</span></a><div class="pcrm">20/05/2026</div></td><td>G56.0</td><td>LER/DORT</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>Vara do Trabalho de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
-            <tr><td><a class="cnj" href="#" onclick="return proc('0010422-18.2025.5.03.0079')">0010422-18.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">11/03/2026</div></td><td>M75.1</td><td>LER/DORT</td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">Concausal</span></td><td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td><td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td></tr>
-            <tr><td><a class="cnj" href="#" onclick="return proc('0010988-04.2025.5.03.0079')">0010988-04.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">02/02/2026</div></td><td>M51.1</td><td>Doença da Coluna</td><td><span class="badge b-alt">Causal</span></td><td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td><td>1ª VT de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td></tr>
-            <tr><td><a class="cnj" href="#" onclick="return proc('0011245-77.2025.5.03.0079')">0011245-77.2025.5.03.0079 <span class="ext">↗</span></a><div class="pcrm">18/01/2026</div></td><td>F32.1</td><td>Transtorno Psíquico <span class="foraesp">fora da especialidade</span></td><td><span class="badge" style="background:#EDEEF1;color:var(--textSec)">Não recon.</span></td><td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td><td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td></tr>
+            <!-- processo multi-CID: 2 CIDs, nexos diferentes -->
+            <tr class="hrow" id="h1">
+              <td><a class="cnj" href="#" onclick="return proc('0000099-62.2026.5.14.0092')">0000099-62.2026.5.14.0092 <span class="ext">↗</span></a></td>
+              <td>04/06/2026</td>
+              <td colspan="3"><span class="cidtog" onclick="tgCid('h1')"><span class="cv">▶</span> <span class="ct">ver 2 CIDs</span></span><span class="multichip">multi-CID</span></td>
+              <td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td>
+              <td>2ª Vara do Trabalho de Ji-Paraná<div class="pcrm">Augusto Silva Lopes</div></td>
+            </tr>
+            <tr class="sub hide" data-h="h1">
+              <td></td><td class="first">04/06/2026</td><td>M75.1</td><td>LER/DORT</td>
+              <td><span class="badge b-alt">Causal</span></td><td></td><td></td>
+            </tr>
+            <tr class="sub hide" data-h="h1">
+              <td></td><td class="first">04/06/2026</td><td>F41.1</td><td>Transtorno Psíquico</td>
+              <td><span class="badge" style="background:#EDEEF1;color:var(--textSec)">Não recon.</span></td><td></td><td></td>
+            </tr>
+
+            <!-- processos single-CID: linha normal -->
+            <tr class="hrow">
+              <td><a class="cnj" href="#" onclick="return proc('0000163-59.2026.5.14.0161')">0000163-59.2026.5.14.0161 <span class="ext">↗</span></a></td>
+              <td>20/05/2026</td><td>G56.0</td><td>LER/DORT</td>
+              <td><span class="badge b-alt">Causal</span></td>
+              <td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td>
+              <td>Vara do Trabalho de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td>
+            </tr>
+            <tr class="hrow">
+              <td><a class="cnj" href="#" onclick="return proc('0010422-18.2025.5.03.0079')">0010422-18.2025.5.03.0079 <span class="ext">↗</span></a></td>
+              <td>11/03/2026</td><td>M75.1</td><td>LER/DORT</td>
+              <td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">Concausal</span></td>
+              <td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td>
+              <td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td>
+            </tr>
+            <tr class="hrow">
+              <td><a class="cnj" href="#" onclick="return proc('0010988-04.2025.5.03.0079')">0010988-04.2025.5.03.0079 <span class="ext">↗</span></a></td>
+              <td>02/02/2026</td><td>M51.1</td><td>Doença da Coluna</td>
+              <td><span class="badge b-alt">Causal</span></td>
+              <td><span class="badge" style="background:var(--purpleLight);color:var(--purple)">sim</span></td>
+              <td>1ª VT de Muriaé<div class="pcrm">Maria Eliza Espindola</div></td>
+            </tr>
+            <tr class="hrow">
+              <td><a class="cnj" href="#" onclick="return proc('0011245-77.2025.5.03.0079')">0011245-77.2025.5.03.0079 <span class="ext">↗</span></a></td>
+              <td>18/01/2026</td><td>F32.1</td><td>Transtorno Psíquico <span class="foraesp">fora da especialidade</span></td>
+              <td><span class="badge" style="background:#EDEEF1;color:var(--textSec)">Não recon.</span></td>
+              <td><span class="badge" style="background:#F1F2F5;color:var(--textSec)">não</span></td>
+              <td>2ª VT de Muriaé<div class="pcrm">Ricardo Alves Pinto</div></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -717,6 +768,14 @@ function openList(origem,arg){
 }
 function closeList(){document.getElementById('drawer').classList.remove('on');document.getElementById('dwovl').classList.remove('on')}
 function proc(cnj){alert('Abrir detalhe do processo '+cnj+'\n\n(mockup: navega para a tela Processos › Detalhes)');return false}
+function tgCid(id){
+  const row=document.getElementById(id);
+  row.classList.toggle('open');
+  const open=row.classList.contains('open');
+  document.querySelectorAll('tr.sub[data-h="'+id+'"]').forEach(s=>s.classList.toggle('hide',!open));
+  const t=row.querySelector('.cidtog .ct');
+  if(t) t.textContent = open ? 'ocultar CIDs' : 'ver 2 CIDs';
+}
 </script>
 </body>
 </html>
